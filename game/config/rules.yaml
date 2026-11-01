@@ -74,7 +74,7 @@ houses:
      award: {start: 13250000, bump: 375000, cap: 150000000, conf: M},
      note: "max score cut 275M -> 150M in 1.37; left 3-bank advances Wall MB"}
   - {id: 3, key: lannister, label: House Lannister, timer_id: 4, timer_s: 40, timer_conf: M,
-     shots: [s_target_1, s_target_2, s_target_3, s_target_4, s_target_5],
+     shots: [s_target_1, s_target_2, s_target_3, s_target_4, s_target_5, s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],   # gold standups give credit, 5 main shots end it (rulesheet)
      award: {start: 100000, bump: 75000, cap: 100000000, conf: M},
      note: "gold economy (multipliers cost 600 gold each) not modelled yet"}
   - {id: 4, key: greyjoy, label: House Greyjoy, timer_id: 6, timer_s: 15, timer_conf: M,
@@ -82,7 +82,7 @@ houses:
      award: {start: 500000, bump: 175000, cap: 100000000, conf: M},
      note: "steals the ability of the last completed house (not modelled)"}
   - {id: 5, key: tyrell, label: House Tyrell, timer_id: 9, timer_s: 30, timer_conf: L,
-     shots: [s_right_2_bank_top, s_right_2_bank_bottom],
+     shots: [s_left_ramp_exit, s_right_ramp_exit, s_right_2_bank_top, s_right_2_bank_bottom],   # ramps, then the lock targets, then the right ramp (rulesheet)
      award: {start: 8250000, bump: 875000, cap: 75000000, conf: M},
      note: "two-bank; timer is the cmode default, no override seen"}
   - {id: 6, key: martell, label: House Martell, timer_id: 10, timer_s: 30, timer_conf: M, hurry_up: true,    # rulesheet: 30 s mode timer (the ROM's 10 s timer is the orbit window / hurry-up)

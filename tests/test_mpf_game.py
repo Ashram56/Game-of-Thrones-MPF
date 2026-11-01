@@ -100,6 +100,14 @@ class TestGotGame(MpfGameTestCase):
             seq = ["s_left_ramp_exit"] * 3 + ["s_left_loop"]
         elif key == "martell":
             seq = ["s_left_loop"] * 3 + ["s_left_ramp_exit"]
+        elif key == "baratheon":
+            seq = ["s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm"]
+        elif key == "lannister":
+            seq = ["s_target_1", "s_left_loop"] * 5
+        elif key == "greyjoy":
+            seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop"]
+        elif key == "tyrell":
+            seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_right_2_bank_top", "s_right_2_bank_bottom", "s_right_ramp_exit"]
         else:
             seq = [running.config["mode_settings"]["shots"][0]] * 3
         for sw in seq:
@@ -348,3 +356,52 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_right_loop", 2)
         self._hit("s_left_ramp_exit")
         self.assertTrue(self.machine.modes["martell"].active)
+
+    def test_baratheon_spinner_builds_bank_cashes_in(self):
+        self._start_house("baratheon")
+        self._hit("s_left_spinner", 2)
+        self.assertTrue(self.machine.modes["baratheon"].active)
+        self._hit("s_3_bank_drop_tgt_top")
+        self._hit("s_3_bank_drop_tgt_mid")
+        self.assertTrue(self.machine.modes["baratheon"].active)
+        before = self.machine.game.player.score
+        self._hit("s_3_bank_drop_tgt_btm")
+        self.assertFalse(self.machine.modes["baratheon"].active)
+        self.assertGreater(self.machine.game.player.score - before, 13250000 + 2 * 375000 - 1)
+
+    def test_lannister_five_credited_shots(self):
+        self._start_house("lannister")
+        self._hit("s_left_loop")                              # no gold credit: nothing
+        self.assertEqual(0, self.machine.modes["lannister"]._made)
+        for i in range(5):
+            self._hit("s_target_%d" % (i + 1))
+            self.assertTrue(self.machine.modes["lannister"].active)
+            self._hit(("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_left_loop")[i])
+        self.assertFalse(self.machine.modes["lannister"].active)
+        self.assertIn(3, self.machine.game.player.got_progression.complete)
+
+    def test_greyjoy_each_main_shot_once_and_timer_refresh(self):
+        self._start_house("greyjoy")
+        self._hit("s_left_loop", 2)                           # a repeated shot does not count
+        self.advance_time_and_run(10)
+        self._hit("s_right_loop")                             # refreshes the 15 s timer
+        self.advance_time_and_run(10)
+        self.assertTrue(self.machine.modes["greyjoy"].active)
+        self._hit("s_left_ramp_exit")
+        self.assertTrue(self.machine.modes["greyjoy"].active)
+        self._hit("s_right_ramp_exit")
+        self.assertFalse(self.machine.modes["greyjoy"].active)
+        self.assertIn(4, self.machine.game.player.got_progression.complete)
+
+    def test_tyrell_ramps_then_bank_then_right_ramp(self):
+        self._start_house("tyrell")
+        self._hit("s_right_2_bank_top")                       # bank before the ramps: nothing
+        self._hit("s_left_ramp_exit")
+        self._hit("s_right_ramp_exit")
+        self._hit("s_right_2_bank_top")
+        self.assertTrue(self.machine.modes["tyrell"].active)
+        self._hit("s_right_2_bank_bottom")
+        self.assertTrue(self.machine.modes["tyrell"].active)
+        self._hit("s_right_ramp_exit")
+        self.assertFalse(self.machine.modes["tyrell"].active)
+        self.assertIn(5, self.machine.game.player.got_progression.complete)

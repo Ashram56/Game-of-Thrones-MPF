@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_greyjoy, ball_ending, tilt
   priority: 300
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.houses.GreyjoyMode
 mode_settings:
   kind: house
   id: 4

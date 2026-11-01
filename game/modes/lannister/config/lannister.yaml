@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_lannister, ball_ending, tilt
   priority: 300
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.houses.LannisterMode
 mode_settings:
   kind: house
   id: 3
@@ -20,6 +20,10 @@ mode_settings:
   - s_target_3
   - s_target_4
   - s_target_5
+  - s_left_ramp_exit
+  - s_right_ramp_exit
+  - s_left_loop
+  - s_right_loop
   shots_to_complete: 3
   hurry_up: false
   timer_s: 40

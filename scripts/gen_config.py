@@ -166,7 +166,9 @@ def slide_scenes(rules):
             for v in sorted(set(rules["dmd"]["videos"].values()))}
 
 
-HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.StarkMode", "martell": "got.houses.MartellMode"}
+HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.StarkMode", "martell": "got.houses.MartellMode",
+              "baratheon": "got.houses.BaratheonMode", "lannister": "got.houses.LannisterMode",
+              "greyjoy": "got.houses.GreyjoyMode", "tyrell": "got.houses.TyrellMode"}
 
 
 def mode_files(rules):

@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_tyrell, ball_ending, tilt
   priority: 300
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.houses.TyrellMode
 mode_settings:
   kind: house
   id: 5
@@ -15,6 +15,8 @@ mode_settings:
     bump: 875000
     cap: 75000000
   shots:
+  - s_left_ramp_exit
+  - s_right_ramp_exit
   - s_right_2_bank_top
   - s_right_2_bank_bottom
   shots_to_complete: 3
