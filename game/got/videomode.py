@@ -13,7 +13,7 @@ class VideoMode(Mode):
     def mode_start(self, n=1, **kwargs):
         self._n = int(n)
         s = self.machine.settings
-        self._level = int(s.get_setting_value("ad_video_mode_difficulty")) if "ad_video_mode_difficulty" in getattr(s, "setting_definitions", {}) else 2
+        self._level = int(s.get_setting_value("ad_video_mode_difficulty")) if "ad_video_mode_difficulty" in s._settings else 2
         self._me = PLAYER_HEALTH
         self._ai = AI_HEALTH[min(4, max(0, self._level))]
         self.rng = __import__("random").Random()

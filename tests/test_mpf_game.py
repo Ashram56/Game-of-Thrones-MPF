@@ -688,6 +688,36 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.3)
         self.assertTrue(self.machine.modes["stark"].active and self.machine.modes["lannister"].active)
 
+    def test_casual_mode_right_flipper_starts_and_auto_picks(self):
+        self.machine.settings.set_setting_value("ad_casual_mode", 1)
+        for i in range(1, 7):
+            self.hit_switch_and_run("s_trough_%d" % i, 0.1)
+        self.advance_time_and_run(3)
+        self.hit_and_release_switch("s_r_flipper_button")      # attract: the right flipper starts the game
+        self.advance_time_and_run(3)
+        self.assertIsNotNone(self.machine.game)
+        player = self.machine.game.player
+        self.hit_and_release_switch("s_r_flipper_button")      # no house choice in casual mode
+        self.assertFalse(player.got_house_picked)
+        player.got_lit_houses = "stark"
+        self.hit_and_release_switch("s_throne")                # auto-pick: no menu, the house starts
+        self.advance_time_and_run(0.3)
+        self.assertIsNone(self.machine.modes["combos"].cyb)
+        self.assertTrue(self.machine.modes["stark"].active)
+
+    def test_settings_reach_special_and_video_mode(self):
+        self.machine.settings.set_setting_value("ad_special_award", 3)       # 25M points instead of a credit
+        self.machine.settings.set_setting_value("ad_video_mode_difficulty", 4)
+        self._start_game()
+        player = self.machine.game.player
+        before = player.score
+        self.post_event("got_special")
+        self.advance_time_and_run(0.1)
+        self.assertEqual(25000000, player.score - before)
+        self.post_event_with_params("got_video_mode_start", n=1)
+        self.advance_time_and_run(0.1)
+        self.assertEqual(7, self.machine.modes["videomode"]._ai)             # AI health at level 4
+
     def test_iron_bank_cash_in(self):
         self._start_game()
         player = self.machine.game.player

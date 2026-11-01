@@ -4,3 +4,4 @@ mode:
   start_events: reset_complete, game_ended
   stop_events: game_started
   priority: 10
+  code: got.casual.Attract

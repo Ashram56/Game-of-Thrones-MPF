@@ -93,3 +93,6 @@ Mystery "Video Mode nX" starts `modes/videomode`: 20 s, either flipper button hi
 
 ## Choose Your Battle, stacking, PASS (docs/14 section 10)
 With lit houses (tickle or Mystery) the throne opens Choose Your Battle in `Combos` (no multiball, no running house): entries are each lit house, each pair of lit houses (stacking: two houses run together) and PASS (starts nothing, houses stay lit); flipper buttons move the cursor (wrap), the action button starts it (event `got_cyb_menu` carries the label; no slide yet). Winter Is Coming is offered with the start as before. With no lit house the throne still starts the next house (our departure; rom_differences). Not modelled: the ROM's entry set (M), casual mode's auto-pick.
+
+## Casual mode and a settings fix
+Casual mode (`ad_casual_mode`, default off): the right flipper starts a game in attract (`got.casual.Attract` subclasses MPF's attract), the house choice is skipped, and Choose Your Battle auto-picks its first entry. Fix: earlier code that read service-menu settings through a non-existent `setting_definitions` attribute silently used the defaults (Special award/limit, video-mode difficulty and permission); it now reads `settings._settings`, with a test.

@@ -3,6 +3,7 @@ import time
 
 from mpf.core.mode import Mode
 
+from got import casual
 from got import powers, state
 from got.rules_core import Progression, load_rules
 
@@ -173,7 +174,7 @@ class GotBase(Mode):
         return not p.got_house_confirmed and self.machine.game.player.ball == 1
 
     def _choose(self, step, **kwargs):
-        if not self._choosing():
+        if not self._choosing() or casual.is_casual(self.machine):        # casual mode skips the house choice (docs/14)
             return
         p = self.player
         p.got_house_index = (int(p.got_house_index or 1) + step) % len(powers.HOUSES)     # default Stark (1)

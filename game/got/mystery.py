@@ -97,7 +97,7 @@ class Mystery:
 
     def _setting(self, name, default):
         s = self.machine.settings
-        return s.get_setting_value(name) if name in getattr(s, "setting_definitions", {}) else default
+        return s.get_setting_value(name) if name in s._settings else default
 
     # --- menu
     def build(self):

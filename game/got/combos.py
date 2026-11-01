@@ -5,6 +5,7 @@ import random
 
 from mpf.core.mode import Mode
 
+from got import casual
 from got.powers import HOUSES
 
 # shot switch -> combo index (ccombo_manager ctor: 0 left loop, 1 kickback, 2 left ramp exit, 3 right ramp exit, 4 right loop)
@@ -306,7 +307,7 @@ class Combos(Mode):
 
     def _setting(self, name, default):
         s = self.machine.settings
-        return s.get_setting_value(name) if name in getattr(s, "setting_definitions", {}) else default
+        return s.get_setting_value(name) if name in s._settings else default
 
     # --- house tickle: three hits of the house's tickle shot light it (the throne then starts lit houses first)
     def _tickle(self, house, **kwargs):
@@ -366,6 +367,9 @@ class Combos(Mode):
             return False
         entries = [[h] for h in lit] + [[a, b] for i, a in enumerate(lit) for b in lit[i + 1:]] + [[]]
         self.cyb = {"entries": entries, "cursor": 0}
+        if casual.is_casual(self.machine):             # SelectModesToStart auto-picks in casual mode (the first entry)
+            self._cyb_confirm()
+            return True
         self._cyb_post()
         return True
 
