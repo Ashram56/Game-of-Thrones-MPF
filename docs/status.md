@@ -17,9 +17,12 @@ Done
 - Core sound map (21 events, from sound_effects.csv) and 9 DMD videos (128x32 frames) copied by gen_media.py (ignored by git).
 - Tests: 11 pass without MPF (`tests/run_without_pytest.py`; pytest not installed here either).
 - Service menu: MPF's built-in service mode on the four service buttons; the ROM's 159 adjustments appear in its settings menu and drive balls per game, ball save time and tilt warnings (tests). Audits: MPF's auditor (switches, shots, score, key events) shows in the menu; the ROM's 207 own audit counters are not mapped yet.
-- Hurry-up (Targaryen): award decays linearly over the mode timer (PROVISIONAL: the ROM's decay amounts are not recovered). Tested.
-- Winter Is Coming chain (from Game-of-Thrones docs/06, H from code, not seen live): offered with a house while completed+running <= 6; 3 accepted lit shots start the hurry-up; each completion adds its decayed award to the Winter super jackpot (`got_winter_super`); the 4th completion starts Winter Has Come (`got/winter.py`, tested). Which switches are Winter's lit shots is still a placeholder.
-- Multiball triggers (PROVISIONAL, trigger in the ROM not recovered): a ready wizard multiball (Hand after 4 houses, Iron Throne after all houses; ready conditions H, start shot M) starts on the next throne hit; three locked balls start Blackwater. Tested for Hand of the King.
+- Hurry-ups use the ROM formula (floor 10% of the award, per-update decrement, 5.5 updates/s; Game-of-Thrones docs/06, H formula, M update rate). Winter: 4,000,000 start, ROM lit-shot switches (mask 0xEF). Tested.
+- Winter Is Coming chain (docs/06, H from code, not seen live): offered with a house while completed+running <= 6; 3 accepted lit shots start the hurry-up; each completion adds its decayed award to the Winter super jackpot (`got_winter_super`, stored, not yet paid in Winter Has Come); the 4th completion starts Winter Has Come (`got/winter.py`).
+- Castle: the three upper standups advance the upper-playfield level (award #19 = 5,000,000 per level, constant; the VPX table grows it, ROM wins); level 4 starts Castle. Standup switches M.
+- Wall: advances (left 3-bank hits here; the ROM also advances from pops and Mystery, not wired) light it at min(11, 6 + 5 x Walls awarded); starts at the elevator kick when no multiball runs and Iron Throne is not ready.
+- Midnight Madness: starts in the 10 minutes after local midnight (the ROM's RTC wait; the VPX table uses 3 min, ROM wins) when a ball is in play and no multiball runs; every switch listed pays 100,000.
+- Still PROVISIONAL: Hand of the King / Iron Throne start on a throne hit (ready conditions are H, start shot is M); Blackwater on three locked balls; the Wall's pop/Mystery advances; Greyjoy needing 4 Winter shots.
 - Emulator facts (Game-of-Thrones docs/05): the left bumper adds 1,170 per scoring call; n x 1170 counts switch events, not a multiplier. Winter link still unconfirmed.
 
 Open (owner/emulation): exact award growth, shot-to-switch mapping, Winter link, multiball triggers, coil timings,

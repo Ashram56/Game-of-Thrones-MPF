@@ -35,6 +35,14 @@ progression:                          # 03 s2, s6
   blackwater_locks_needed: 3                      # L: three lock switches, flag 36 lock lit
   castle_upper_playfield_levels: [ARCHERS, CHARGE, BREACH]   # M, 03 s3
   pops_big_points: 1000000            # H value (POPS_Award_Big_Points_GiveOne); trigger not wired yet
+  castle_level_award: 5000000           # H: award #19 per upper-playfield level, constant (the VPX table grows it: ROM wins, docs/03 s9)
+  castle_start_level: 4                 # H: move_up_one_level starts Castle when the level reaches 4
+  castle_standups: [s_u_p_left_target, s_u_p_center_target, s_u_p_right_target]   # M: bits 0x100000/0x200000/0x400000
+  wall_advances_first: 6                # H: GetNumNeededToStartMball = min(11, 6 + 5 x advances awarded)
+  wall_advances_step: 5
+  wall_advances_max: 11
+  wall_advance_switches: [s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm]   # M: Baratheon bank hits advance (pops/Mystery also advance in the ROM, not wired)
+  madness_window_s: 600                 # H: ROM waits ~10 min after midnight for a ball on the playfield (the VPX table: 3 min, ROM wins)
   conquer_castle_award: {start: 25000000, bump: 25000000, cap: 150000000, conf: M}   # 03 s7
 
 game_rules:                           # 03 s5, H defaults (all operator adjustments, see rom/settings.yaml)
@@ -55,7 +63,7 @@ houses:
   - {id: 0, key: targaryen, label: House Targaryen, timer_id: 0, timer_s: 20, timer_conf: M, hurry_up: true,
      shots: [s_left_ramp_exit, s_right_ramp_exit, s_u_p_left_loop],
      award: {start: 8000000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
-     note: "3 dragon stages; 16 s at init, 20 s at Start; hurry-up decay amounts are computed in the ROM (CFG linear decay here)"}
+     note: "3 dragon stages; 16 s at init, 20 s at Start; hurry-up decay: ROM formula (docs/06)"}
   - {id: 1, key: stark, label: House Stark, timer_id: 1, timer_s: 30, timer_conf: L,
      shots: [s_right_ramp_exit, s_left_ramp_exit, s_left_loop, s_right_loop],   # VPX: ramps build value, an orbit finishes (vpx/README.md)
      award: {start: 500000, bump: 375000, cap: 75000000, conf: M},
@@ -81,7 +89,8 @@ houses:
      award: {start: 18000000, bump: 1250000, cap: 0, conf: M, cap_conf: CFG},
      note: "mini grace sub-timer (62 ticks) not modelled"}
   - {id: 7, key: winter_is_coming, label: Winter Is Coming, timer_id: 12, timer_s: 16, timer_conf: M, hurry_up: true,
-     shots: [s_left_loop, s_right_loop, s_left_ramp_exit, s_right_ramp_exit],
+     shots: [s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm, s_left_loop, s_kickback, s_left_ramp_exit,
+             s_right_ramp_exit, s_right_loop, s_right_2_bank_top, s_right_2_bank_bottom],   # H: DoShot mask 0xEF (docs/06)
      award: {start: 4000000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
      note: "hurry-up that grows; wizard-path feeder for Winter Has Come (link is M)"}
 

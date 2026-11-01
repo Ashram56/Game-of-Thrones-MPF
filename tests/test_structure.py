@@ -151,8 +151,11 @@ def test_award_bump_and_cap():
     assert a.value == 500000
 
 
-def test_hurry_up_linear():
-    assert Award(8000000).hurry_up(10, 20) == 4000000
+def test_hurry_up_rom_formula():
+    w = Award(4000000)                               # Winter Is Coming, 16 s (docs/06: floor 400k, ~40.9k per update)
+    assert w.hurry_up(16, 16) == 4000000
+    assert w.hurry_up(0, 16) == 400000
+    assert 3000000 < w.hurry_up(12, 16) < 3200000    # ~225k per second
 
 
 def test_progression_wizard_path():

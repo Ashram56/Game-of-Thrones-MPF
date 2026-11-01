@@ -35,11 +35,20 @@ class Award:
         """GiveAward(mult): value x mult x the global score multiplier."""
         return self.value * mult * global_mult
 
+    UPDATES_PER_S = 5.5          # M: cgametimer update frequency 2 of 11 sub-steps/s (Game-of-Thrones docs/06)
+
     def hurry_up(self, remaining_s, total_s):
-        """Linear decay to zero. CFG: the ROM computes the amounts (CalcHurryUpDecValue), not recovered."""
-        if total_s <= 0:
-            return self.value
-        return int(self.value * max(0.0, min(1.0, remaining_s / total_s)))
+        """ROM decay (caward::DecAward, docs/06, H formula, M update rate): floor = 10% of the award (rounded down to a
+        multiple of 100,000 when above 100,000); every update subtracts ((A - floor) / T / 10 + 1) x 10, T = updates in
+        the timer. Winter 4,000,000 / 16 s: floor 400,000, about 40,900 per update."""
+        a = self.value
+        floor = a // 10
+        if floor > 100000:
+            floor -= floor % 100000
+        t = max(1, int(self.UPDATES_PER_S * total_s))
+        dec = ((a - floor) // t // 10 + 1) * 10
+        updates = int(self.UPDATES_PER_S * max(0, total_s - remaining_s))
+        return max(floor, a - dec * updates)
 
 
 class Progression:

@@ -159,3 +159,72 @@ class TestGotGame(MpfGameTestCase):
                     missing.append((kind, name))
         known_gaps = [m for m in missing if not m[1].startswith(("l_", "f_"))]
         self.assertEqual([], known_gaps)
+
+    def _hit(self, sw, n=1):
+        for _ in range(n):
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(0.1)
+
+    def test_castle_levels_then_multiball(self):
+        self._start_game()
+        for level in range(1, 4):
+            before = self.machine.game.player.score
+            for sw in ("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target"):
+                self._hit(sw)
+            self.assertEqual(level, self.machine.game.player.got_upper_level)
+            self.assertGreaterEqual(self.machine.game.player.score - before, 5000000)   # award #19, constant (ROM)
+            self.assertFalse(self.machine.modes["castle"].active)
+        for sw in ("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target"):
+            self._hit(sw)
+        self.assertTrue(self.machine.modes["castle"].active)
+
+    def test_wall_lit_after_six_advances_then_starts_at_elevator(self):
+        self._start_game()
+        bank = ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid")
+        self._hit(bank[0], 5)
+        self.assertFalse(self.machine.game.player.got_wall_lit)
+        self._hit(bank[1])                                   # 6th advance lights the Wall (flag 34)
+        self.assertTrue(self.machine.game.player.got_wall_lit)
+        self.hit_switch_and_run("s_elevator_popper", 0.5)
+        self.assertTrue(self.machine.modes["wall"].active)
+        self.assertEqual(1, self.machine.game.player.got_wall_awarded)
+
+    def test_wall_second_needs_eleven(self):
+        self._start_game()
+        self.machine.game.player.got_wall_awarded = 1
+        self._hit("s_3_bank_drop_tgt_top", 10)
+        self.assertFalse(self.machine.game.player.got_wall_lit)
+        self._hit("s_3_bank_drop_tgt_top")
+        self.assertTrue(self.machine.game.player.got_wall_lit)
+
+    def test_midnight_madness_at_midnight_only(self):
+        import time
+        import got.base as base
+        self._start_game()
+        self.release_switch_and_run("s_shooter_lane", 1)            # ball in play
+        orig = base._now
+        try:
+            base._now = lambda: time.struct_time((2026, 11, 2, 12, 0, 0, 0, 306, 0))
+            self.advance_time_and_run(3)
+            self.assertFalse(self.machine.modes["midnight_madness"].active)
+            base._now = lambda: time.struct_time((2026, 11, 2, 0, 5, 0, 0, 306, 0))
+            self.advance_time_and_run(3)
+            self.assertTrue(self.machine.modes["midnight_madness"].active)
+            before = self.machine.game.player.score
+            self._hit("s_left_pop_bumper")
+            self.assertGreaterEqual(self.machine.game.player.score - before, 100000)    # award #10 per switch
+        finally:
+            base._now = orig
+
+    def test_winter_uses_rom_switches_and_decay(self):
+        self._start_game()
+        self.post_event("start_mode_winter_is_coming")
+        self.advance_time_and_run(0.2)
+        for sw in ("s_kickback", "s_right_2_bank_top", "s_3_bank_drop_tgt_mid"):   # ROM lit-shot switches (mask 0xEF)
+            self._hit(sw)
+        self.assertEqual(0, self.machine.game.player.got_winter_lit_shots)
+        s0 = self.machine.game.player.got_winter_super
+        self.advance_time_and_run(8)                                                # half the 16 s timer
+        self._hit("s_kickback")
+        gained = self.machine.game.player.got_winter_super - s0
+        self.assertTrue(1500000 < gained < 2600000, gained)                        # ~2.2M of the 4M start
