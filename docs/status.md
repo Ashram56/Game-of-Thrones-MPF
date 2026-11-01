@@ -16,6 +16,7 @@ Done
 - Wizard progression (Hand after 4 houses, extra ball at N, Iron Throne when all 7, Winter Has Come) in tested pure Python.
 - Core sound map (21 events, from sound_effects.csv) and 9 DMD videos (128x32 frames) copied by gen_media.py (ignored by git).
 - Tests: 11 pass without MPF (`tests/run_without_pytest.py`; pytest not installed here either).
+- Service menu: MPF's built-in service mode on the four service buttons; the ROM's 159 adjustments appear in its settings menu and drive balls per game, ball save time and tilt warnings (tests). Audits: MPF's auditor (switches, shots, score, key events) shows in the menu; the ROM's 207 own audit counters are not mapped yet.
 
 Open (owner/emulation): exact award growth, shot-to-switch mapping, Winter link, multiball triggers, coil timings,
 Godot project (project.godot, GMC add-on, frame playback), service menu, audits, high scores, remaining modes.

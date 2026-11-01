@@ -56,7 +56,7 @@ autofire_coils:
 # H: ad_ball_save_time default 5 s. Each multiball has its own shoot_again (modes/*/config).
 ball_saves:
   default:
-    active_time: 5s
+    active_time: settings.ad_ball_save_time * 1000      # service menu: BALL SAVE TIME (s)
     hurry_up_time: 2s
     grace_period: 2s
     balls_to_save: 1

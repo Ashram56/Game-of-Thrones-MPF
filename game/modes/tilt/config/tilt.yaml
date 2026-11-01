@@ -6,7 +6,7 @@ mode:
 
 # H: tilt warnings 2, debounce 1000 ms (adjustments). Slam tilt ends the game.
 tilt:
-  warnings_to_tilt: 2
+  warnings_to_tilt: settings.ad_tilt_warnings      # service menu: TILT WARNINGS
   multiple_hit_window: 1000ms
   settle_time: 5s
   reset_warnings_events: ball_ending

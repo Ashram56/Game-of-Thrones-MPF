@@ -87,6 +87,8 @@ def test_references_resolve():
 def test_modes_listed_and_exist():
     cfg = load(GAME + "/config/config.yaml")
     for m in cfg["modes"]:
+        if m in ("service",):          # built-in MPF mode
+            continue
         assert os.path.exists(os.path.join(GAME, "modes", m, "config", m + ".yaml")), m
     rules = load_rules()
     assert len(rules["houses"]) == 8 and len(rules["multiballs"]) == 7
