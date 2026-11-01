@@ -1,0 +1,9 @@
+#config_version=6
+# Combo X, swords and Wildfire (got.combos; Game-of-Thrones docs/10, H). Priority above the houses so the shot's combo
+# multiplier is set before the house mode pays.
+mode:
+  start_events: ball_starting
+  stop_events: ball_ending
+  priority: 500
+  game_mode: true
+  code: got.combos.Combos

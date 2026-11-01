@@ -150,7 +150,11 @@ class Extras(Mode):
         elif name == "Advance Toward Wall MB":
             p.got_wall_advances += 1
         elif name == "+5 Wild Fire":
-            p.got_wildfire += 5
+            self.machine.events.post("got_wildfire_bump", n=5)
+        elif name == "Light Wild Fire":
+            p.got_wildfire_lit = 1
+        elif name == "Light Swords":
+            self.machine.events.post("got_light_swords")
         elif name == "Light Mystery":
             p.got_mystery_lit = 1
         elif name == "Add Mode Time":

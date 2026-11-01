@@ -18,6 +18,7 @@ modes:
   - service
   - tilt
   - extras
+  - combos
   - audits
   - scoring     # fixed switch scores, generated from data/switch_events.csv (Game-of-Thrones docs/08)
   - base

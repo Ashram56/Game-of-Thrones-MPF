@@ -431,12 +431,55 @@ class TestGotGame(MpfGameTestCase):
             self.assertTrue(self.machine.modes["targaryen"].active)
             for sw in waves[stage]:
                 self._hit(sw)
+            self.machine.modes["combos"]._end()                    # Combo X window lapsed (1x)
             before = player.score
             self._hit("s_kickback")
             gained = player.score - before
             self.assertTrue(values[stage] * 0.9 < gained < values[stage] * 1.05, (stage, gained))
             self.assertFalse(self.machine.modes["targaryen"].active)
         self.assertIn(0, player.got_progression.complete)
+
+    def test_combo_x_chain_and_sword(self):
+        self._start_game()
+        player = self.machine.game.player
+        self._hit("s_left_loop")
+        self.assertEqual(1, player.got_combo_mult)               # first shot pays 1x
+        self._hit("s_right_loop")                                # follow-up of the left loop (docs/10)
+        self.assertEqual(2, player.got_combo_mult)
+        self._hit("s_left_ramp_exit")
+        self.assertEqual(3, player.got_combo_mult)
+        self._hit("s_right_ramp_exit")
+        self.assertEqual(3, player.got_combo_mult)               # capped: 3 + swords(0)
+        self.advance_time_and_run(10)                            # 7 s window + grace lapse
+        self._hit("s_left_loop")
+        self.assertEqual(1, player.got_combo_mult)
+        self.advance_time_and_run(10)
+        self.post_event("got_light_swords")
+        self.advance_time_and_run(0.1)
+        before = player.score
+        self._hit("s_right_ramp_exit")
+        self.assertEqual(1, player.got_swords)
+        self.assertGreater(player.score - before, 500000)
+        self.assertEqual(0, player.got_swords_lit)
+        self._hit("s_left_loop")
+        self._hit("s_right_loop")
+        self._hit("s_left_ramp_exit")
+        self._hit("s_right_ramp_exit")
+        self.assertEqual(4, player.got_combo_mult)               # the sword raises the ceiling to 4
+
+    def test_wildfire_ram_and_jackpot_value(self):
+        from got.combos import jackpot_value
+        self.assertEqual(250000, jackpot_value(0))
+        self.assertEqual(250000 + 55000 + 54990 + 54960, jackpot_value(3))
+        self._start_game()
+        player = self.machine.game.player
+        self.post_event("got_wildfire_bump", n=5)
+        self.advance_time_and_run(0.1)
+        self.assertEqual(5, player.got_wildfire)
+        player.got_wildfire_lit = 1
+        self._hit("s_battering_ram")                             # starts Wildfire
+        self._hit("s_battering_ram")                             # +10 while running
+        self.assertEqual(15, player.got_wildfire)
 
     def _start_mb(self, key):
         self._start_game()

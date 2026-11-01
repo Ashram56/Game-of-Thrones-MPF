@@ -29,11 +29,11 @@ class AwardMode(Mode):
 
     def _pay(self):
         cfg = self._cfg
-        points = self._award.give(global_mult=self.player.got_multiplier or 1)
+        points = self._award.give(global_mult=self._gm())
         if cfg.get("hurry_up"):
             # CFG/provisional: the ROM's hurry-up decay amounts are not recovered; linear decay over the mode timer.
             timer = self.machine.timers[cfg["key"] + "_timer"]
-            points = self._award.hurry_up(timer.ticks, cfg["timer_s"]) * (self.player.got_multiplier or 1)
+            points = self._award.hurry_up(timer.ticks, cfg["timer_s"]) * self._gm()
         self.player.score += points
         self._last_points = points
         self._award.bump()
@@ -43,6 +43,10 @@ class AwardMode(Mode):
         if self._shots >= cfg.get("shots_to_complete", 0) > 0 and cfg["kind"] == "house":
             self.machine.events.post("got_house_complete", house_id=cfg["id"], key=cfg["key"])
             self.stop()
+
+    def _gm(self):
+        """Playfield multiplier x Combo X multiplier of the shot (docs/10: DoShot applies the combo value)."""
+        return (self.player.got_multiplier or 1) * (self.player.got_combo_mult or 1)
 
     def _accepts(self, sw):
         """Hook for houses with their own shot logic (got.houses)."""

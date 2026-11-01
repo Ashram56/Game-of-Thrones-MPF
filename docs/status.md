@@ -40,3 +40,9 @@ Godot project (project.godot, GMC add-on, frame playback), service menu, audits,
 Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays the ROM video frames at 8x (1024x256 window
 = 128x32 DMD). The frame on screen matches the source frame scaled 8x, so the scaling code is correct; the earlier
 "cropped" view was just a close-up video frame. Not yet checked: text/score overlays and MPF Monitor on a real display.
+
+## Combo X, swords, Wildfire (docs/10 part 1, H) - mode `combos` (got/combos.py)
+- Combo X: 5 shots, follow-up lists from the ELF, 7 s window + 1.4 s grace, multiplier bumps per follow-up, ceiling 4 - difficulty(1) + swords, max 5 (6 in Hand). `got_combo_mult` is applied by AwardMode (houses) and to sword awards. NOT yet applied to multiball/Winter awards. Hand-of-the-King detection uses the mode key.
+- Swords: lit by each completed house, Mystery/pop "Light Swords"; collected at the right ramp exit, weighted pick from data/swords.csv (copied by gen_config). The Mystery table (rulesheet) has no sword entry, so only the pop award and houses light swords.
+- Wildfire: counter bumped through event `got_wildfire_bump` (pop +5); ram hit while running +10 and +2 s, 20 s timer, lit by pop "Light Wild Fire". `jackpot_value(n)` implements CalcJackpotValue but is not yet wired to the Blackwater award #8.
+- Pending: spinner, Lord of Light, video mode (docs/10 part 2).
