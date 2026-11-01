@@ -1,0 +1,8 @@
+#config_version=6
+# Gold and Mystery, Bonus X and the playfield multiplier (got.extras; community rulesheet rev 1.37, M).
+mode:
+  start_events: ball_starting
+  stop_events: ball_ending
+  priority: 95
+  game_mode: true
+  code: got.extras.Extras

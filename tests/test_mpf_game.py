@@ -562,3 +562,39 @@ class TestGotGame(MpfGameTestCase):
         self.assertTrue(self.machine.modes["greyjoy"].active)  # the 15 s Greyjoy timer is frozen
         self.advance_time_and_run(30)
         self.assertFalse(self.machine.modes["greyjoy"].active)  # it runs again after the freeze
+
+    def test_pfx_from_ram_hits(self):
+        self._start_game()
+        player = self.machine.game.player
+        self._hit("s_battering_ram", 3)
+        self.assertEqual(0, player.got_multiplier)             # 3 hits only qualify
+        self._hit("s_battering_ram")
+        self.assertEqual(2, player.got_multiplier)             # 4th starts 2x
+        self._hit("s_battering_ram", 4)
+        self.assertEqual(3, player.got_multiplier)
+        self._hit("s_battering_ram", 12)
+        self.assertEqual(5, player.got_multiplier)             # capped at 5x
+        before = player.score
+        self._hit("s_left_outlane")
+        self.assertEqual(25000, player.score - before)         # fixed switch scores are not multiplied here (ROM base points)
+
+    def test_bonus_x_from_top_lanes(self):
+        self._start_game()
+        player = self.machine.game.player
+        self._hit("s_left_top_lane")
+        self._hit("s_left_top_lane")
+        self.assertEqual(0, player.got_bonus_x)
+        self._hit("s_right_top_lane")
+        self.assertEqual(2, player.got_bonus_x)
+
+    def test_gold_standups_light_mystery_and_buy_an_award(self):
+        self._start_game()
+        player = self.machine.game.player
+        player.got_gold = 1000
+        for i in range(1, 6):
+            self._hit("s_target_%d" % i)
+        self.assertEqual(1500, player.got_gold)                # 5 x 100
+        self.assertTrue(player.got_mystery_lit)
+        self.hit_switch_and_run("s_elevator_popper", 0.5)
+        self.assertFalse(player.got_mystery_lit)
+        self.assertLess(player.got_gold, 1500)                 # an affordable award was bought
