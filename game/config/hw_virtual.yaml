@@ -1,0 +1,4 @@
+#config_version=6
+# Desktop overlay: MPF's smart_virtual platform (balls move, trough starts full).
+hardware:
+  platform: smart_virtual

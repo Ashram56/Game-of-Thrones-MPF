@@ -1,0 +1,38 @@
+"""MPF glue: one generic mode class for the 8 houses and 7 multiballs, driven by `mode_settings` that
+scripts/gen_config.py writes from rules.yaml. UNVERIFIED against a running MPF (not installable offline):
+API names follow MPF 0.80 (Mode.add_mode_event_handler, Mode.player, <switch>_active events)."""
+from mpf.core.mode import Mode
+
+from got.rules_core import Award
+
+
+class AwardMode(Mode):
+    def mode_start(self, **kwargs):
+        cfg = self.config.get("mode_settings", {})
+        self._cfg = cfg
+        self._award_key = "got_award_" + cfg["key"]
+        player = self.player
+        if player is not None and player.get(self._award_key) is None:    # per-player value, kept between ball
+            player[self._award_key] = cfg["award"]["start"]
+        self._award = Award(cfg["award"]["start"], cfg["award"].get("bump", 0), cfg["award"].get("cap", 0))
+        if player is not None and player.get(self._award_key):
+            self._award.value = player[self._award_key]
+        self._shots = 0
+        for sw in cfg["shots"]:
+            self.add_mode_event_handler(sw + "_active", self._shot)
+        self.add_mode_event_handler("timer_%s_timer_complete" % cfg["key"], self._timeout)
+
+    def _shot(self, **kwargs):
+        cfg = self._cfg
+        points = self._award.give(global_mult=self.player.get("got_multiplier", 1) or 1)
+        self.player.score += points
+        self._award.bump()
+        self.player[self._award_key] = self._award.value
+        self._shots += 1
+        self.machine.events.post("got_%s_award" % cfg["key"], points=points)
+        if self._shots >= cfg.get("shots_to_complete", 0) > 0 and cfg["kind"] == "house":
+            self.machine.events.post("got_house_complete", house_id=cfg["id"], key=cfg["key"])
+            self.stop()
+
+    def _timeout(self, **kwargs):
+        self.stop()

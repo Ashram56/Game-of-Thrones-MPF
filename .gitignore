@@ -1,0 +1,10 @@
+# copyrighted ROM media: copied by scripts/gen_media.py, never committed
+game/sounds/
+game/images/
+game/config/rom/dmd_frames.json
+game/logs/
+game/data/
+game/.godot/
+game/addons/
+__pycache__/
+.venv/

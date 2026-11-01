@@ -1,0 +1,6 @@
+#config_version=6
+# Basic attract: start button (tag "start") begins a game; MPF's attract mode handles the button itself.
+mode:
+  start_events: reset_complete, game_ended
+  stop_events: game_started
+  priority: 10

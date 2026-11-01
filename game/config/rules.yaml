@@ -1,0 +1,152 @@
+# Game rules as data: Stern Game of Thrones LE/Premium 1.37.0 (Spike 1).
+# Source: Game-of-Thrones docs/03-rules.md (cited as "03 s<section>") and data/*.csv.
+# No PinMAME or reference traces exist for Spike 1: every value is checked against the spec and by code
+# reading only, never against a running game. Confidence per value:
+#   H = read straight from a table or constant, M = constants plus symbol names, L = inferred / read-me only,
+#   CFG = NOT recovered: a placeholder the owner or a later emulation run must confirm (clearly a config value).
+# scripts/gen_config.py turns this file into game/modes/*/config/*.yaml; edit here, not there.
+
+meta:
+  game: Game of Thrones LE/Premium
+  version: "1.37.0"
+  platform: Spike 1
+  verification: spec_and_code_reading_only
+
+# Used when a house/multiball entry omits them (CFG: the ROM's shot counts are not extracted).
+defaults:
+  house_shots_to_complete: 3          # CFG: shots needed to complete a house mode
+  multiball_balls: 3                  # CFG: balls served at multiball start
+  jackpots_for_super: 3               # CFG: jackpots before the super jackpot lights
+  base_scoring:                       # 03 s4, H: fixed switch scores
+    s_10_points: 10
+    s_throne: 30
+    s_elevator_popper: 30
+    s_lock_1: 30
+    s_lock_2: 30
+    s_lock_3: 30
+
+progression:                          # 03 s2, s6
+  hand_of_the_king_ready_after_houses: 4          # H (ModeComplete: count == 4)
+  extra_ball_lit_adjustment: ad_house_complete_extra_ball   # H, default 8, range 2-8
+  iron_throne_ready_when_all_houses_complete: true            # H (AreAllHouseModesComplete, flag 40)
+  houses_counted: [0, 1, 2, 3, 4, 5, 6]           # M: Winter Is Coming (7) is a separate path
+  winter_is_coming_completes_into_winter_has_come: true       # M (virtual dispatch, not statically visible)
+  wall_lit_by_left_3_bank_complete: true          # M (flag 34, OkToAdvance)
+  blackwater_locks_needed: 3                      # L: three lock switches, flag 36 lock lit
+  castle_upper_playfield_levels: [ARCHERS, CHARGE, BREACH]   # M, 03 s3
+  pops_big_points: 1000000            # H value (POPS_Award_Big_Points_GiveOne); trigger not wired yet
+  conquer_castle_award: {start: 25000000, bump: 25000000, cap: 150000000, conf: M}   # 03 s7
+
+game_rules:                           # 03 s5, H defaults (all operator adjustments, see rom/settings.yaml)
+  balls_per_game: 3
+  tilt_warnings: 2
+  tilt_debounce_ms: 1000
+  ball_save_time_s: 5
+  extra_ball_limit: 5
+  extra_ball_percentage: 25
+  special_limit: 1
+  special_percentage: 10
+  video_mode_loser_points: 500000
+
+# House modes (03 s2). timer_s: seconds from 03 s6 (M). shots: switches that count as the mode's shots (L: the ROM's
+# shot-to-switch mapping is not extracted; chosen from the switch names, replace when emulation gives the real ones).
+# award: start value H (awards.csv); bump and cap from 03 s7 (M) or CFG where 03 gives none.
+houses:
+  - {id: 0, key: targaryen, label: House Targaryen, timer_id: 0, timer_s: 20, timer_conf: M, hurry_up: true,
+     shots: [s_left_ramp_exit, s_right_ramp_exit, s_u_p_left_loop],
+     award: {start: 8000000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
+     note: "3 dragon stages; 16 s at init, 20 s at Start; hurry-up decay amounts are computed in the ROM (CFG linear decay here)"}
+  - {id: 1, key: stark, label: House Stark, timer_id: 1, timer_s: 30, timer_conf: L,
+     shots: [s_left_loop, s_right_loop, s_left_ramp_exit],
+     award: {start: 500000, bump: 375000, cap: 75000000, conf: M},
+     note: "Dire Wolf button ends a running mode; timer is the cmode default (30 s), Stark listed no override"}
+  - {id: 2, key: baratheon, label: House Baratheon, timer_id: 3, timer_s: 40, timer_conf: M,
+     shots: [s_left_spinner, s_battering_ram, s_left_ramp_exit],
+     award: {start: 13250000, bump: 375000, cap: 150000000, conf: M},
+     note: "max score cut 275M -> 150M in 1.37; left 3-bank advances Wall MB"}
+  - {id: 3, key: lannister, label: House Lannister, timer_id: 4, timer_s: 40, timer_conf: M,
+     shots: [s_target_1, s_target_2, s_target_3, s_target_4, s_target_5],
+     award: {start: 100000, bump: 75000, cap: 100000000, conf: M},
+     note: "gold economy (multipliers cost 600 gold each) not modelled yet"}
+  - {id: 4, key: greyjoy, label: House Greyjoy, timer_id: 6, timer_s: 15, timer_conf: M,
+     shots: [s_right_ramp_exit, s_right_loop, s_left_loop],
+     award: {start: 500000, bump: 175000, cap: 100000000, conf: M},
+     note: "steals the ability of the last completed house (not modelled)"}
+  - {id: 5, key: tyrell, label: House Tyrell, timer_id: 9, timer_s: 30, timer_conf: L,
+     shots: [s_right_2_bank_top, s_right_2_bank_bottom],
+     award: {start: 8250000, bump: 875000, cap: 75000000, conf: M},
+     note: "two-bank; timer is the cmode default, no override seen"}
+  - {id: 6, key: martell, label: House Martell, timer_id: 10, timer_s: 10, timer_conf: M, hurry_up: true,
+     shots: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
+     award: {start: 18000000, bump: 1250000, cap: 0, conf: M, cap_conf: CFG},
+     note: "mini grace sub-timer (62 ticks) not modelled"}
+  - {id: 7, key: winter_is_coming, label: Winter Is Coming, timer_id: 12, timer_s: 16, timer_conf: M, hurry_up: true,
+     shots: [s_left_loop, s_right_loop, s_left_ramp_exit, s_right_ramp_exit],
+     award: {start: 4000000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
+     note: "hurry-up that grows; wizard-path feeder for Winter Has Come (link is M)"}
+
+# Multiballs (03 s3; multiballs.csv). start_bonus and ball-save defaults H. jackpot award values: awards.csv H, bump/cap 03 s7 M.
+multiballs:
+  - {id: 0, key: blackwater, label: Blackwater Multiball, flag: 35, start_bonus: 10000000, ball_save_adjustment: ad_blackwater_multiball_ball_save_timer, ball_save_s: 10,
+     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop],
+     jackpot: {start: 250000, bump: 75000, cap: 50000000, conf: M}, super: {start: 0, conf: CFG}}
+  - {id: 1, key: castle, label: Castle Multiball, flag: 37, start_bonus: 25000000, ball_save_adjustment: ad_castle_multiball_ball_save_timer, ball_save_s: 15,
+     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
+     jackpot: {start: 5000000, bump: 250000, cap: 10000000, conf: M},
+     super: {start: 20000000, bump: 10000000, cap: 50000000, conf: M}}
+  - {id: 2, key: hand_of_the_king, label: Hand of the King Multiball, flag: 38, start_bonus: 50000000, ball_save_adjustment: ad_hand_multiball_ball_save_timer, ball_save_s: 20,
+     jackpot_switches: [s_left_return_lane, s_right_return_lane, s_left_ramp_exit, s_right_ramp_exit],
+     jackpot: {start: 2500000, bump: 0, cap: 0, conf: H, growth_conf: CFG}, super: {start: 0, conf: CFG}}
+  - {id: 3, key: iron_throne, label: Iron Throne Multiball, flag: 41, start_bonus: 100000000, ball_save_adjustment: ad_iron_throne_ball_save_timer, ball_save_s: 25,
+     jackpot_switches: [s_throne, s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
+     jackpot: {start: 5000000, bump: 1250000, cap: 12500000, conf: M},
+     super: {start: 10000000, bump: 1250000, cap: 50000000, conf: M}}
+  - {id: 4, key: midnight_madness, label: Midnight Madness Multiball, flag: 39, start_bonus: 3000000, ball_save_adjustment: ad_madness_multiball_ball_save_timer, ball_save_s: 12,
+     jackpot_switches: [s_left_pop_bumper, s_right_pop_bumper, s_bottom_pop_bumper, s_left_slingshot, s_right_slingshot],
+     jackpot: {start: 100000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
+     note: "per-switch award (every listed switch pays award #10)", per_switch: true}
+  - {id: 5, key: wall, label: Battle for the Wall Multiball, flag: 43, start_bonus: 25000000, ball_save_adjustment: ad_wall_multiball_ball_save_timer, ball_save_s: 20,
+     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop],
+     jackpot: {start: 3250000, bump: 175000, cap: 25000000, conf: M}, super: {start: 0, conf: CFG}}
+  - {id: 6, key: winter_has_come, label: Winter Has Come Multiball, flag: 42, start_bonus: 25000000, ball_save_adjustment: ad_winter_has_come_ball_save_timer, ball_save_s: 15,
+     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
+     jackpot: {start: 100000, bump: 375000, cap: 25000000, conf: M, start_conflict: "awards.csv #18 = 100,000, 03 s7 says 1M (cmball_winter::InitializeFirstBall); awards.csv used, confirm"},
+     super: {start: 0, conf: CFG}}
+
+# Sound mapping: gameplay event -> se_* effect of data/sound_effects.csv (core set only, see docs/status.md).
+sounds:
+  game_started: se_tune_main_play
+  ball_started_2: se_tune_main_play_ball_2
+  ball_started_3: se_tune_main_play_ball_3
+  game_ended: se_tune_game_over
+  tilt_warning: se_tilt_warning
+  tilt: se_tilt
+  slam_tilt: se_slam_tilt
+  start_button_no_credits: se_fx_start_button_no_credits
+  spinner: se_fx_spinner_med
+  slingshot: se_fx_slingshot
+  pop_bumper: se_fx_pop_bumpers
+  extra_ball_lit: se_fx_light_extra_ball
+  extra_ball: se_extra_ball
+  ball_saved: se_ball_saved_dragon_roars
+  jackpot: se_fx_award_1x_jackpot
+  super_jackpot: se_fx_award_1x_super_jackpot
+  vo_ball_saved: se_vo_ball_saved
+  vo_tilt: se_vo_tilt
+  vo_tilt_warning: se_vo_tilt_warning
+  vo_game_over: se_vo_game_over
+  vo_extra_ball_lit: se_vo_extra_ball_is_lit
+
+# DMD: video id (data/dmd_videos.csv) shown when an event fires; frames are 128x32 PNGs (assets/dmd/animations).
+dmd:
+  fps: 20                              # CFG: per-frame timing is in the ROM's display effects, not extracted
+  videos:
+    mode_targaryen_started: 4
+    mode_stark_started: 22
+    mode_baratheon_started: 30
+    mode_lannister_started: 37
+    mode_greyjoy_started: 49
+    mode_tyrell_started: 73
+    mode_martell_started: 86
+    mode_winter_is_coming_started: 146
+    mode_wall_started: 110

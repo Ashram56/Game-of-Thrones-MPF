@@ -1,0 +1,47 @@
+#config_version=6
+# Stern Game of Thrones LE/Premium 1.37.0 (Spike 1), MPF machine config. Switch/coil/light numbers are the ROM's
+# ids (S<id>, C<id>, L<id>, D<idx> for dedicated switches), from game/config/rom/ (generated, scripts/gen_config.py).
+# Platform neutral: launch with an overlay, e.g.  mpf game . -c config,hw_virtual
+# VERIFICATION: no PinMAME/traces exist for Spike 1; nothing here has been run in MPF (MPF was not installable).
+
+config:
+  - rom/switches.yaml
+  - rom/coils.yaml
+  - rom/lights.yaml
+  - rom/settings.yaml
+  - rom/sounds.yaml
+  - rom/slides.yaml
+  - devices.yaml
+
+modes:
+  - attract
+  - base
+  - targaryen
+  - stark
+  - baratheon
+  - lannister
+  - greyjoy
+  - tyrell
+  - martell
+  - winter_is_coming
+  - blackwater
+  - castle
+  - hand_of_the_king
+  - iron_throne
+  - midnight_madness
+  - wall
+  - winter_has_come
+
+game:
+  balls_per_game: 3          # H: ad_balls_per_game default
+  max_players: 4
+
+machine:
+  balls_installed: 6         # L: six trough switches (S16-S21) plus a jam switch
+  min_balls: 1
+
+displays:
+  dmd:
+    width: 128
+    height: 32
+    default: true

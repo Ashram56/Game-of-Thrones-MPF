@@ -1,0 +1,92 @@
+#config_version=6
+# Hand-written devices. Names refer to the generated rom/*.yaml (checked by tests/test_structure.py).
+
+playfields:
+  playfield:
+    default_source_device: bd_plunger
+    tags: default
+
+ball_devices:
+  bd_trough:
+    ball_switches: s_trough_1, s_trough_2, s_trough_3, s_trough_4, s_trough_5, s_trough_6
+    jam_switch: s_trough_jam
+    eject_coil: c_trough
+    eject_targets: bd_plunger
+    tags: trough, home, drain
+  bd_plunger:
+    ball_switches: s_shooter_lane
+    eject_coil: c_auto_plunger
+    eject_timeouts: 3s
+    mechanical_eject: true
+  bd_lock:                      # L: locks 1-3 hold balls for Blackwater; the release post frees them
+    ball_switches: s_lock_1, s_lock_2, s_lock_3
+    eject_coil: c_lock_release_post
+    eject_timeouts: 3s
+    tags: lock
+  bd_elevator:
+    ball_switches: s_elevator_popper
+    eject_coil: c_elevator_popper
+    eject_timeouts: 3s
+  bd_throne:
+    ball_switches: s_throne
+    eject_coil: c_throne
+    eject_timeouts: 3s
+
+flippers:
+  f_left:
+    main_coil: c_left_flipper_power
+    activation_switch: s_l_flipper_button
+  f_right:
+    main_coil: c_right_flipper_power
+    activation_switch: s_r_flipper_button
+  f_up_left:
+    main_coil: c_u_p_left_flipper
+    activation_switch: s_up_left_flipper_button
+  f_up_right:
+    main_coil: c_u_p_right_flipper
+    activation_switch: s_up_right_flipper_button
+
+autofire_coils:
+  ac_left_slingshot: {coil: c_left_slingshot, switch: s_left_slingshot}
+  ac_right_slingshot: {coil: c_right_slingshot, switch: s_right_slingshot}
+  ac_left_pop: {coil: c_left_pop_bumper, switch: s_left_pop_bumper}
+  ac_right_pop: {coil: c_right_pop_bumper, switch: s_right_pop_bumper}
+  ac_bottom_pop: {coil: c_bottom_pop_bumper, switch: s_bottom_pop_bumper}
+
+# H: tilt warnings 2, debounce 1000 ms (adjustments). Slam tilt ends the game.
+tilt:
+  tilt_warning_switch: s_tilt_pendulum
+  slam_tilt_switch: s_slam_tilt
+  warnings_to_tilt: 2
+  multiple_hit_window: 1000ms
+  settle_time: 5s
+  reset_warnings_events: ball_ending
+
+# H: ad_ball_save_time default 5 s. Each multiball has its own shoot_again (modes/*/config).
+ball_saves:
+  default:
+    active_time: 5s
+    hurry_up_time: 2s
+    grace_period: 2s
+    balls_to_save: 1
+    auto_launch: true
+    enable_events: ball_started
+    timer_start_events: balldevice_bd_plunger_ball_eject_success
+
+# H: extra ball limit 5; lit by the progression (got_light_extra_ball), awarded by got_award_extra_ball.
+extra_ball_groups:
+  default:
+    max_per_game: 5
+    max_lit: 1
+    lit_memory: true
+    light_events: got_light_extra_ball
+    award_events: got_award_extra_ball
+
+event_player:
+  tilt_warning: got_sound_tilt_warning
+  tilt: got_sound_tilt
+  slam_tilt: got_sound_slam_tilt
+  game_started: got_sound_game_started
+  ball_save_default_saving_ball: got_sound_ball_saved
+  extra_ball_group_default_awarded: got_sound_extra_ball
+  got_light_extra_ball: got_sound_extra_ball_lit
