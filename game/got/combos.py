@@ -80,6 +80,10 @@ class Combos(Mode):
         self.add_mode_event_handler("got_house_complete", self._light_sword)
         self.add_mode_event_handler("got_light_swords", self._light_sword)
         self.add_mode_event_handler("got_house_complete", self._ability_on_complete)
+        self.cyb = None                      # open Choose Your Battle menu: {"entries": [[keys]], "cursor": n}
+        self.add_mode_event_handler("s_l_flipper_button_active", self._cyb_move, step=-1)
+        self.add_mode_event_handler("s_r_flipper_button_active", self._cyb_move, step=1)
+        self.add_mode_event_handler("s_lockdown_active", self._cyb_confirm)
         for house, switches in TICKLE.items():
             for sw in switches:
                 self.add_mode_event_handler(sw + "_active", self._tickle, house=house)
@@ -349,3 +353,42 @@ class Combos(Mode):
         self._end()
         self.machine.events.post("got_iron_bank", points=points)
         return True
+
+    # --- Choose Your Battle (docs/14 section 10, H/M): CanWeStartChooseYourBattle = no multiball, no running house mode;
+    # entries start 1 or 2 lit houses together (stacking), PASS starts nothing and leaves the houses lit.
+    def cyb_open_menu(self, prog):
+        from got import state
+        p = self.player
+        if self.cyb or state.multiball_running(self.machine) or state.house_running(self.machine):
+            return bool(self.cyb)
+        lit = [h for h in HOUSES if h in ((p.got_lit_houses or "").split(",")) and HOUSES.index(h) not in prog.complete]
+        if not lit:
+            return False
+        entries = [[h] for h in lit] + [[a, b] for i, a in enumerate(lit) for b in lit[i + 1:]] + [[]]
+        self.cyb = {"entries": entries, "cursor": 0}
+        self._cyb_post()
+        return True
+
+    def _cyb_label(self):
+        e = self.cyb["entries"][self.cyb["cursor"]]
+        return " + ".join(h.upper() for h in e) if e else "PASS"
+
+    def _cyb_post(self):
+        self.machine.events.post("got_cyb_menu", label=self._cyb_label(), cursor=self.cyb["cursor"])
+
+    def _cyb_move(self, step, **kwargs):
+        if self.cyb:
+            self.cyb["cursor"] = (self.cyb["cursor"] + step) % len(self.cyb["entries"])
+            self._cyb_post()
+
+    def _cyb_confirm(self, **kwargs):
+        if not self.cyb:
+            return
+        keys = self.cyb["entries"][self.cyb["cursor"]]
+        self.cyb = None
+        prog = self.player.got_progression
+        for k in keys:
+            self.machine.events.post("start_mode_" + k)
+        if keys and len(prog.complete & prog.houses) + 1 <= 6 and not self.machine.modes["winter_has_come"].active:
+            self.machine.events.post("start_mode_winter_is_coming")
+        self.machine.events.post("got_cyb_done", houses=",".join(keys))

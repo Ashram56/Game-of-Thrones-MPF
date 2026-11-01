@@ -30,7 +30,7 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(3)
         self.assertIsNotNone(self.machine.game)
         self.assertEqual(1, self.machine.game.player.number)
-        self.hit_and_release_switch("s_throne")
+        self._throne()
         self.advance_time_and_run(1)
         self.assertGreater(self.machine.game.player.score, 0)
 
@@ -87,10 +87,17 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(3)
         self.hit_and_release_switch("s_start_button")
         self.advance_time_and_run(3)
-        self.hit_and_release_switch("s_throne")
+        self._throne()
         self.advance_time_and_run(1)
         self.assertEqual(1, self.machine.auditor.current_audits["events"]["game_started"])
         self.assertEqual(1, self.machine.auditor.current_audits["switches"]["s_throne"])
+
+    def _throne(self):
+        """Throne hit; when Choose Your Battle opens (lit houses) the action button starts the highlighted entry."""
+        self.hit_and_release_switch("s_throne")
+        if self.machine.modes["combos"].cyb:
+            self.hit_and_release_switch("s_lockdown")
+        self.advance_time_and_run(0.1)
 
     def _complete_running_house(self):
         running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house"
@@ -133,7 +140,7 @@ class TestGotGame(MpfGameTestCase):
     def test_houses_ready_and_start_hand_multiball(self):
         self._start_game()
         for house in range(4):
-            self.hit_and_release_switch("s_throne")      # throne starts the next house
+            self._throne()      # throne starts the next house
             self.advance_time_and_run(0.5)
             self._complete_running_house()
             self.advance_time_and_run(0.5)
@@ -144,7 +151,7 @@ class TestGotGame(MpfGameTestCase):
 
     def test_hurry_up_decays(self):
         self._start_game()
-        self.hit_and_release_switch("s_throne")
+        self._throne()
         self.advance_time_and_run(0.5)
         self.assertTrue(self.machine.modes["targaryen"].active)
         s0 = self.machine.game.player.score
@@ -156,7 +163,7 @@ class TestGotGame(MpfGameTestCase):
 
     def test_winter_chain(self):
         self._start_game()
-        self.hit_and_release_switch("s_throne")           # a house and Winter Is Coming start together
+        self._throne()           # a house and Winter Is Coming start together
         self.advance_time_and_run(0.5)
         self.assertTrue(self.machine.modes["winter_is_coming"].active)
         self.post_event("stop_mode_targaryen")            # lit shots only count with no house mode running (docs/06)
@@ -344,7 +351,7 @@ class TestGotGame(MpfGameTestCase):
 
     def test_winter_lit_shots_ignored_while_house_runs(self):
         self._start_game()
-        self.hit_and_release_switch("s_throne")                # house + Winter Is Coming
+        self._throne()                # house + Winter Is Coming
         self.advance_time_and_run(0.5)
         self._hit("s_kickback", 3)
         self.assertEqual(0, self.machine.game.player.got_winter_lit_shots)
@@ -356,7 +363,7 @@ class TestGotGame(MpfGameTestCase):
         events = []
         self.machine.events.add_handler("got_light_extra_ball", lambda **kwargs: events.append(1))
         for house in range(3):
-            self.hit_and_release_switch("s_throne")
+            self._throne()
             self.advance_time_and_run(0.5)
             self._complete_running_house()
             self.advance_time_and_run(0.5)
@@ -647,7 +654,7 @@ class TestGotGame(MpfGameTestCase):
         for i in range(3):
             self._hit("s_left_ramp_exit")                      # Lannister's tickle shot
         self.assertEqual("lannister", player.got_lit_houses)
-        self.hit_and_release_switch("s_throne")                # lit houses start first
+        self._throne()                # lit houses start first
         self.advance_time_and_run(0.5)
         self.assertTrue(self.machine.modes["lannister"].active)
         gold = player.got_gold
@@ -657,6 +664,29 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(4, player.got_button_ability)
         self.assertEqual(8, player.got_ability_uses)
         self.assertEqual("", player.got_lit_houses or "")
+
+    def test_choose_your_battle_stack_and_pass(self):
+        self._start_game()
+        player = self.machine.game.player
+        combos = self.machine.modes["combos"]
+        player.got_lit_houses = "lannister,stark"
+        self.hit_and_release_switch("s_throne")
+        self.assertIsNotNone(combos.cyb)
+        self.assertEqual([["stark"], ["lannister"], ["stark", "lannister"], []], combos.cyb["entries"])
+        # PASS starts nothing and leaves both lit
+        self.hit_and_release_switch("s_l_flipper_button")      # wraps to the last entry (PASS)
+        self.assertEqual([], combos.cyb["entries"][combos.cyb["cursor"]])
+        self.hit_and_release_switch("s_lockdown")
+        self.advance_time_and_run(0.3)
+        self.assertFalse(self.machine.modes["stark"].active or self.machine.modes["lannister"].active)
+        self.assertEqual("lannister,stark", player.got_lit_houses)
+        # the pair entry starts both houses together
+        self.hit_and_release_switch("s_throne")
+        self.hit_and_release_switch("s_r_flipper_button")
+        self.hit_and_release_switch("s_r_flipper_button")      # entry 2 = the pair
+        self.hit_and_release_switch("s_lockdown")
+        self.advance_time_and_run(0.3)
+        self.assertTrue(self.machine.modes["stark"].active and self.machine.modes["lannister"].active)
 
     def test_iron_bank_cash_in(self):
         self._start_game()

@@ -90,3 +90,6 @@ Mystery "Video Mode nX" starts `modes/videomode`: 20 s, either flipper button hi
 - First-ball semantics: lock flag, ram SJ per player once (already so). Hand ready persists (the progression object is per player).
 - Not done: Choose Your Battle / PASS / two stacked houses (our throne-starts-house departure stays), casual mode (adj 108), Greyjoy start-of-ball award, audits_meaning.csv (the 137 uncounted audits), Special extra-ball payout.
 - Lannister completion pays 200 gold (400 if the Lannister ability was already set).
+
+## Choose Your Battle, stacking, PASS (docs/14 section 10)
+With lit houses (tickle or Mystery) the throne opens Choose Your Battle in `Combos` (no multiball, no running house): entries are each lit house, each pair of lit houses (stacking: two houses run together) and PASS (starts nothing, houses stay lit); flipper buttons move the cursor (wrap), the action button starts it (event `got_cyb_menu` carries the label; no slide yet). Winter Is Coming is offered with the start as before. With no lit house the throne still starts the next house (our departure; rom_differences). Not modelled: the ROM's entry set (M), casual mode's auto-pick.

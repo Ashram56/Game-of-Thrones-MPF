@@ -54,9 +54,15 @@ class GotBase(Mode):
             self.machine.events.post("got_" + ev)
 
     def _start_next_house(self, **kwargs):
-        # Departure (docs/rom_differences.md): the ROM's Choose Your Battle is replaced by "throne starts the next house".
+        # Lit houses open Choose Your Battle (got.combos); with none lit the throne still starts the next house (departure,
+        # docs/rom_differences.md).
         prog = self._progression()
         lit = [x for x in (self.player.got_lit_houses or "").split(",") if x]
+        cyb = self.machine.modes["combos"]
+        if cyb.cyb_open_menu(prog):                     # Choose Your Battle over the lit houses (docs/14)
+            return
+        if cyb.cyb:
+            return
         order = sorted(self._rules["houses"], key=lambda h: h["key"] not in lit)       # Mystery "Light <house>" goes first
         for h in order:
             if h["id"] not in prog.complete and not self._house_running():
