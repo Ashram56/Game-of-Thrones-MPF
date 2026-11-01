@@ -7,6 +7,7 @@ Which switches are the lit shots is PROVISIONAL (docs/06: the shot-to-switch map
 """
 from mpf.core.mode import Mode
 
+from got import state
 from got.rules_core import Award
 
 
@@ -24,6 +25,10 @@ class WinterMode(Mode):
 
     def _shot(self, **kwargs):
         p = self.player
+        # cmode_manager::ShotMade suppress rule (docs/06): no lit shots while a house mode or multiball runs or Hand is startable
+        if not self._hurry and (state.house_running(self.machine) or state.multiball_running(self.machine)
+                                or state.hand_startable(self.machine, p)):
+            return
         if not self._hurry:
             p.got_winter_lit_shots += 1
             if p.got_winter_lit_shots > 2:              # third accepted shot

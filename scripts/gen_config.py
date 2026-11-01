@@ -221,6 +221,15 @@ def apply_scoring(rules, data):
             if r[col] != "":
                 a[field] = int(r[col])
         a["conf"] = "H"
+    # data/award_growth.csv fills what scoring.csv leaves blank (awards 1 and 9: docs/06 section d)
+    for r in rows(data, "award_growth.csv"):
+        tgt = SCORING_MAP.get(int(r["award_id"]))
+        if not tgt:
+            continue
+        a = houses[tgt[1]] if tgt[0] == "house" else mbs[tgt[1]].setdefault(tgt[2], {})
+        for field, col in (("start", "start_value"), ("bump", "increment_per_bump"), ("cap", "cap")):
+            if r[col] != "" and not byid.get(int(r["award_id"]), {}).get({"start": "elf_start", "bump": "elf_bump_increment", "cap": "elf_cap"}[field]):
+                a[field] = int(r[col])
     r19 = byid.get(19)
     if r19:
         rules["progression"]["castle_level_award"] = {"start": int(r19["elf_start"]), "bump": int(r19["elf_bump_increment"]),

@@ -12,8 +12,8 @@ mode_settings:
   key: hand_of_the_king
   award:
     start: 2500000
-    bump: 0
-    cap: 0
+    bump: 175000
+    cap: 25000000
   shots:
   - s_left_return_lane
   - s_right_return_lane

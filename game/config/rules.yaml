@@ -41,7 +41,8 @@ progression:                          # 03 s2, s6
   wall_advances_first: 6                # H: GetNumNeededToStartMball = min(11, 6 + 5 x advances awarded)
   wall_advances_step: 5
   wall_advances_max: 11
-  wall_advance_switches: [s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm, s_kickback]   # M bank hits (Baratheon); H kickback calls advance_wall_multiball (docs/08). Pops/Mystery also advance in the ROM, not wired
+  wall_bank_switches: [s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm]   # H: bank_complete advances the Wall (house condition M)
+  wall_advance_switches: [s_kickback]   # H: swdf_kickback calls advance_wall_multiball. Mystery and the pop-award list also advance in the ROM, not wired
   madness_window_s: 600                 # H: ROM waits ~10 min after midnight for a ball on the playfield (the VPX table: 3 min, ROM wins)
   conquer_castle_award: {start: 25000000, bump: 25000000, cap: 150000000, conf: M}   # 03 s7
 

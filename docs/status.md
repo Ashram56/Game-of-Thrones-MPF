@@ -23,7 +23,10 @@ Done
 - Castle: the three upper standups advance the upper-playfield level (award #19: 5,000,000, +2,500,000 per level to 15,000,000; the per-level bump is M); level 4 starts Castle. Standup switches M.
 - Wall: advances (left 3-bank hits and the kickback, H for the kickback; the ROM also advances from pops and Mystery, not wired) light it at min(11, 6 + 5 x Walls awarded); starts at the elevator kick when no multiball runs and Iron Throne is not ready.
 - Midnight Madness: starts in the 10 minutes after local midnight (the ROM's RTC wait; the VPX table uses 3 min, ROM wins) when a ball is in play and no multiball runs; every switch listed pays 100,000.
-- Still PROVISIONAL: Hand of the King / Iron Throne start on a throne hit (ready conditions are H, start shot is M); Blackwater on three locked balls; the Wall's pop/Mystery advances; Greyjoy needing 4 Winter shots.
+- Wizard starts (docs/06, H from code, not seen live): at the left ramp exit or when a ball enters the lock, Iron Throne is checked first (all 7 houses done, no multiball), then Hand of the King (4 houses done, no multiball, no house running); Wall starts at the elevator kick (lit, no multiball, Iron not startable). Winter's lit shots count only while no house mode or multiball runs and Hand is not startable. Wall advances: kickback and a completed left 3-bank (H); Mystery and the pop-award list also advance it in the ROM (not wired: no Mystery yet).
+- Award growth: Hand of the King jackpot 2,500,000 start, +175,000, cap 25,000,000 (the +100,000,000 super-jackpot carry-over and the later-phase table are not wired); Targaryen's value per dragon level (8/10/12/15M) is not wired.
+- Tickle (docs/06 c): the house pre-light shot counter (3 shots, award #0 75,000 +25,000), which shots count per house is not enumerated: not wired.
+- Still PROVISIONAL: Blackwater starts when the third ball enters the lock (the lit-lock flag 36 logic is not recovered); Greyjoy needing 4 Winter shots.
 - Emulator facts (Game-of-Thrones docs/05): the left bumper adds 1,170 per scoring call; n x 1170 counts switch events, not a multiplier. Winter link still unconfirmed.
 
 Open (owner/emulation): exact award growth, shot-to-switch mapping, Winter link, multiball triggers, coil timings,

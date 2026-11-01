@@ -3,6 +3,7 @@ import time
 
 from mpf.core.mode import Mode
 
+from got import state
 from got.rules_core import Progression, load_rules
 
 
@@ -16,13 +17,18 @@ class GotBase(Mode):
         self._rules = load_rules()
         self.add_mode_event_handler("got_house_complete", self._house_complete)
         self.add_mode_event_handler("s_throne_active", self._start_next_house)
-        self.add_mode_event_handler("balldevice_bd_lock_ball_enter", self._lock_entered)
+        self.add_mode_event_handler("s_left_ramp_exit_active", self._left_ramp_exit_work)
+        for sw in ("s_lock_1", "s_lock_2", "s_lock_3"):          # lock_event_handler event 2: a ball arrives in the lock
+            self.add_mode_event_handler(sw + "_active", self._left_ramp_exit_work, lock_entry=True)
         pr = self._rules["progression"]
         # Castle: the three upper standups advance the upper-playfield level; level 4 starts Castle (docs/06, H/M)
         self._standups_hit = set()
         for sw in pr["castle_standups"]:
             self.add_mode_event_handler(sw + "_active", self._standup, sw=sw)
         # Wall: advances counter, lit at min(11, 6 + 5 x advances awarded) (docs/06, H); starts from the elevator kick
+        self._bank_hit = set()
+        for sw in pr["wall_bank_switches"]:
+            self.add_mode_event_handler(sw + "_active", self._bank_switch, sw=sw)
         for sw in pr["wall_advance_switches"]:
             self.add_mode_event_handler(sw + "_active", self._wall_advance)
         self.add_mode_event_handler("s_elevator_popper_active", self._wall_start)
@@ -41,15 +47,8 @@ class GotBase(Mode):
             self.machine.events.post("got_" + ev)
 
     def _start_next_house(self, **kwargs):
-        prog = self._progression()
-        # PROVISIONAL (Hand 'StartReady' / Iron Throne 'SetReady' are H in docs/06, but their start shot is M): a multiball that became
-        # ready starts on the next throne hit, before the next house.
-        for key in sorted(prog.ready):
-            if key not in prog.started:
-                prog.started.add(key)
-                self.machine.events.post("start_mode_" + key)
-                return
         # Departure (docs/rom_differences.md): the ROM's Choose Your Battle is replaced by "throne starts the next house".
+        prog = self._progression()
         for h in self._rules["houses"]:
             if h["id"] not in prog.complete and not self._house_running():
                 self.machine.events.post("start_mode_" + h["key"])
@@ -58,16 +57,35 @@ class GotBase(Mode):
                     self.machine.events.post("start_mode_winter_is_coming")
                 return
 
-    def _house_running(self):
-        return any(m.active for m in self.machine.modes if m.config.get("mode_settings", {}).get("kind") == "house" and m.config["mode_settings"]["id"] != 7)
+    def _left_ramp_exit_work(self, lock_entry=False, **kwargs):
+        """do_left_ramp_exit_work (0x4ba30, H): Iron Throne is checked first, then Hand of the King, then the Blackwater lock.
+        Also run when a ball enters the lock (lock_event_handler event 2)."""
+        prog = self._progression()
+        if state.iron_startable(self.machine, self.player):
+            prog.started.add("iron_throne")
+            self.machine.events.post("start_mode_iron_throne")
+        elif state.hand_startable(self.machine, self.player):
+            prog.started.add("hand_of_the_king")
+            self.machine.events.post("start_mode_hand_of_the_king")
+        elif lock_entry and not state.multiball_running(self.machine):
+            # ROM: Blackwater AwardLock also runs at the ramp exit when the lock is lit; the lit-lock logic (flag 36) is not
+            # recovered, so only a ball that physically enters the lock locks here (M).
+            self._blackwater_lock()
 
-    def _lock_entered(self, **kwargs):
-        # PROVISIONAL: three balls locked (S lock_1..3) start Blackwater (03 s3: locks 1-3 hold balls for Blackwater).
-        if self.machine.ball_devices["bd_lock"].balls >= 3:
+    def _blackwater_lock(self):
+        """cblackwater::AwardLock (H): needs the lock lit, no multiball and Iron not startable; when the player's locked count
+        reaches the requirement Blackwater starts. The requirement (3) and the lit-lock logic are M."""
+        p = self.player
+        p.got_locked_balls += 1
+        if p.got_locked_balls >= 3:
+            p.got_locked_balls = 0
             self.machine.events.post("start_mode_blackwater")
 
+    def _house_running(self):
+        return state.house_running(self.machine)
+
     def _multiball_running(self):
-        return any(m.active and m.config.get("mode_settings", {}).get("kind") == "multiball" for m in self.machine.modes)
+        return state.multiball_running(self.machine)
 
     # --- Castle
     def _standup(self, sw, **kwargs):
@@ -91,6 +109,13 @@ class GotBase(Mode):
         pr = self._rules["progression"]
         return min(pr["wall_advances_max"], pr["wall_advances_first"] + pr["wall_advances_step"] * self.player.got_wall_awarded)
 
+    def _bank_switch(self, sw, **kwargs):
+        # LeftDropTargetBank::bank_complete advances the Wall for Baratheon (docs/06, H; the house condition is M)
+        self._bank_hit.add(sw)
+        if self._bank_hit >= set(self._rules["progression"]["wall_bank_switches"]):
+            self._bank_hit = set()
+            self._wall_advance()
+
     def _wall_advance(self, **kwargs):
         p = self.player
         if p.got_wall_lit or self._multiball_running():            # OkToAdvance: no multiball, flag 34 not set
@@ -104,7 +129,7 @@ class GotBase(Mode):
     def _wall_start(self, **kwargs):
         p = self.player
         prog = self._progression()
-        if p.got_wall_lit and not self._multiball_running() and "iron_throne" not in (prog.ready - prog.started):
+        if p.got_wall_lit and not self._multiball_running() and not state.iron_startable(self.machine, p):
             p.got_wall_lit = 0
             p.got_wall_awarded += 1
             self.machine.events.post("start_mode_wall")

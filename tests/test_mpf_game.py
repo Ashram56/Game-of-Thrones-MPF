@@ -110,7 +110,7 @@ class TestGotGame(MpfGameTestCase):
                 self.advance_time_and_run(0.2)
             self.advance_time_and_run(0.5)
         self.assertIn("hand_of_the_king", self.machine.game.player.got_progression.ready)
-        self.hit_and_release_switch("s_throne")
+        self.hit_and_release_switch("s_left_ramp_exit")        # do_left_ramp_exit_work starts Hand (docs/06, H)
         self.advance_time_and_run(1)
         self.assertTrue(self.machine.modes["hand_of_the_king"].active)
 
@@ -131,6 +131,8 @@ class TestGotGame(MpfGameTestCase):
         self.hit_and_release_switch("s_throne")           # a house and Winter Is Coming start together
         self.advance_time_and_run(0.5)
         self.assertTrue(self.machine.modes["winter_is_coming"].active)
+        self.post_event("stop_mode_targaryen")            # lit shots only count with no house mode running (docs/06)
+        self.advance_time_and_run(0.2)
         for completion in range(4):
             if not self.machine.modes["winter_is_coming"].active:
                 self.post_event("start_mode_winter_is_coming")
@@ -180,10 +182,9 @@ class TestGotGame(MpfGameTestCase):
 
     def test_wall_lit_after_six_advances_then_starts_at_elevator(self):
         self._start_game()
-        bank = ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid")
-        self._hit(bank[0], 5)
+        self._hit("s_kickback", 5)
         self.assertFalse(self.machine.game.player.got_wall_lit)
-        self._hit(bank[1])                                   # 6th advance lights the Wall (flag 34)
+        self._hit("s_kickback")                              # 6th advance lights the Wall (flag 34)
         self.assertTrue(self.machine.game.player.got_wall_lit)
         self.hit_switch_and_run("s_elevator_popper", 0.5)
         self.assertTrue(self.machine.modes["wall"].active)
@@ -192,9 +193,9 @@ class TestGotGame(MpfGameTestCase):
     def test_wall_second_needs_eleven(self):
         self._start_game()
         self.machine.game.player.got_wall_awarded = 1
-        self._hit("s_3_bank_drop_tgt_top", 10)
+        self._hit("s_kickback", 10)
         self.assertFalse(self.machine.game.player.got_wall_lit)
-        self._hit("s_3_bank_drop_tgt_top")
+        self._hit("s_kickback")
         self.assertTrue(self.machine.game.player.got_wall_lit)
 
     def test_midnight_madness_at_midnight_only(self):
@@ -257,3 +258,33 @@ class TestGotGame(MpfGameTestCase):
             self.hit_and_release_switch("s_kickback")
             self.advance_time_and_run(0.3)
         self.assertEqual(4000000 + 2 * 75000, player.got_winter_award)    # BumpAward +75,000 per completion (ROM)
+
+    def test_wall_bank_complete_advances_once(self):
+        self._start_game()
+        for sw in ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm"):
+            self._hit(sw)
+        self.assertEqual(1, self.machine.game.player.got_wall_advances)
+
+    def test_iron_throne_before_hand_at_lock_entry(self):
+        self._start_game()
+        from got.rules_core import Progression, load_rules
+        prog = Progression(load_rules())
+        prog.ready.update({"hand_of_the_king", "iron_throne"})
+        self.machine.game.player.got_progression = prog
+        self.hit_switch_and_run("s_lock_1", 1)                 # a ball entering the lock = left ramp exit (docs/06, H)
+        self.assertTrue(self.machine.modes["iron_throne"].active)
+        self.assertFalse(self.machine.modes["hand_of_the_king"].active)
+
+    def test_blackwater_starts_when_third_ball_locked(self):
+        self._start_game()
+        for sw in ("s_lock_1", "s_lock_2", "s_lock_3"):
+            self.hit_switch_and_run(sw, 1)
+        self.assertTrue(self.machine.modes["blackwater"].active)
+
+    def test_winter_lit_shots_ignored_while_house_runs(self):
+        self._start_game()
+        self.hit_and_release_switch("s_throne")                # house + Winter Is Coming
+        self.advance_time_and_run(0.5)
+        self._hit("s_kickback", 3)
+        self.assertEqual(0, self.machine.game.player.got_winter_lit_shots)
+        self.assertFalse(self.machine.modes["winter_is_coming"].config and getattr(self.machine.modes["winter_is_coming"], "_hurry", False))
