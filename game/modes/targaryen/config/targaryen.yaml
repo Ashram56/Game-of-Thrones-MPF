@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_targaryen, ball_ending, tilt
   priority: 300
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.houses.TargaryenMode
 mode_settings:
   kind: house
   id: 0
@@ -17,7 +17,9 @@ mode_settings:
   shots:
   - s_left_ramp_exit
   - s_right_ramp_exit
-  - s_u_p_left_loop
+  - s_left_loop
+  - s_right_loop
+  - s_kickback
   shots_to_complete: 3
   hurry_up: true
   timer_s: 20

@@ -108,6 +108,15 @@ class TestGotGame(MpfGameTestCase):
             seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop"]
         elif key == "tyrell":
             seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_right_2_bank_top", "s_right_2_bank_bottom", "s_right_ramp_exit"]
+        elif key == "targaryen":
+            for stage in range(4):                                  # four dragons, one mode start each
+                for sw in ("s_left_ramp_exit", "s_left_loop", "s_right_ramp_exit", "s_right_loop", "s_kickback")[:5]:
+                    self.hit_and_release_switch(sw)
+                    self.advance_time_and_run(0.1)
+                if stage < 3:
+                    self.post_event("start_mode_targaryen")
+                    self.advance_time_and_run(0.2)
+            return
         else:
             seq = [running.config["mode_settings"]["shots"][0]] * 3
         for sw in seq:
@@ -405,3 +414,26 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_right_ramp_exit")
         self.assertFalse(self.machine.modes["tyrell"].active)
         self.assertIn(5, self.machine.game.player.got_progression.complete)
+
+    def test_targaryen_four_dragons(self):
+        self._start_game()
+        player = self.machine.game.player
+        values = (8000000, 10000000, 12000000, 15000000)
+        waves = (["s_left_ramp_exit", "s_left_loop"],
+                 ["s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop"],
+                 ["s_left_ramp_exit", "s_left_loop", "s_right_loop"],
+                 ["s_left_ramp_exit", "s_left_loop", "s_right_loop"])
+        for stage in range(4):
+            self.post_event("start_mode_targaryen")
+            self.advance_time_and_run(0.3)
+            self.assertTrue(self.machine.modes["targaryen"].active)
+            self._hit("s_kickback")                              # dragon before the wave is done: nothing
+            self.assertTrue(self.machine.modes["targaryen"].active)
+            for sw in waves[stage]:
+                self._hit(sw)
+            before = player.score
+            self._hit("s_kickback")
+            gained = player.score - before
+            self.assertTrue(values[stage] * 0.9 < gained < values[stage] * 1.05, (stage, gained))
+            self.assertFalse(self.machine.modes["targaryen"].active)
+        self.assertIn(0, player.got_progression.complete)

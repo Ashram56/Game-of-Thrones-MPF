@@ -163,3 +163,52 @@ class TyrellMode(AwardMode):
             self._shots = self._cfg["shots_to_complete"] - 1
             return True
         return False
+
+
+DRAGON_VALUES = (8000000, 10000000, 12000000, 15000000)    # H: SetHurryUpAwardValue per dragon level (Game-of-Thrones data/award_growth.csv)
+DRAGON_SHOT = "s_kickback"                                   # H: ELF shot bit 4 (docs/06); the VPX table uses the castle/wall kicker
+
+
+class TargaryenMode(AwardMode):
+    """Four dragon battles; progress is kept per player between starts. Stage 0: one ramp and one loop; stage 1: both ramps
+    and both loops; stages 2-3: three main shots; then the dragon shot collects the (decaying) hurry-up. The first three
+    stages end the mode and the next start faces the next dragon; stage 3 completes the house (rulesheet, wave randomness,
+    DRAGON FIRE and Greyjoy extras not modelled, M)."""
+
+    def mode_start(self, **kwargs):
+        super().mode_start(**kwargs)
+        self._stage = min(3, int(self.player.got_dragon_stage or 0))
+        self._award.value = DRAGON_VALUES[self._stage]
+        self._wave = set()
+        self._armed = False
+        self._count = 0
+
+    def _accepts(self, sw):
+        self._shots = 0
+        if not self._armed:
+            if sw in MAINS and not (self._stage >= 2 and False):
+                self._wave.add(sw) if self._stage < 2 else None
+                self._count += 1
+                ramps = {s for s in self._wave if "ramp" in s}
+                loops = {s for s in self._wave if "loop" in s}
+                if self._stage == 0 and ramps and loops:
+                    self._armed = True
+                elif self._stage == 1 and len(ramps) == 2 and len(loops) == 2:
+                    self._armed = True
+                elif self._stage >= 2 and self._count >= 3:
+                    self._armed = True
+                if self._armed:
+                    self.machine.events.post("got_targaryen_dragon_lit")
+            return False
+        if sw == DRAGON_SHOT:
+            if self._stage >= 3:
+                self._shots = self._cfg["shots_to_complete"] - 1       # last dragon: the house completes
+            return True
+        return False
+
+    def _pay(self):
+        stage = self._stage
+        super()._pay()
+        if stage < 3:
+            self.player.got_dragon_stage = stage + 1
+            self.stop()

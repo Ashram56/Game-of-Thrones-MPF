@@ -25,6 +25,9 @@ class AwardMode(Mode):
     def _shot(self, sw=None, **kwargs):
         if not self._accepts(sw):
             return
+        self._pay()
+
+    def _pay(self):
         cfg = self._cfg
         points = self._award.give(global_mult=self.player.got_multiplier or 1)
         if cfg.get("hurry_up"):

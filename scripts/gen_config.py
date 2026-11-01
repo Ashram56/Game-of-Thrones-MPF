@@ -168,7 +168,7 @@ def slide_scenes(rules):
 
 HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.StarkMode", "martell": "got.houses.MartellMode",
               "baratheon": "got.houses.BaratheonMode", "lannister": "got.houses.LannisterMode",
-              "greyjoy": "got.houses.GreyjoyMode", "tyrell": "got.houses.TyrellMode"}
+              "greyjoy": "got.houses.GreyjoyMode", "tyrell": "got.houses.TyrellMode", "targaryen": "got.houses.TargaryenMode"}
 
 
 def mode_files(rules):

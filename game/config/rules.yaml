@@ -62,7 +62,7 @@ game_rules:                           # 03 s5, H defaults (all operator adjustme
 # award: start value H (awards.csv); bump and cap from 03 s7 (M) or CFG where 03 gives none.
 houses:
   - {id: 0, key: targaryen, label: House Targaryen, timer_id: 0, timer_s: 20, timer_conf: M, hurry_up: true,
-     shots: [s_left_ramp_exit, s_right_ramp_exit, s_u_p_left_loop],
+     shots: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop, s_kickback],   # waves on ramps/loops, the dragon shot (kickback, ELF bit 4) collects
      award: {start: 8000000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
      note: "3 dragon stages; 16 s at init, 20 s at Start; hurry-up decay: ROM formula (docs/06)"}
   - {id: 1, key: stark, label: House Stark, timer_id: 1, timer_s: 30, timer_conf: L,
