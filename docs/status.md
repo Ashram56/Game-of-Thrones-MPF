@@ -77,3 +77,6 @@ Grow Wall Jackpot (Mystery and pop award) raises the Wall award by its own bump;
 - Two-bank lock: before the first Blackwater any hit lights it (difficulty <= 2), afterwards only a completed bank.
 - Greyjoy: 5 shots (adds the kickback). Hand of the King: 2 sets when Greyjoy is complete, else 3. The ready byte persistence after a drain is M.
 - M: the lock flag and the ram Super Jackpot are cleared once per player (InitializeFirstBall at the first ball), so they now persist across balls; if the ROM runs it every ball this is a one-line change in `Combos.mode_start`.
+
+## Video mode duel (CFG gameplay, H scoring) - got/videomode.py, slides/videomode.tscn
+Mystery "Video Mode nX" starts `modes/videomode`: 20 s, either flipper button hits the AI, the AI strikes every max(0.4, 1.6 - 0.2 x level) s, 10 health each (CFG: the ROM's health, damage and AI timing are not recovered). Win/lose ends it at once, timeout is a tie; the payout is the ROM's (docs/10 section 6) with level from `ad_video_mode_difficulty` (default 2). Slide shows "YOU n / FOE n" (not yet checked on a display; no graphics from the ROM's video-mode assets).

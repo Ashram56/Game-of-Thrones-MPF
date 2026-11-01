@@ -619,6 +619,28 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
         self.assertTrue(player.got_lock_lit)
 
+    def test_video_mode_win_tie_and_loss(self):
+        self._start_game()
+        player = self.machine.game.player
+        before = player.score
+        self.post_event_with_params("got_video_mode_start", n=2)
+        self.advance_time_and_run(0.1)
+        for _ in range(10):
+            self.hit_and_release_switch("s_r_flipper_button")
+        self.advance_time_and_run(0.1)
+        self.assertFalse(self.machine.modes["videomode"].active)
+        self.assertGreaterEqual(player.score - before, (5000000 * 2 + 20000000) * 2)   # win, level 2, 2X
+        before = player.score
+        self.post_event_with_params("got_video_mode_start", n=1)
+        self.advance_time_and_run(21)                                   # no presses: the AI wins
+        self.assertFalse(self.machine.modes["videomode"].active)
+        self.assertEqual(500000 * 2, player.score - before)             # loss
+        self.post_event_with_params("got_video_mode_start", n=1)
+        self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_l_flipper_button")
+        self.advance_time_and_run(0.1)
+        self.assertTrue(self.machine.modes["videomode"].active)
+
     def _start_mb(self, key):
         self._start_game()
         self.post_event("start_mode_" + key)

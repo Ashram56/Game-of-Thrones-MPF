@@ -1,0 +1,8 @@
+#config_version=6
+# Video mode duel (got.videomode; Game-of-Thrones docs/10 section 6: 20 s, flipper buttons, win/tie/loss scores H; the hit points and AI speed are CFG).
+mode:
+  start_events: got_video_mode_start
+  stop_events: got_video_mode_finished, tilt
+  priority: 600
+  game_mode: true
+  code: got.videomode.VideoMode

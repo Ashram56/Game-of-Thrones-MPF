@@ -26,3 +26,13 @@ slide_player:
   got_mystery_award:
     mystery:
       action: remove
+  got_video_mode_state:
+    videomode:
+      priority: 60
+      tokens:
+        me: "{me}"
+        ai: "{ai}"
+      expire: 25s
+  got_video_mode_finished:
+    videomode:
+      action: remove
