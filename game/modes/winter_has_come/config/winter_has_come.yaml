@@ -11,7 +11,7 @@ mode_settings:
   id: 6
   key: winter_has_come
   award:
-    start: 100000
+    start: 1000000
     bump: 375000
     cap: 25000000
   shots:
@@ -24,7 +24,7 @@ mode_settings:
   flag: 42
   ball_save_adjustment: ad_winter_has_come_ball_save_timer
   confidence:
-    award: M
+    award: H
 multiballs:
   mb_winter_has_come:
     ball_count: 3

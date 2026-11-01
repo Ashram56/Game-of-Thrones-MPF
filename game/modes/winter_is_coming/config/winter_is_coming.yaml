@@ -12,8 +12,8 @@ mode_settings:
   key: winter_is_coming
   award:
     start: 4000000
-    bump: 0
-    cap: 0
+    bump: 75000
+    cap: 100000000
   shots:
   - s_3_bank_drop_tgt_top
   - s_3_bank_drop_tgt_mid

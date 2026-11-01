@@ -24,7 +24,7 @@ mode_settings:
   flag: 37
   ball_save_adjustment: ad_castle_multiball_ball_save_timer
   confidence:
-    award: M
+    award: H
 multiballs:
   mb_castle:
     ball_count: 3

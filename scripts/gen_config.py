@@ -199,12 +199,59 @@ def mode_files(rules):
     return out
 
 
+# award_id -> (house key | multiball key, "award"/"jackpot"/"super"): Game-of-Thrones data/scoring.csv (docs/07, H from ELF)
+SCORING_MAP = {1: ("house", "targaryen"), 2: ("house", "stark"), 3: ("house", "baratheon"), 4: ("house", "lannister"),
+               5: ("house", "greyjoy"), 6: ("house", "tyrell"), 7: ("house", "martell"), 17: ("house", "winter_is_coming"),
+               8: ("mb", "blackwater", "jackpot"), 9: ("mb", "hand_of_the_king", "jackpot"), 10: ("mb", "midnight_madness", "jackpot"),
+               11: ("mb", "wall", "jackpot"), 12: ("mb", "castle", "jackpot"), 13: ("mb", "castle", "super"),
+               15: ("mb", "iron_throne", "jackpot"), 16: ("mb", "iron_throne", "super"), 18: ("mb", "winter_has_come", "jackpot")}
+
+
+def apply_scoring(rules, data):
+    """Override award start/bump/cap with the ELF values of data/scoring.csv where the table has them (blank = keep)."""
+    byid = {int(r["award_id"]): r for r in rows(data, "scoring.csv")}
+    houses = {h["key"]: h["award"] for h in rules["houses"]}
+    mbs = {m["key"]: m for m in rules["multiballs"]}
+    for aid, tgt in SCORING_MAP.items():
+        r = byid.get(aid)
+        if not r:
+            continue
+        a = houses[tgt[1]] if tgt[0] == "house" else mbs[tgt[1]].setdefault(tgt[2], {})
+        for field, col in (("start", "elf_start"), ("bump", "elf_bump_increment"), ("cap", "elf_cap")):
+            if r[col] != "":
+                a[field] = int(r[col])
+        a["conf"] = "H"
+    r19 = byid.get(19)
+    if r19:
+        rules["progression"]["castle_level_award"] = {"start": int(r19["elf_start"]), "bump": int(r19["elf_bump_increment"]),
+                                                      "cap": int(r19["elf_cap"])}
+    return rules
+
+
+def switch_scores(data, rules):
+    """Fixed switch scores: data/switch_events.csv base_points (docs/08, H) over the 03 s4 base scoring; pops 1,170 (traced live)."""
+    pts = {}
+    for r in rows(data, "switch_events.csv"):
+        if r["kind"] == "node" and r["base_points"] and good(r["name"]):
+            pts["s_" + r["name"]] = int(r["base_points"])
+    for sw in ("s_left_pop_bumper", "s_right_pop_bumper", "s_bottom_pop_bumper"):
+        pts[sw] = 1170
+    for sw, v in rules["defaults"]["base_scoring"].items():
+        if sw != "s_10_points":
+            pts.setdefault(sw, v)
+    return {"variable_player": {k + "_active": {"score": v} for k, v in sorted(pts.items())}}
+
+
 def build(data):
     with open(os.path.join(GAME, "config", "rules.yaml"), encoding="utf-8") as f:
         rules = yaml.safe_load(f)
+    rules = apply_scoring(rules, data)
     files = {}
     for name, fn in (("switches", switches), ("coils", coils), ("lights", lights), ("settings", settings)):
         files["config/rom/%s.yaml" % name] = dump(fn(data))
+    sc = {"mode": {"start_events": "ball_starting", "stop_events": "ball_ending", "priority": 90, "game_mode": True}}
+    sc.update(switch_scores(data, rules))
+    files["modes/scoring/config/scoring.yaml"] = dump(sc)       # variable_player is only valid inside a game mode
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"
     files["config/rom/slides.yaml"] = dump(slides(data, rules))

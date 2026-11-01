@@ -23,7 +23,7 @@ mode_settings:
   timer_s: 10
   confidence:
     timer: M
-    award: M
+    award: H
 timers:
   martell_timer:
     start_value: 10

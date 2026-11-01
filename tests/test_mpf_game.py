@@ -172,7 +172,7 @@ class TestGotGame(MpfGameTestCase):
             for sw in ("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target"):
                 self._hit(sw)
             self.assertEqual(level, self.machine.game.player.got_upper_level)
-            self.assertGreaterEqual(self.machine.game.player.score - before, 5000000)   # award #19, constant (ROM)
+            self.assertGreaterEqual(self.machine.game.player.score - before, 2500000 + 2500000 * level)   # award #19: 5M, +2.5M per level (docs/07)
             self.assertFalse(self.machine.modes["castle"].active)
         for sw in ("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target"):
             self._hit(sw)
@@ -228,3 +228,32 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_kickback")
         gained = self.machine.game.player.got_winter_super - s0
         self.assertTrue(1500000 < gained < 2600000, gained)                        # ~2.2M of the 4M start
+
+    def test_switch_base_points_from_rom_table(self):
+        self._start_game()
+        for sw, pts in (("s_left_outlane", 25000), ("s_left_return_lane", 530), ("s_left_pop_bumper", 1170),
+                        ("s_kickback", 3330), ("s_battering_ram", 2330)):
+            before = self.machine.game.player.score
+            self._hit(sw)
+            self.assertEqual(pts, self.machine.game.player.score - before, sw)
+
+    def test_award_tables_from_scoring_csv(self):
+        import yaml
+        def start(key):
+            return yaml.safe_load(open(os.path.join(self.get_machine_path(), "modes", key, "config", key + ".yaml")))["mode_settings"]["award"]
+        self.assertEqual(500000, start("stark")["start"])           # docs/07 (H)
+        self.assertEqual(100000, start("lannister")["start"])       # ROM wins over the VPX 1,000,000
+        self.assertEqual(8250000, start("tyrell")["start"])
+        self.assertEqual({"start": 3250000, "bump": 175000, "cap": 25000000}, start("wall"))
+        self.assertEqual(1000000, start("winter_has_come")["start"])
+
+    def test_winter_award_grows_per_completion(self):
+        self._start_game()
+        player = self.machine.game.player
+        for _ in range(2):
+            self.post_event("start_mode_winter_is_coming")
+            self.advance_time_and_run(0.2)
+            self._hit("s_kickback", 3)
+            self.hit_and_release_switch("s_kickback")
+            self.advance_time_and_run(0.3)
+        self.assertEqual(4000000 + 2 * 75000, player.got_winter_award)    # BumpAward +75,000 per completion (ROM)

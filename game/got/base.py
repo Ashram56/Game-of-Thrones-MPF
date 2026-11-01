@@ -78,7 +78,9 @@ class GotBase(Mode):
             p = self.player
             p.got_upper_level += 1
             if p.got_upper_level < pr["castle_start_level"]:
-                p.score += pr["castle_level_award"] * (p.got_multiplier or 1)      # award #19, constant (ROM)
+                a = pr["castle_level_award"]          # award #19: 5M, +2.5M per level to 15M (docs/07; bump per level is M)
+                level_award = min(a["cap"], a["start"] + a["bump"] * (p.got_upper_level - 1))
+                p.score += level_award * (p.got_multiplier or 1)
                 self.machine.events.post("got_castle_level_award", level=p.got_upper_level)
             elif not self._multiball_running():
                 p.got_upper_level = 0

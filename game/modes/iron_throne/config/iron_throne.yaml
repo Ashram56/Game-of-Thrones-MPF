@@ -25,7 +25,7 @@ mode_settings:
   flag: 41
   ball_save_adjustment: ad_iron_throne_ball_save_timer
   confidence:
-    award: M
+    award: H
 multiballs:
   mb_iron_throne:
     ball_count: 3

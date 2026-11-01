@@ -23,7 +23,7 @@ mode_settings:
   flag: 43
   ball_save_adjustment: ad_wall_multiball_ball_save_timer
   confidence:
-    award: M
+    award: H
 multiballs:
   mb_wall:
     ball_count: 3

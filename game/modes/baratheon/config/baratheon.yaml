@@ -24,7 +24,7 @@ mode_settings:
   timer_s: 40
   confidence:
     timer: M
-    award: M
+    award: H
 timers:
   baratheon_timer:
     start_value: 40

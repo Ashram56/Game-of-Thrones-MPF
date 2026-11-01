@@ -22,7 +22,7 @@ mode_settings:
   timer_s: 30
   confidence:
     timer: L
-    award: M
+    award: H
 timers:
   tyrell_timer:
     start_value: 30

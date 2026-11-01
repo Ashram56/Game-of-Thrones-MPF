@@ -35,13 +35,13 @@ progression:                          # 03 s2, s6
   blackwater_locks_needed: 3                      # L: three lock switches, flag 36 lock lit
   castle_upper_playfield_levels: [ARCHERS, CHARGE, BREACH]   # M, 03 s3
   pops_big_points: 1000000            # H value (POPS_Award_Big_Points_GiveOne); trigger not wired yet
-  castle_level_award: 5000000           # H: award #19 per upper-playfield level, constant (the VPX table grows it: ROM wins, docs/03 s9)
+  castle_level_award: {start: 5000000, bump: 2500000, cap: 15000000}   # H: award #19 (data/scoring.csv; overridden by gen_config). Whether move_up_one_level bumps per level is M
   castle_start_level: 4                 # H: move_up_one_level starts Castle when the level reaches 4
   castle_standups: [s_u_p_left_target, s_u_p_center_target, s_u_p_right_target]   # M: bits 0x100000/0x200000/0x400000
   wall_advances_first: 6                # H: GetNumNeededToStartMball = min(11, 6 + 5 x advances awarded)
   wall_advances_step: 5
   wall_advances_max: 11
-  wall_advance_switches: [s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm]   # M: Baratheon bank hits advance (pops/Mystery also advance in the ROM, not wired)
+  wall_advance_switches: [s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm, s_kickback]   # M bank hits (Baratheon); H kickback calls advance_wall_multiball (docs/08). Pops/Mystery also advance in the ROM, not wired
   madness_window_s: 600                 # H: ROM waits ~10 min after midnight for a ball on the playfield (the VPX table: 3 min, ROM wins)
   conquer_castle_award: {start: 25000000, bump: 25000000, cap: 150000000, conf: M}   # 03 s7
 

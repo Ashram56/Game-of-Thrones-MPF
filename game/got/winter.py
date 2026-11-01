@@ -15,6 +15,8 @@ class WinterMode(Mode):
         cfg = self.config["mode_settings"]
         self._cfg = cfg
         self._award = Award(cfg["award"]["start"], cfg["award"].get("bump", 0), cfg["award"].get("cap", 0))
+        if self.player.got_winter_award:               # the award grows by BumpAward per completion, kept per player
+            self._award.value = self.player.got_winter_award
         self._hurry = False
         for sw in cfg["shots"]:
             self.add_mode_event_handler(sw + "_active", self._shot)
@@ -36,6 +38,8 @@ class WinterMode(Mode):
         p.got_winter_super += points                    # cmball_winter::AddSuperJackpot
         p.got_winter_completions += 1
         self.machine.events.post("got_winter_is_coming_award", points=points)
+        self._award.bump()
+        p.got_winter_award = self._award.value
         completions = p.got_winter_completions
         self.stop()
         if completions > 3:                             # 4th completion links to Winter Has Come

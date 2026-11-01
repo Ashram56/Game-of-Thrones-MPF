@@ -23,7 +23,7 @@ mode_settings:
   flag: 35
   ball_save_adjustment: ad_blackwater_multiball_ball_save_timer
   confidence:
-    award: M
+    award: H
 multiballs:
   mb_blackwater:
     ball_count: 3

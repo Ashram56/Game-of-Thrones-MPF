@@ -24,7 +24,7 @@ mode_settings:
   timer_s: 15
   confidence:
     timer: M
-    award: M
+    award: H
 timers:
   greyjoy_timer:
     start_value: 15

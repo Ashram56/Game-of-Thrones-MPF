@@ -1,16 +1,8 @@
 #config_version=6
-# Base game mode: fixed switch scores (03 s4, H) and the wizard progression (got.base.GotBase).
+# Base game mode: (fixed switch scores are generated in config/rom/switch_scores.yaml) and the wizard progression (got.base.GotBase).
 mode:
   start_events: ball_starting
   stop_events: ball_ending
   priority: 100
   game_mode: true
   code: got.base.GotBase
-
-variable_player:
-  s_10_points_active: {score: 10}
-  s_throne_active: {score: 30}
-  s_elevator_popper_active: {score: 30}
-  s_lock_1_active: {score: 30}
-  s_lock_2_active: {score: 30}
-  s_lock_3_active: {score: 30}
