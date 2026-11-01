@@ -31,6 +31,17 @@ MYSTERY = {
     "hold_bonus": (4200, ("hold_bonus",)),
     "light_extra_ball": (4500, ("light_extra_ball",)),
     "biggest_points": (6000, ("points", 25000000)),
+    # ROM awards (docs/03 menu, docs/10); prices are CFG (the ROM's are not recovered), effects and go/no-go are H
+    "wildfire_5": (400, ("wildfire", 5)),
+    "wildfire_10": (700, ("wildfire", 10)),
+    "light_wildfire": (500, ("light_wildfire",)),
+    "light_lord_of_light": (550, ("light_lol",)),
+    "light_swords": (900, ("light_swords",)),
+    "award_sword": (1500, ("award_sword",)),
+    "golden_hand": (3500, ("golden_hand",)),
+    "video_1x": (300, ("video", 1)),
+    "video_2x": (900, ("video", 2)),
+    "video_3x": (1800, ("video", 3)),
 }
 
 
@@ -191,13 +202,36 @@ class Extras(Mode):
         if not p.got_mystery_lit:
             return
         p.got_mystery_lit = 0
-        affordable = [n for n, (cost, _) in MYSTERY.items() if cost <= p.got_gold]
+        affordable = [n for n, (cost, eff) in MYSTERY.items() if cost <= p.got_gold and self._mystery_ok(eff)]
         if not affordable:
             return
         name = self.rng.choice(affordable)        # rulesheet: keep gold / random affordable / most expensive; random here
         cost, effect = MYSTERY[name]
         p.got_gold -= cost
         self._apply(name, effect)
+
+    def _mystery_ok(self, eff):
+        """GoNoGo of each Mystery award (docs/10): an award that could not change anything is not offered."""
+        p = self.player
+        kind = eff[0]
+        if kind == "light_swords":
+            return not p.got_swords_lit and int(p.got_swords or 0) < 7
+        if kind == "award_sword":
+            return int(p.got_swords or 0) <= 2
+        if kind == "light_lol":
+            return not self.machine.modes["combos"]._lol
+        if kind == "light_wildfire":
+            return not p.got_wildfire_lit
+        if kind == "golden_hand":
+            return not p.got_golden_hand
+        if kind == "video":
+            return bool(self.machine.settings.get_setting_value("ad_allow_video_mode") if self._has_setting("ad_allow_video_mode") else 1)
+        if kind == "bonus_x":
+            return int(p.got_bonus_x or 1) + eff[1] <= BONUS_X_MAX
+        return True
+
+    def _has_setting(self, name):
+        return name in getattr(self.machine.settings, "setting_definitions", {})
 
     def _apply(self, name, effect):
         p = self.player
@@ -212,6 +246,20 @@ class Extras(Mode):
             self.machine.events.post("got_light_extra_ball")
         elif kind == "hold_bonus":
             p.got_hold_bonus = 1
+        elif kind == "wildfire":
+            self.machine.events.post("got_wildfire_bump", n=effect[1])
+        elif kind == "light_wildfire":
+            p.got_wildfire_lit = 1
+        elif kind == "light_lol":
+            self.machine.events.post("got_light_lord_of_light")
+        elif kind == "light_swords":
+            self.machine.events.post("got_light_swords")
+        elif kind == "award_sword":
+            self.machine.events.post("got_award_sword")
+        elif kind == "golden_hand":
+            p.got_golden_hand = 1
+        elif kind == "video":
+            self.machine.events.post("got_video_mode_start", n=effect[1])
         self.machine.events.post("got_mystery_award", award=name)
 
     # --- Bonus X

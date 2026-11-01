@@ -68,6 +68,7 @@ class Combos(Mode):
             self.add_mode_event_handler(sw + "_active", self._shot, sw=sw)
         self.add_mode_event_handler("got_house_complete", self._light_sword)
         self.add_mode_event_handler("got_light_swords", self._light_sword)
+        self.add_mode_event_handler("got_award_sword", self._award_sword)
         self.add_mode_event_handler(RAM + "_active", self._ram)
         self.add_mode_event_handler("got_wildfire_bump", self._wildfire_bump)
         # spinner (docs/10 section 4) and Lord of Light (section 5)
@@ -123,6 +124,12 @@ class Combos(Mode):
         p = self.player
         if int(p.got_swords or 0) + int(p.got_swords_lit or 0) < 7:
             p.got_swords_lit = int(p.got_swords_lit or 0) + 1
+
+    def _award_sword(self, **kwargs):
+        """Mystery "Award Sword": the same pick and pay as a collection, without needing a lit sword."""
+        p = self.player
+        p.got_swords_lit = int(p.got_swords_lit or 0) + 1
+        self._collect_sword(1)
 
     def _collect_sword(self, mult):
         p = self.player

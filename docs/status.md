@@ -54,3 +54,6 @@ Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays t
 
 ## DMD score slide (checked on Xvfb)
 `game/slides/score.tscn` (MPFVariable score, comma separated) is played on `ball_started` and removed on `game_ended` (`config/display.yaml`). Headless display run: `mpf game . -c smoke_game -t` (fills the trough, starts a game, hits the spinner) with Godot `--rendering-driver opengl3` under Xvfb; the screenshot showed 10,410 after 3 spins (2,500 + 970 each, matching MPF). The slide must start after the player exists (not on `game_started`). Still plain text: no ROM font, no ball/player line, no mode text; ROM videos play over it.
+
+## Mystery: ROM awards added (extras.py MYSTERY)
+Added Wildfire 5/10, Light Wild Fire, Light Lord of Light, Light Swords, Award Sword, Golden Hand, Video Mode 1x/2x/3x with the ROM go/no-go rules (swords: not lit and < 7 owned; Award Sword while <= 2 owned; Golden Hand once; video mode setting). Their gold prices are CFG (ROM prices not recovered; the 9 original prices are the rulesheet's). Video mode posts `got_video_mode_start(n)`; the duel itself is not built. Still missing from the ROM menu: Special, Super JP 1-3x, Light Lock, Light PF Multiplier, Light each House, Arrows/Charge/Breach/Winter, the button abilities.

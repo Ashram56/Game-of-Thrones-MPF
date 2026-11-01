@@ -503,6 +503,31 @@ class TestGotGame(MpfGameTestCase):
         self.post_event_with_params("got_video_mode_result", outcome="win", n=1, level=2)
         self.advance_time_and_run(0.1)
 
+    def test_mystery_rom_awards(self):
+        self._start_game()
+        player = self.machine.game.player
+        extras = self.machine.modes["extras"]
+        extras._apply("light_swords", ("light_swords",))
+        extras._apply("wf", ("wildfire", 10))
+        extras._apply("gh", ("golden_hand",))
+        extras._apply("lol", ("light_lol",))
+        self.advance_time_and_run(0.1)
+        self.assertEqual(1, player.got_swords_lit)
+        self.assertEqual(10, player.got_wildfire)
+        self.assertEqual(1, player.got_golden_hand)
+        self.assertTrue(self.machine.modes["combos"]._lol)
+        self.assertFalse(extras._mystery_ok(("light_swords",)))     # already lit: no-go
+        self.assertFalse(extras._mystery_ok(("golden_hand",)))
+        extras._apply("sword", ("award_sword",))
+        self.advance_time_and_run(0.1)
+        self.assertEqual(1, player.got_swords)
+        self.assertTrue(extras._mystery_ok(("award_sword",)))
+        player.got_gold = 100000
+        player.got_mystery_lit = 1
+        before = player.score
+        self._hit("s_elevator_popper")                               # random affordable award, must not crash
+        self.advance_time_and_run(0.2)
+
     def _start_mb(self, key):
         self._start_game()
         self.post_event("start_mode_" + key)
