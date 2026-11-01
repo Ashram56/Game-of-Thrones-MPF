@@ -1,0 +1,9 @@
+#config_version=6
+# DMD score slide (GMC scene game/slides/score.tscn): shown for the whole game, ROM videos play over it.
+slide_player:
+  ball_started:
+    score:
+      priority: 1
+  game_ended:
+    score:
+      action: remove

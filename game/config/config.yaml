@@ -12,6 +12,7 @@ config:
   - rom/sounds.yaml        # sound_player only (GMC registers game/sounds/<track>/<stem>)
   - rom/slides.yaml        # slide_player only (slides are scenes in game/slides/)
   - devices.yaml
+  - display.yaml
 
 modes:
   - attract
