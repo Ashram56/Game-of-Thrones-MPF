@@ -595,6 +595,23 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(100, player.got_gold)
         self.assertGreaterEqual(player.score - before, 5000000)
 
+    def test_wall_jackpot_grows_special_and_pop_lock(self):
+        self._start_game()
+        player = self.machine.game.player
+        start = self.machine.modes["wall"].config["mode_settings"]["award"]["start"]
+        self.post_event("got_bump_wall_jackpot")
+        self.advance_time_and_run(0.1)
+        self.assertGreater(player.got_award_wall, start)
+        self.post_event("got_special")
+        self.advance_time_and_run(0.1)
+        self.assertEqual(1, player.got_specials)
+        extras = self.machine.modes["extras"]
+        extras._pop_names[999] = "Light Lock"
+        extras._reels.hit = lambda reel, go: 999
+        self.hit_and_release_switch("s_left_pop_bumper")
+        self.advance_time_and_run(0.1)
+        self.assertTrue(player.got_lock_lit)
+
     def _start_mb(self, key):
         self._start_game()
         self.post_event("start_mode_" + key)

@@ -1,0 +1,46 @@
+#config_version=6
+# Headless display test of the Mystery menu: mpf game . -c smoke_mystery  (500 gold from the standups, then the elevator)
+config:
+  - config.yaml
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 0.1s
+      switch: s_trough_1
+      action: activate
+    - time: 0.1s
+      switch: s_trough_2
+      action: activate
+    - time: 0.1s
+      switch: s_trough_3
+      action: activate
+    - time: 0.1s
+      switch: s_trough_4
+      action: activate
+    - time: 0.1s
+      switch: s_trough_5
+      action: activate
+    - time: 0.1s
+      switch: s_trough_6
+      action: activate
+    - time: 3s
+      switch: s_start_button
+      action: hit
+    - time: 0.5s
+      switch: s_target_1
+      action: hit
+    - time: 0.5s
+      switch: s_target_2
+      action: hit
+    - time: 0.5s
+      switch: s_target_3
+      action: hit
+    - time: 0.5s
+      switch: s_target_4
+      action: hit
+    - time: 0.5s
+      switch: s_target_5
+      action: hit
+    - time: 1s
+      switch: s_elevator_popper
+      action: hit

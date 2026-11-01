@@ -71,6 +71,8 @@ class Combos(Mode):
             self.add_mode_event_handler(sw + "_active", self._shot, sw=sw)
         self.add_mode_event_handler("got_house_complete", self._light_sword)
         self.add_mode_event_handler("got_light_swords", self._light_sword)
+        self.add_mode_event_handler("got_bump_wall_jackpot", self._bump_wall_jackpot)
+        self.add_mode_event_handler("got_special", self._special)
         self.add_mode_event_handler("got_award_sword", self._award_sword)
         self.add_mode_event_handler(RAM + "_active", self._ram)
         self.add_mode_event_handler("got_wildfire_bump", self._wildfire_bump)
@@ -251,3 +253,15 @@ class Combos(Mode):
 
     def _bw_played(self, **kwargs):
         self.player.got_bw_played = int(self.player.got_bw_played or 0) + 1
+
+    # --- Grow Wall Jackpot (Mystery / pop award): cwall::BumpJackpotValue raises the Wall award by its own bump, capped
+    def _bump_wall_jackpot(self, **kwargs):
+        p = self.player
+        award = self.machine.modes["wall"].config["mode_settings"]["award"]
+        value = int(p.got_award_wall or award["start"])
+        p.got_award_wall = min(award["cap"], value + award["bump"]) if award.get("cap") else value + award["bump"]
+
+    # --- Special: a free game credit (award_special; limit/percentage adjustments 53/55 are not modelled)
+    def _special(self, **kwargs):
+        self.player.got_specials = int(self.player.got_specials or 0) + 1
+        self.machine.events.post("got_special_awarded")

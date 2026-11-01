@@ -61,9 +61,12 @@ Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays t
 - Effects wired: points (x combo multiplier, M), Light <house> (the throne starts lit houses first: our departure from Choose Your Battle), Wildfire, Bonus X, Wall jackpot/advance, swords, video mode start event, Arrows/Charge/Breach (absolute upper level), Light Lock (flag only), Golden Hand, Lord of Light, PF multiplier (next ram hit, M), Extra Ball, Hold Bonus, Winter (award x4 and start), button abilities (Baratheon = Lord of Light, Lannister = buy a multiplier 1,200-3,000, Martell = add a ball; the Lannister counter is fixed at 8).
 - Stubs: Special (event `got_special` only; limit setting gate), Super Jackpot 1-3x (sets `got_super_lit`, no consumer yet), Light Lock (no consumer), Grow Wall Jackpot (event only), Baratheon ability gate for Light Baratheon. Mystery argument = combo multiplier is M.
 
-## Mystery DMD slide (not yet checked on a display)
+## Mystery DMD slide (checked on Xvfb: `-c smoke_mystery`, shows the top/middle/keep lines, then returns to the score)
 `game/slides/mystery.tscn` shows the top and middle awards and "Keep gold" for 10 s from `got_mystery_menu` (tokens top/middle/keep, `config/display.yaml`); removed on `got_mystery_award`. No cursor highlight yet (event `got_mystery_cursor` carries the position). Needs a Xvfb run with enough gold to open the menu.
 
 ## Ram Super Jackpot and Blackwater lock (docs/12, H)
 - Lock: flag 36 (`got_lock_lit`) is cleared at ball start, lit by Mystery "Light Lock" and by the right two-bank completion (only while Blackwater was never played; later relights are M). A ball locks only when lit and no multiball runs: count + 1, gold +75 (+250 during Lannister), +5 Wildfire, flag cleared; the 3rd lock starts Blackwater. The lock switches no longer lock unlit.
 - Ram Super Jackpot (`got_super_lit` 1-3, lit by Mystery): the next ram shot pays V x 6 x level + 10M (x playfield multiplier), V = `got_bw_jackpot` or, when Blackwater is not running, `jackpot_value(wildfire)`. No timeout; reset at ball start. Not wired: pop-award source (M), Blackwater's own in-multiball Super.
+
+## Stubs closed
+Grow Wall Jackpot (Mystery and pop award) raises the Wall award by its own bump; Special counts `got_specials` (a free-game credit is not paid, limits 53/55 not modelled); pop awards Light Lock, Bump Wall Jackpot, Special are wired. The pop-award list has no Super Jackpot entry (config/rom/pop_awards.json), so that "M" source is closed: Mystery only. Open: Blackwater's in-multiball Super Jackpot (ours uses the rulesheet 6x set total, not V x 6 x level + 10M).

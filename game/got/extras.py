@@ -149,6 +149,13 @@ class Extras(Mode):
             self.machine.events.post("got_light_lord_of_light")
         elif name == "Light Swords":
             self.machine.events.post("got_light_swords")
+        elif name == "Light Lock":
+            if not p.got_lock_lit and not any(m.active and m.config.get("mode_settings", {}).get("key") == "blackwater" for m in self.machine.modes):
+                p.got_lock_lit = 1
+        elif name == "Bump Wall Jackpot":
+            self.machine.events.post("got_bump_wall_jackpot")
+        elif name == "Special":
+            self.machine.events.post("got_special")
         elif name == "Light Mystery":
             p.got_mystery_lit = 1
         elif name == "Add Mode Time":
