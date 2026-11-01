@@ -1,0 +1,11 @@
+name,lt_name,lt_id,vpx,nx,ny,note
+f_right_ramp,lt_fl_right_ramp,78,Flasher235,0.8696,0.4608,flasher at the right ramp
+f_left_loop,lt_fl_left_loop,79,fl242,0.1918,0.4231,light at the spinner / left orbit
+f_pop_bumpers,lt_fl_pop_bumpers,81,Flasher237,0.752,0.1519,flasher at the pop bumpers
+f_sword_lock,lt_fl_sword_lock,80,Flasher236,0.7159,0.2664,uncertain: centre-right flasher assigned to the sword/lock
+f_throne,lt_fl_throne,83,Flasher008,0.5444,0.2008,uncertain: flasher near the elevator/throne
+f_battering_ram,lt_fl_battering_ram,84,,0.5744,0.3763,no VPX flasher: placed beside the ram
+f_left_right_sling,lt_fl_left_right_sling,82,,0.455,0.765,no VPX flasher: between the slingshots
+f_u_p_left_flood,lt_u_p_left_flood,3,UPFFlasher001,0.1364,0.1774,UPF flasher (lt_u_p_left_flood in data)
+f_u_p_right_flood,lt_u_p_right_flood,2,UPFFlasher002,0.5642,0.1764,UPF flasher
+f_dragon_fire,lt_dragon_fire,25,DragonFire,0.2966,0.2541,dragon fire flasher

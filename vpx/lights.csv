@@ -1,0 +1,68 @@
+number,name,lt_name,lt_id,vpx,lampz,nx,ny,colour,in_mpf_config,note
+L3,l_shoot_again,lt_shoot_again,77,LightShootAgain,1,0.4544,0.873,#ffdbbb,yes,insert at the shooter bottom
+L22,l_left_outlane,lt_left_outlane,52,li11,2,0.0569,0.6759,#ffdbbb,yes,
+L23,l_left_return_lane,lt_left_return_lane,67,li14,3,0.1343,0.676,#ffdbbb,yes,
+lt55,l_left_3_bank_bot,lt_left_3_bank_bot,55,li17,4,0.1639,0.6051,#ffdbbb,no,LoLLights(0)
+lt56,l_left_3_bank_mid,lt_left_3_bank_mid,56,li20,5,0.1946,0.5809,#ffdbbb,no,LoLLights(1)
+lt57,l_left_3_bank_top,lt_left_3_bank_top,57,li23,6,0.2249,0.5569,#ffdbbb,no,LoLLights(2)
+lt27,l_left_3_bank_sigil,lt_left_3_bank_sigil,27,li26,7,0.2641,0.6044,#ffdbbb,no,HouseShield Baratheon
+lt18,l_hand_of_the_king,lt_hand_of_the_king,18,li29,8,0.3545,0.6299,#ffdbbb,no,round insert
+lt72,l_targaryen_sigil,lt_targaryen_sigil,72,li32,9,0.4555,0.6169,#ffdbbb,no,HouseSigil(7)
+lt75,l_iron_throne,lt_iron_throne,75,li35,10,0.5575,0.6298,#ffdbbb,no,round insert
+lt62,l_stark_sigil,lt_stark_sigil,62,li38,11,0.3537,0.6852,#ffdbbb,no,HouseSigil(1)
+lt61,l_baratheon_sigil,lt_baratheon_sigil,61,li41,12,0.4555,0.6781,#ffdbbb,no,HouseSigil(2)
+lt48,l_lannister_sigil,lt_lannister_sigil,48,li44,13,0.557,0.685,#ffdbbb,no,HouseSigil(3)
+lt13,l_greyjoy_sigil,lt_greyjoy_sigil,13,li47,14,0.4049,0.7447,#ffdbbb,no,HouseSigil(4)
+lt45,l_tyrell_sigil,lt_tyrell_sigil,45,li50,15,0.5053,0.7445,#ffdbbb,no,HouseSigil(5)
+lt34,l_martell_sigil,lt_martell_sigil,34,li53,16,0.4557,0.8044,#ffdbbb,no,HouseSigil(6)
+lt44,l_2x,lt_2x,44,li56,17,0.3395,0.7887,#ffdbbb,no,pfmuxlights
+lt6,l_3x,lt_3x,6,li59,18,0.573,0.7883,#ffdbbb,no,pfmuxlights
+lt41,l_4x,lt_4x,41,li62,19,0.3184,0.7663,#ffdbbb,no,pfmuxlights
+lt8,l_5x,lt_5x,8,li65,20,0.5914,0.7663,#ffdbbb,no,pfmuxlights
+L38,l_right_return_lane,lt_right_return_lane,70,li71,21,0.7762,0.6753,#ffdbbb,yes,
+L37,l_right_outlane,lt_right_outlane,17,li74,22,0.8555,0.6743,#ffdbbb,yes,
+lt71,l_right_2_bank_sigil,lt_right_2_bank_sigil,71,li77,23,0.7449,0.5824,#ffdbbb,no,HouseShield Tyrell
+lt49,l_right_2_bank_top,lt_right_2_bank_top,49,li80,24,0.7806,0.5354,#ffdbbb,no,gear insert beside the 2-bank (li80/li83 flash with the wildfire targets)
+lt50,l_right_2_bank_bot,lt_right_2_bank_bot,50,li83,25,0.8254,0.569,#ffdbbb,no,gear insert beside the 2-bank
+lt30,l_left_loop_sigil,lt_left_loop_sigil,30,li86,26,0.2547,0.5127,#ffdbbb,no,HouseShield Greyjoy
+lt28,l_left_loop_arrow,lt_left_loop_arrow,28,li89,27,0.226,0.471,#ffdbbb,no,arrow above li86
+lt5,l_standup_target_1_l,lt_standup_target_1_l,5,li92,28,0.3135,0.4983,#ffdbbb,no,GoldTargetLights(0)
+lt73,l_standup_target_2,lt_standup_target_2,73,li105,32,0.3857,0.4115,#ffdbbb,no,GoldTargetLights(1)
+lt74,l_standup_target_3,lt_standup_target_3,74,li120,37,0.5099,0.3669,#ffdbbb,no,GoldTargetLights(2)
+lt58,l_standup_target_4,lt_standup_target_4,58,li135,42,0.6319,0.3589,#ffdbbb,no,GoldTargetLights(3)
+lt29,l_standup_target_5_r,lt_standup_target_5_r,29,li147,46,0.7639,0.3754,#ffdbbb,no,GoldTargetLights(4)
+lt20,l_left_ramp_sigil,lt_left_ramp_sigil,20,li114,35,0.4549,0.4169,#ffdbbb,no,HouseShield Lannister
+lt66,l_left_ramp_arrow_top,lt_left_ramp_arrow_top,66,li117,36,0.447,0.3755,#ffdbbb,no,arrow above li114
+lt68,l_left_ramp_lock,lt_left_ramp_lock,68,li111,34,0.461,0.4727,#ffdbbb,no,LOCK insert
+lt46,l_battering_ram_1_top,lt_battering_ram_1_top,46,li129,40,0.5566,0.423,#ffdbbb,no,SJP insert (SetBatteringRamLights)
+lt42,l_battering_ram_2_mid,lt_battering_ram_2_mid,42,li126,39,0.5511,0.4452,#ffdbbb,no,wildfire insert
+lt63,l_battering_ram_3_bot,lt_battering_ram_3_bot,63,li123,38,0.5464,0.4676,#ffdbbb,no,playfield multiplier insert (SetBatteringRamLights)
+lt51,l_battering_ram_arrow,lt_battering_ram_arrow,51,li132,41,0.5623,0.3907,#ffdbbb,no,midblue arrow above the ram inserts
+lt47,l_right_ramp_sigil,lt_right_ramp_sigil,47,li141,44,0.6273,0.4825,#ffdbbb,no,HouseShield Stark
+lt39,l_right_ramp_arrow_top,lt_right_ramp_arrow_top,39,li144,45,0.6544,0.4419,#ffdbbb,no,arrow above li141
+L39,l_extra_ball,lt_extra_ball,76,li150,47,0.6772,0.5496,#ffdbbb,yes,EXTRA BALL insert
+lt19,l_right_loop_sigil,lt_right_loop_sigil,19,li156,49,0.7688,0.4515,#ffdbbb,no,HouseShield Martell
+lt12,l_right_loop_arrow_top,lt_right_loop_arrow_top,12,li159,50,0.8059,0.4124,#ffdbbb,no,arrow above li156
+lt37,l_left_top_lane,lt_left_top_lane,37,li162,51,0.6996,0.0226,#ffdbbb,no,
+lt54,l_right_top_lane,lt_right_top_lane,54,li165,52,0.7883,0.0224,#ffdbbb,no,
+lt15,l_left_pop_bumper,lt_left_pop_bumper,15,li168,66,0.6453,0.1204,#ffdbbb,no,BumperLights(0)
+lt4,l_right_pop_bumper,lt_right_pop_bumper,4,li171,67,0.8556,0.1154,#ffdbbb,no,BumperLights(1)
+lt26,l_bottom_pop_bumper,lt_bottom_pop_bumper,26,li174,68,0.7666,0.2044,#ffdbbb,no,BumperLights(2)
+lt7,l_u_p_left_rollover,lt_u_p_left_rollover,7,li180,53,0.2484,0.1544,#ffdbbb,no,UPFLights 3
+lt69,l_u_p_right_rollover,lt_u_p_right_rollover,69,li183,54,0.324,0.1544,#ffdbbb,no,UPFLights 5
+lt36,l_u_p_left_loop,lt_u_p_left_loop,36,li186,55,0.1074,0.1432,#ffdbbb,no,"UPFLights 1, castle"
+lt9,l_u_p_left_target,lt_u_p_left_target,9,li189,56,0.1993,0.1365,#ffdbbb,no,UPFLights 2
+lt35,l_u_p_center_target,lt_u_p_center_target,35,li192,57,0.2863,0.132,#ffdbbb,no,UPFLights 4
+lt64,l_u_p_right_target,lt_u_p_right_target,64,li195,58,0.371,0.1374,#ffdbbb,no,UPFLights 6
+lt23,l_u_p_sigil,lt_u_p_sigil,23,li198,59,0.2745,0.2434,#ffdbbb,no,"UPFLights 7, shield"
+lt31,l_u_p_battle_mode_1,lt_u_p_battle_mode_1,31,li201,60,0.2793,0.2834,#ffdbbb,no,UPF Castle MB (guess)
+lt43,l_u_p_battle_mode_2,lt_u_p_battle_mode_2,43,li204,61,0.2799,0.306,#ffdbbb,no,guess
+lt32,l_u_p_battle_mode_3,lt_u_p_battle_mode_3,32,li207,62,0.282,0.3284,#ffdbbb,no,UPF Charge (guess)
+lt24,l_u_p_battle_mode_4,lt_u_p_battle_mode_4,24,li210,63,0.2819,0.352,#ffdbbb,no,UPF Arrows (guess)
+lt16,l_u_p_2x,lt_u_p_2x,16,li213,64,0.2094,0.2945,#ffdbbb,no,UPF 2X
+lt40,l_u_p_3x,lt_u_p_3x,40,li216,65,0.3458,0.2944,#ffdbbb,no,UPF 3X
+L1,l_start_button,,,,,0.22,0.915,#ffffff,yes,button lamp: cabinet strip
+L2,l_tournament_start_button,,,,,0.27,0.915,#ffffff,yes,button lamp: cabinet strip
+L9,l_top_player_button_green,,,,,0.32,0.915,#ffffff,yes,button lamp: cabinet strip
+L10,l_top_player_button_red,,,,,0.37,0.915,#ffffff,yes,button lamp: cabinet strip
+L11,l_top_player_button_blue,,,,,0.42,0.915,#ffffff,yes,button lamp: cabinet strip

@@ -1,0 +1,79 @@
+number,name,vpx,kind,nx,ny,note
+S1,s_left_return_lane,sw1,table,0.1345,0.7385,inlane (script: DoInlaneHit 0)
+S2,s_right_return_lane,sw2,table,0.7792,0.7378,inlane (DoInlaneHit 1)
+S3,s_left_outlane,sw3,table,0.0582,0.7592,Outlane_Hit
+S4,s_right_outlane,sw4,table,0.8552,0.7566,Outlane_Hit
+S5,s_left_slingshot,Leftslingshot,table,0.2301,0.7252,slingshot wall
+S6,s_right_slingshot,Rightslingshot,table,0.6813,0.7253,slingshot wall
+S7,s_3_bank_drop_tgt_top,Target7,table,0.1706,0.5431,"LoL drop target 3 (DTHit 1), top of bank by position"
+S8,s_3_bank_drop_tgt_mid,Target8,table,0.1408,0.565,LoL drop target 2 (DTHit 2)
+S9,s_3_bank_drop_tgt_btm,Target9,table,0.1105,0.5878,"LoL drop target 1 (DTHit 3), bottom of bank by position"
+S10,s_u_p_left_loop,sw79,table,0.1494,0.0701,upper PF castle loop (RegisterUPFHit 1)
+S11,s_u_p_left_target,Target80,table,0.1802,0.0981,upper PF left target (STHit 13)
+S12,s_u_p_center_target,Target81,table,0.2804,0.0889,upper PF center target (STHit 12)
+S13,s_u_p_right_target,Target82,table,0.3826,0.095,upper PF right target (STHit 11)
+S14,s_left_loop,LorbitSW30,table,0.0858,0.2282,left orbit: Greyjoy shot (sw30a/sw30b are its lead-in triggers)
+S23,s_shooter_lane,swPlungerRest,table,0.9525,0.9003,plunger lane rest trigger
+S24,s_right_loop,RorbitSW31,table,0.9427,0.0718,right orbit: Martell shot
+S25,s_left_ramp_entrance,sw38,table,0.5279,0.0992,left ramp entrance (sound only)
+S26,s_left_ramp_exit,sw39,table,0.9332,0.2052,"left ramp switch: Lannister shot, arms the lock switch sw48"
+S34,s_right_ramp_entrance,sw41,table,0.6898,0.2006,right ramp entrance (sound only)
+S35,s_right_ramp_exit,sw42,table,0.5637,0.1069,right ramp switch: Stark shot
+S29,s_right_2_bank_top,Target43,table,0.8333,0.5181,wildfire target (STHit 9): Tyrell shot
+S33,s_right_2_bank_bottom,Target44,table,0.8826,0.5544,wildfire target (STHit 10): Tyrell shot
+S30,s_left_pop_bumper,Bumper1,table,0.6356,0.1344,BumperLights li168
+S31,s_right_pop_bumper,Bumper2,table,0.8453,0.1292,BumperLights li171
+S32,s_bottom_pop_bumper,Bumper3,table,0.7485,0.1922,BumperLights li174
+S36,s_target_1,Target32,table,0.2997,0.4769,"gold target 1 (STHit 4, GoldHit 0, light li92)"
+S37,s_target_2,Target33,table,0.3827,0.3888,gold target 2 (li105)
+S38,s_target_3,Target34,table,0.5101,0.3446,gold target 3 (li120)
+S39,s_target_4,Target35,table,0.6408,0.3374,gold target 4 (li135)
+S40,s_target_5,Target36,table,0.7769,0.3522,gold target 5 (li147)
+S41,s_left_top_lane,sw53,table,0.6986,0.0579,TopLane_Hit 0
+S42,s_right_top_lane,sw54,table,0.7896,0.0577,TopLane_Hit 1
+S46,s_left_spinner,Spinner001,table,0.2099,0.4353,spinner
+S49,s_battering_ram,BatteringRam,table,0.5744,0.3463,"ram (also _Mid, _High walls)"
+S50,s_lock_1,sw46,table,0.908,0.4999,ball lock lane: first ball rests at the lowest switch (inferred)
+S51,s_lock_2,sw47,table,0.924,0.4743,lock lane (inferred)
+S52,s_lock_3,sw48,table,0.9415,0.4257,lock lane top; script: 'lock switch' sw48
+S54,s_elevator_popper,kickerfloor,table,0.4647,0.0247,"elevator bottom kicker (DestroyBall, ElevatorKick)"
+S58,s_throne,KickerIT,table,0.7723,0.116,Iron Throne kicker
+S57,s_1_bank_drop,Target90,table,0.6896,0.3721,right ramp drop target (DTHit 4)
+S59,s_u_p_left_lane,sw83,table,0.0665,0.2154,upper PF left inlane (UPFHit 7)
+S63,s_u_p_right_lane,sw84,table,0.4947,0.2155,upper PF right inlane (UPFHit 8)
+S60,s_u_p_left_10pt,rlbandsw85,table,0.1148,0.2465,upper PF left sling rubber (ROM: upper playfield left sling)
+S64,s_u_p_right_10pt,rlbandsw86,table,0.4473,0.248,upper PF right sling rubber
+S61,s_u_p_left_rollover,sw77,table,0.2295,0.0642,"upper PF left rollover (UPFHit 3, li180)"
+S62,s_u_p_right_rollover,sw78,table,0.3331,0.0646,"upper PF right rollover (UPFHit 5, li183)"
+S44,s_kickback,,hand,0.06,0.8,no VPX object; at the left outlane (estimate)
+S16,s_trough_6,,trough,0.5,0.905,"trough: no object (simulated ball stack), drawn in a row"
+S17,s_trough_5,,trough,0.54,0.905,"trough: no object (simulated ball stack), drawn in a row"
+S18,s_trough_4,,trough,0.58,0.905,"trough: no object (simulated ball stack), drawn in a row"
+S19,s_trough_3,,trough,0.62,0.905,"trough: no object (simulated ball stack), drawn in a row"
+S20,s_trough_2,,trough,0.66,0.905,"trough: no object (simulated ball stack), drawn in a row"
+S21,s_trough_1,,trough,0.7,0.905,"trough: no object (simulated ball stack), drawn in a row"
+S22,s_trough_jam,BallRelease,trough,0.8821,0.8534,trough jam: at the ball release kicker
+D16,s_l_flipper_button,,cabinet,0.04,0.985,no playfield object: cabinet strip
+D18,s_left_flipper_eos,,cabinet,0.09,0.985,no playfield object: cabinet strip
+D24,s_up_left_flipper_button,,cabinet,0.14,0.985,no playfield object: cabinet strip
+S45,s_start_button,,cabinet,0.22,0.985,no playfield object: cabinet strip
+S15,s_tournament_start_button,,cabinet,0.27,0.985,no playfield object: cabinet strip
+D12,s_lockdown,,cabinet,0.32,0.985,no playfield object: cabinet strip
+D32,s_tilt_pendulum,,cabinet,0.38,0.985,no playfield object: cabinet strip
+D34,s_slam_tilt,,cabinet,0.43,0.985,no playfield object: cabinet strip
+D38,s_power_interlock_sense,,cabinet,0.48,0.985,no playfield object: cabinet strip
+D40,s_service_back,,cabinet,0.54,0.985,no playfield object: cabinet strip
+D42,s_service_minus,,cabinet,0.59,0.985,no playfield object: cabinet strip
+D44,s_service_plus,,cabinet,0.64,0.985,no playfield object: cabinet strip
+D46,s_service_select,,cabinet,0.69,0.985,no playfield object: cabinet strip
+D26,s_up_right_flipper_button,,cabinet,0.79,0.985,no playfield object: cabinet strip
+D22,s_right_flipper_eos,,cabinet,0.87,0.985,no playfield object: cabinet strip
+D20,s_r_flipper_button,,cabinet,0.94,0.985,no playfield object: cabinet strip
+D0,s_left_coin,,cabinet,0.1,0.95,no playfield object: cabinet strip
+D2,s_center_coin,,cabinet,0.15,0.95,no playfield object: cabinet strip
+D4,s_right_coin,,cabinet,0.2,0.95,no playfield object: cabinet strip
+D6,s_fourth_coin,,cabinet,0.25,0.95,no playfield object: cabinet strip
+D8,s_fifth_coin,,cabinet,0.3,0.95,no playfield object: cabinet strip
+S53,s_10_points,,cabinet,0.55,0.95,no playfield object: cabinet strip
+S27,s_topper_dragon,,cabinet,0.62,0.95,no playfield object: cabinet strip
+S55,s_dragon_home,,cabinet,0.69,0.95,no playfield object: cabinet strip

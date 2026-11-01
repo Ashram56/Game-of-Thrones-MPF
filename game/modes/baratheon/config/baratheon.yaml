@@ -16,8 +16,9 @@ mode_settings:
     cap: 150000000
   shots:
   - s_left_spinner
-  - s_battering_ram
-  - s_left_ramp_exit
+  - s_3_bank_drop_tgt_top
+  - s_3_bank_drop_tgt_mid
+  - s_3_bank_drop_tgt_btm
   shots_to_complete: 3
   hurry_up: false
   confidence:

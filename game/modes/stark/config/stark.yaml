@@ -15,9 +15,10 @@ mode_settings:
     bump: 375000
     cap: 75000000
   shots:
+  - s_right_ramp_exit
+  - s_left_ramp_exit
   - s_left_loop
   - s_right_loop
-  - s_left_ramp_exit
   shots_to_complete: 3
   hurry_up: false
   confidence:
