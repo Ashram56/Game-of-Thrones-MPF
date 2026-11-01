@@ -53,15 +53,6 @@ autofire_coils:
   ac_right_pop: {coil: c_right_pop_bumper, switch: s_right_pop_bumper}
   ac_bottom_pop: {coil: c_bottom_pop_bumper, switch: s_bottom_pop_bumper}
 
-# H: tilt warnings 2, debounce 1000 ms (adjustments). Slam tilt ends the game.
-tilt:
-  tilt_warning_switch: s_tilt_pendulum
-  slam_tilt_switch: s_slam_tilt
-  warnings_to_tilt: 2
-  multiple_hit_window: 1000ms
-  settle_time: 5s
-  reset_warnings_events: ball_ending
-
 # H: ad_ball_save_time default 5 s. Each multiball has its own shoot_again (modes/*/config).
 ball_saves:
   default:

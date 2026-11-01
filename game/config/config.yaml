@@ -9,12 +9,12 @@ config:
   - rom/coils.yaml
   - rom/lights.yaml
   - rom/settings.yaml
-  - rom/sounds.yaml
-  - rom/slides.yaml
+  # (sounds.yaml/slides.yaml: GMC only, MPF 0.80 removed them)
   - devices.yaml
 
 modes:
   - attract
+  - tilt
   - base
   - targaryen
   - stark

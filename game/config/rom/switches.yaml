@@ -20,11 +20,9 @@ switches:
   s_left_slingshot:
     number: S5
     label: Left Slingshot
-    tags: playfield_active
   s_right_slingshot:
     number: S6
     label: Right Slingshot
-    tags: playfield_active
   s_3_bank_drop_tgt_top:
     number: S7
     label: Left 3-Bank (Top)
@@ -106,15 +104,12 @@ switches:
   s_left_pop_bumper:
     number: S30
     label: Left Bumper
-    tags: playfield_active
   s_right_pop_bumper:
     number: S31
     label: Right Bumper
-    tags: playfield_active
   s_bottom_pop_bumper:
     number: S32
     label: Bottom Bumper
-    tags: playfield_active
   s_right_2_bank_bottom:
     number: S33
     label: Right 2-Bank Bottom
@@ -174,15 +169,12 @@ switches:
   s_lock_1:
     number: S50
     label: Lock 1
-    tags: playfield_active
   s_lock_2:
     number: S51
     label: Lock 2
-    tags: playfield_active
   s_lock_3:
     number: S52
     label: Lock 3
-    tags: playfield_active
   s_10_points:
     number: S53
     label: 10 Points
@@ -190,7 +182,6 @@ switches:
   s_elevator_popper:
     number: S54
     label: Elevator Popper
-    tags: playfield_active
   s_dragon_home:
     number: S55
     label: Dragon Home
@@ -201,7 +192,6 @@ switches:
   s_throne:
     number: S58
     label: Throne
-    tags: playfield_active
   s_u_p_left_lane:
     number: S59
     label: Up Left Lane
@@ -268,9 +258,11 @@ switches:
   s_tilt_pendulum:
     number: D32
     label: Tilt Pendulum
+    tags: tilt_warning
   s_slam_tilt:
     number: D34
     label: Slam Tilt
+    tags: slam_tilt
   s_power_interlock_sense:
     number: D38
     label: Interlock

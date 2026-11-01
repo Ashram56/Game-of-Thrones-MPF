@@ -35,6 +35,10 @@ def good(name):
         and "+" not in name and not name.startswith("dedicated_")
 
 
+AUTOFIRE_SW = {"left_slingshot", "right_slingshot", "left_pop_bumper", "right_pop_bumper", "bottom_pop_bumper",
+                "lock_1", "lock_2", "lock_3", "elevator_popper", "throne", "shooter_lane"}
+
+
 def switches(data):
     out = {}
     nonpf = {15, 16, 17, 18, 19, 20, 21, 22, 23, 27, 45, 55}      # trough, start buttons, topper, dragon home
@@ -46,7 +50,7 @@ def switches(data):
         tags = []
         if n == 45:
             tags.append("start")
-        if n not in nonpf:
+        if n not in nonpf and r["name"] not in AUTOFIRE_SW:   # autofire devices tag these themselves
             tags.append("playfield_active")
         if tags:
             sw["tags"] = ", ".join(tags)
@@ -56,6 +60,8 @@ def switches(data):
             out["s_" + r["name"]] = {"number": "D%s" % r["idx"], "label": r["label_en"].title()}
     for name in ("service_back", "service_minus", "service_plus", "service_select"):
         out["s_" + name]["tags"] = "service"
+    out["s_tilt_pendulum"]["tags"] = "tilt_warning"
+    out["s_slam_tilt"]["tags"] = "slam_tilt"
     out["s_left_coin"]["tags"] = "left_coin"
     out["s_center_coin"]["tags"] = "center_coin"
     out["s_right_coin"]["tags"] = "right_coin"

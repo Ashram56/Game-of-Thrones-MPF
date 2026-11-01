@@ -1,0 +1,13 @@
+#config_version=6
+mode:
+  start_events: init_done
+  game_mode: false
+  priority: 10000
+
+# H: tilt warnings 2, debounce 1000 ms (adjustments). Slam tilt ends the game.
+tilt:
+  warnings_to_tilt: 2
+  multiple_hit_window: 1000ms
+  settle_time: 5s
+  reset_warnings_events: ball_ending
+
