@@ -1,9 +1,10 @@
 """Video mode duel. H (docs/10): timer 41 = 20 s; ends when the player's or the AI's health reaches 0 (win/lose) or at time
-out (tie); score = video_mode_score(outcome, n, level), level from adjustment 132 (default 2). CFG (not recovered): health
-points, hit damage and the AI's strike interval."""
+out (tie); score = video_mode_score(outcome, n, level), level from adjustment 132 (default 2). H (docs/14): player health 3, AI health 3-7 by level, damage 1 (2 for a heavy hit). CFG: the AI's strike interval and heavy share (the ROM uses random(6 - level) tick sleeps and weighted actions, M)."""
 from mpf.core.mode import Mode
 
-HEALTH = 10
+PLAYER_HEALTH = 3                      # H: cplayer::Initialize
+AI_HEALTH = (3, 4, 5, 6, 7)            # H: by level 0..4 (videomode+0x80)
+HEAVY_CHANCE = 0.3                     # CFG: share of AI strikes that are heavy hits (2 damage)
 DURATION_S = 20
 AI_INTERVAL_S = lambda level: max(0.4, 1.6 - 0.2 * level)
 
@@ -13,7 +14,9 @@ class VideoMode(Mode):
         self._n = int(n)
         s = self.machine.settings
         self._level = int(s.get_setting_value("ad_video_mode_difficulty")) if "ad_video_mode_difficulty" in getattr(s, "setting_definitions", {}) else 2
-        self._me = self._ai = HEALTH
+        self._me = PLAYER_HEALTH
+        self._ai = AI_HEALTH[min(4, max(0, self._level))]
+        self.rng = __import__("random").Random()
         self.add_mode_event_handler("s_l_flipper_button_active", self._attack)
         self.add_mode_event_handler("s_r_flipper_button_active", self._attack)
         self.delay.add(DURATION_S * 1000, self._finish, outcome="tie", name="vm_time")
@@ -30,7 +33,7 @@ class VideoMode(Mode):
             self._finish("win")
 
     def _ai_strike(self, **kwargs):
-        self._me -= 1
+        self._me -= 2 if self.rng.random() < HEAVY_CHANCE else 1
         self._state()
         if self._me <= 0:
             self._finish("loss")

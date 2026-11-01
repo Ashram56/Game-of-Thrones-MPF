@@ -134,6 +134,11 @@ class WinterHasComeMode(AwardMode):
         self.machine.events.post("got_winter_has_come_horde")
 
 
+UPPER_ALL = ("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target", "s_u_p_left_rollover", "s_u_p_right_rollover")
+UPPER_STATES = (("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target"), ("s_u_p_left_target", "s_u_p_right_target"),
+                ("s_u_p_center_target",), ("s_u_p_left_rollover", "s_u_p_right_rollover"))      # masks 0x700000 / 0x500000 / 0x200000 / 0x1800000
+
+
 class BlackwaterMode(AwardMode):
     """docs/13 (H): rounds R = 1, 2, 3 (then 3 again). Every round arms the five mask-0x6e shots R times each (5, 10, 15 hits);
     a hit pays V x combo x R (V does not rise); the last hit of the round lights the Super Jackpot (level R) for 20 s + 1.4 s
@@ -148,7 +153,26 @@ class BlackwaterMode(AwardMode):
         p = self.player
         p.got_bw_jackpot = jackpot_value(int(p.got_wildfire or 0))
         self._round = 1
+        self._upper = 0
+        for sw in UPPER_ALL:
+            self.add_mode_event_handler(sw + "_active", self._upper_shot, sw=sw)
         self._arm()
+
+    def _upper_shot(self, sw, **kwargs):
+        """DoUpperPlayfieldWork (docs/14, H masks/order): any standup -> left or right standup -> centre standup -> an upper
+        rollover. Steps 0-2 pay a jackpot, step 3 the Super Jackpot (upper multiplier 1: M)."""
+        p = self.player
+        if sw not in UPPER_STATES[self._upper]:
+            return
+        v = int(p.got_bw_jackpot)
+        if self._upper < 3:
+            points = v * self._round * (p.got_multiplier or 1)
+            self._upper += 1
+        else:
+            points = (v * 6 + 10000000) * (p.got_multiplier or 1)
+            self._upper = 0
+            self.machine.events.post("got_blackwater_super", points=points, level=1)
+        p.score += points
 
     def _arm(self):
         self._left = {sw: self._round for sw in self.SHOTS}

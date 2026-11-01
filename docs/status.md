@@ -80,3 +80,12 @@ Grow Wall Jackpot (Mystery and pop award) raises the Wall award by its own bump;
 
 ## Video mode duel (CFG gameplay, H scoring) - got/videomode.py, slides/videomode.tscn
 Mystery "Video Mode nX" starts `modes/videomode`: 20 s, either flipper button hits the AI, the AI strikes every max(0.4, 1.6 - 0.2 x level) s, 10 health each (CFG: the ROM's health, damage and AI timing are not recovered). Win/lose ends it at once, timeout is a tie; the payout is the ROM's (docs/10 section 6) with level from `ad_video_mode_difficulty` (default 2). Slide shows "YOU n / FOE n" (not yet checked on a display; no graphics from the ROM's video-mode assets).
+
+## docs/14 wired
+- House tickle (H masks): three hits of each house's tickle shot light it (Targaryen kickback, Stark right ramp, Baratheon left bank, Lannister left ramp, Greyjoy left loop, Tyrell right 2-bank, Martell right loop), each hit pays 75,000 + 25,000 per earlier hit; the throne starts lit houses first. A completed house is unlit again. The "only while unlit/not in a multiball" gate is M.
+- Button ability on completion (house_select_awards.csv): 1 Targaryen, 2 Stark, 3 Baratheon, 4 Lannister (8 uses), 5 Tyrell, 6 Martell, Greyjoy keeps the previous; the ability overrides the chosen-house power in `_action`. Use counters other than Lannister's are 1 per grant (M).
+- Tyrell Iron Bank: 20M m - 18M + 75,000 m^2 min(c,120), c = sum of the armed combo multipliers x m (the ROM's c counts the 5 combo shots: M), then resets the combo and the playfield multiplier.
+- Blackwater upper playfield: standup, left/right standup, centre standup, upper rollover = Super Jackpot (V x 6 + 10M; upper multiplier fixed at 1: M); steps 0-2 pay jackpots.
+- Video duel: player health 3, AI 3-7 by level, damage 1 (heavy 2: 30% share is CFG).
+- First-ball semantics: lock flag, ram SJ per player once (already so). Hand ready persists (the progression object is per player).
+- Not done: Choose Your Battle / PASS / two stacked houses (our throne-starts-house departure stays), casual mode (adj 108), Greyjoy start-of-ball award, Lannister +200/400 gold on completion, audits_meaning.csv (the 137 uncounted audits), Special extra-ball payout.

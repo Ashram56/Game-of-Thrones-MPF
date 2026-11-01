@@ -194,6 +194,8 @@ class GotBase(Mode):
         multiplier with gold, 6 Martell = add a ball in multiball."""
         p = self.player
         ab = int(p.got_button_ability or 0)
+        if ab == 5 and self.machine.modes["combos"].iron_bank():
+            return True
         if ab == 3:
             p.got_button_ability = 0
             self.machine.events.post("got_light_lord_of_light")

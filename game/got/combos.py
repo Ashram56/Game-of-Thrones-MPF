@@ -5,6 +5,8 @@ import random
 
 from mpf.core.mode import Mode
 
+from got.powers import HOUSES
+
 # shot switch -> combo index (ccombo_manager ctor: 0 left loop, 1 kickback, 2 left ramp exit, 3 right ramp exit, 4 right loop)
 SHOTS = {"s_left_loop": 0, "s_kickback": 1, "s_left_ramp_exit": 2, "s_right_ramp_exit": 3, "s_right_loop": 4}
 # StartNewCombos follow-up lists (docs/10 section 1), by combo index
@@ -36,6 +38,12 @@ B_CAP = (0, 50000, 125000, 250000, 375000, 500000, 625000, 750000, 875000, 10000
 TWO_BANK = ("s_right_2_bank_top", "s_right_2_bank_bottom")
 SJ_BASE, SJ_PER_LEVEL, SJ_BONUS = 250000, 6, 10000000
 TWO_BANK_DIFFICULTY = 2               # adjustment 122 default
+# cmode::GetTickleShots (docs/14, H): the shot that counts toward lighting each house; every house needs 3
+TICKLE = {"targaryen": ("s_kickback",), "stark": ("s_right_ramp_exit",), "baratheon": BANK, "lannister": ("s_left_ramp_exit",),
+          "greyjoy": ("s_left_loop",), "tyrell": ("s_right_2_bank_top", "s_right_2_bank_bottom"), "martell": ("s_right_loop",)}
+TICKLE_NEEDED, TICKLE_BASE, TICKLE_STEP = 3, 75000, 25000
+# set_button_ability on house completion (docs/14 house_select_awards.csv); Greyjoy (0) keeps the previous one
+ABILITY_ON_COMPLETE = {"targaryen": 1, "stark": 2, "baratheon": 3, "lannister": 4, "tyrell": 5, "martell": 6}
 LORD_LIMIT = 10                       # adjustment 123 default (10 = unlimited)
 
 
@@ -71,6 +79,10 @@ class Combos(Mode):
             self.add_mode_event_handler(sw + "_active", self._shot, sw=sw)
         self.add_mode_event_handler("got_house_complete", self._light_sword)
         self.add_mode_event_handler("got_light_swords", self._light_sword)
+        self.add_mode_event_handler("got_house_complete", self._ability_on_complete)
+        for house, switches in TICKLE.items():
+            for sw in switches:
+                self.add_mode_event_handler(sw + "_active", self._tickle, house=house)
         self.add_mode_event_handler("got_bump_wall_jackpot", self._bump_wall_jackpot)
         self.add_mode_event_handler("got_special", self._special)
         self.add_mode_event_handler("got_award_sword", self._award_sword)
@@ -291,3 +303,47 @@ class Combos(Mode):
     def _setting(self, name, default):
         s = self.machine.settings
         return s.get_setting_value(name) if name in getattr(s, "setting_definitions", {}) else default
+
+    # --- house tickle: three hits of the house's tickle shot light it (the throne then starts lit houses first)
+    def _tickle(self, house, **kwargs):
+        p = self.player
+        from got import state
+        prog = p.got_progression
+        hid = HOUSES.index(house)
+        lit = set((p.got_lit_houses or "").split(",")) - {""}
+        if house in lit or (prog and hid in prog.complete) or state.multiball_running(self.machine):
+            return
+        n = int(getattr(p, "got_tickle_" + house) or 0)
+        p.score += (TICKLE_BASE + TICKLE_STEP * n) * (p.got_multiplier or 1)
+        n += 1
+        setattr(p, "got_tickle_" + house, n)
+        if n >= TICKLE_NEEDED:
+            setattr(p, "got_tickle_" + house, 0)
+            lit.add(house)
+            p.got_lit_houses = ",".join(sorted(lit))
+            self.machine.events.post("got_light_house", house=house)
+
+    def _ability_on_complete(self, key=None, **kwargs):
+        ab = ABILITY_ON_COMPLETE.get(key)
+        if ab:
+            p = self.player
+            p.got_button_ability = ab
+            p.got_ability_uses = 8 if ab == 4 else 1          # Lannister buttons per game (adjustment 116); the others once per grant (M)
+        lit = set((self.player.got_lit_houses or "").split(",")) - {""}
+        lit.discard(key)                                      # a completed house is no longer lit
+        self.player.got_lit_houses = ",".join(sorted(lit))
+
+    # --- Tyrell Iron Bank (ability 5): 20M x m - 18M + 75,000 x m^2 x min(c, 120), c = sum of combo multipliers x m (M)
+    def iron_bank(self):
+        p = self.player
+        m = int(p.got_multiplier or 1)
+        c = sum(self._armed.values()) * m
+        if int(p.got_button_ability or 0) != 5 or int(p.got_ability_uses or 0) <= 0 or c <= 5:
+            return False
+        points = 20000000 * m - 18000000 + 75000 * m * m * min(c, 120)
+        p.score += points
+        p.got_ability_uses -= 1
+        p.got_multiplier = 0
+        self._end()
+        self.machine.events.post("got_iron_bank", points=points)
+        return True

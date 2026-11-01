@@ -105,7 +105,7 @@ class TestGotGame(MpfGameTestCase):
         elif key == "lannister":
             seq = ["s_target_1", "s_left_loop"] * 5
         elif key == "greyjoy":
-            seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop"]
+            seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback"]
         elif key == "tyrell":
             seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_right_2_bank_top", "s_right_2_bank_bottom", "s_right_ramp_exit"]
         elif key == "targaryen":
@@ -261,7 +261,7 @@ class TestGotGame(MpfGameTestCase):
     def test_switch_base_points_from_rom_table(self):
         self._start_game()
         for sw, pts in (("s_left_outlane", 25000), ("s_left_return_lane", 530), ("s_left_pop_bumper", 1170),
-                        ("s_kickback", 3330), ("s_battering_ram", 2330)):
+                        ("s_kickback", 3330 + 75000), ("s_battering_ram", 2330)):     # the kickback is also the first Targaryen tickle (75,000)
             before = self.machine.game.player.score
             self._hit(sw)
             self.assertEqual(pts, self.machine.game.player.score - before, sw)
@@ -625,7 +625,7 @@ class TestGotGame(MpfGameTestCase):
         before = player.score
         self.post_event_with_params("got_video_mode_start", n=2)
         self.advance_time_and_run(0.1)
-        for _ in range(10):
+        for _ in range(5):                                              # AI health at level 2
             self.hit_and_release_switch("s_r_flipper_button")
         self.advance_time_and_run(0.1)
         self.assertFalse(self.machine.modes["videomode"].active)
@@ -640,6 +640,34 @@ class TestGotGame(MpfGameTestCase):
         self.hit_and_release_switch("s_l_flipper_button")
         self.advance_time_and_run(0.1)
         self.assertTrue(self.machine.modes["videomode"].active)
+
+    def test_house_tickle_lights_house_and_ability_on_completion(self):
+        self._start_game()
+        player = self.machine.game.player
+        for i in range(3):
+            self._hit("s_left_ramp_exit")                      # Lannister's tickle shot
+        self.assertEqual("lannister", player.got_lit_houses)
+        self.hit_and_release_switch("s_throne")                # lit houses start first
+        self.advance_time_and_run(0.5)
+        self.assertTrue(self.machine.modes["lannister"].active)
+        self.post_event_with_params("got_house_complete", house_id=3, key="lannister")
+        self.advance_time_and_run(0.1)
+        self.assertEqual(4, player.got_button_ability)
+        self.assertEqual(8, player.got_ability_uses)
+        self.assertEqual("", player.got_lit_houses or "")
+
+    def test_iron_bank_cash_in(self):
+        self._start_game()
+        player = self.machine.game.player
+        combos = self.machine.modes["combos"]
+        player.got_button_ability = 5
+        player.got_ability_uses = 1
+        player.got_multiplier = 2
+        combos._armed = {0: 3, 1: 3}                           # c = (3 + 3) x 2 = 12
+        before = player.score
+        self.hit_and_release_switch("s_lockdown")
+        self.assertEqual(20000000 * 2 - 18000000 + 75000 * 4 * 12, player.score - before)
+        self.assertEqual(0, player.got_ability_uses)
 
     def _start_mb(self, key):
         self._start_game()
@@ -674,6 +702,19 @@ class TestGotGame(MpfGameTestCase):
         before = player.score
         self._hit("s_battering_ram")
         self.assertGreaterEqual(player.score - before, v * 12 + 10000000)
+
+    def test_blackwater_upper_playfield_super_jackpot(self):
+        self._start_game()
+        player = self.machine.game.player
+        self.post_event("start_mode_blackwater")
+        self.advance_time_and_run(0.5)
+        v = player.got_bw_jackpot
+        self._hit("s_u_p_center_target")                       # state 0: any standup (a jackpot)
+        self._hit("s_u_p_left_target")                        # state 1: left or right
+        self._hit("s_u_p_center_target")                      # state 2: centre
+        before = player.score
+        self._hit("s_u_p_left_rollover")                      # state 3: Super Jackpot V x 6 + 10M
+        self.assertGreaterEqual(player.score - before, v * 6 + 10000000)
 
     def test_blackwater_super_times_out(self):
         self._start_mb("blackwater")
