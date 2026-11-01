@@ -49,18 +49,22 @@ coils:
     number: C13
     label: Up Left Flipper
     default_pulse_ms: 25
+    default_hold_power: 0.25
   c_u_p_right_flipper:
     number: C14
     label: Up Right Flipper
     default_pulse_ms: 25
+    default_hold_power: 0.25
   c_left_flipper_power:
     number: C15
     label: Left Flipper Power
     default_pulse_ms: 25
+    default_hold_power: 0.25
   c_right_flipper_power:
     number: C16
     label: Right Flipper Power
     default_pulse_ms: 25
+    default_hold_power: 0.25
   c_left_slingshot:
     number: C17
     label: Left Slingshot

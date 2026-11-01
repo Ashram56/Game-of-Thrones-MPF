@@ -1,8 +1,6 @@
 # Status (first session)
 
-Verification: spec and code reading only (no Spike 1 emulator or traces). MPF not installable (no PyPI/apt), so
-the config was validated for YAML syntax, duplicate keys and cross-references only; the MPF glue (`got/*.py`)
-and device syntax (tilt, ball_saves, extra_ball_groups, multiballs, sound_pools) are unrun and may need fixes.
+Verification: MPF 0.80.1 boots the game headless (smart_virtual) and tests/test_mpf_game.py plays a full 3-ball game (start, house mode shot, drains, game end). Still no Spike 1 traces.
 
 Done
 - Switch (S, 61 + 28 dedicated), coil (35), light (80) and 159 settings configs generated from data/*.csv.

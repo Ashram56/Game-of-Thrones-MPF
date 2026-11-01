@@ -75,6 +75,8 @@ def coils(data):
             n = r["name"]
             out["c_" + n] = {"number": "C%s" % r["coil_id"], "label": r["label_en"].title(),
                              "default_pulse_ms": 25}      # CFG: Spike 1 coil timing not extracted (flags column is raw)
+    for f in ("left_flipper_power", "right_flipper_power", "u_p_left_flipper", "u_p_right_flipper"):
+        out["c_" + f]["default_hold_power"] = 0.25     # CFG: MPF needs a hold power to keep a flipper up (value not from ROM)
     out["c_shaker_motor"]["default_pulse_ms"] = 100
     return {"coils": out}
 

@@ -74,7 +74,7 @@ def test_references_resolve():
         assert f["main_coil"] in coils and f["activation_switch"] in sw, name
     for name, a in c["autofire_coils"].items():
         assert a["coil"] in coils and a["switch"] in sw, name
-    assert c["tilt"]["tilt_warning_switch"] in sw and c["tilt"]["slam_tilt_switch"] in sw
+    assert c["switches"]["s_tilt_pendulum"]["tags"] == "tilt_warning" and c["switches"]["s_slam_tilt"]["tags"] == "slam_tilt"
     rules = load_rules()
     for h in rules["houses"]:
         for s in h["shots"]:
