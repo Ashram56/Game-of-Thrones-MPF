@@ -8,6 +8,7 @@ Writes game/config/rom/{switches,coils,lights,settings,sounds,slides}.yaml and g
 Game-of-Thrones repo's data/ (env GOT_DATA, default ../Game-of-Thrones/data); nothing is read from the ROM.
 """
 import argparse
+import json
 import csv
 import os
 import re
@@ -119,41 +120,50 @@ def sounds(data, rules):
     """Core sound set only. The WAVs are copied by scripts/gen_media.py into game/sounds/<track>/ (gitignored)."""
     fx = {r["name"]: r for r in rows(data, "sound_effects.csv")}
     cat = {int(r["sound_id"]): r for r in rows(data, "audio_catalog.csv")}
-    snd, pools, player = {}, {}, {}
+    # GMC 1.0 (MPF 0.80) has no `sounds:`/`sound_pools:` section: it registers every file of game/sounds/<track>/ by
+    # its file stem. A pooled effect plays its first sound (GMC has no random_force_next pool; CFG: lost variety).
+    player, files = {}, {}
     for event, se in rules["sounds"].items():
         r = fx[se]
-        ids = [int(x) for x in r["sound_ids"].split()]
-        names = []
-        for i in ids:
-            c = cat[i]
-            track = TRACK.get(c["category"], "sfx")
-            name = "snd%04d" % i
-            snd[name] = {"file": c["file"], "track": track}
-            if track == "music":
-                snd[name]["loops"] = -1
-            names.append(name)
-        if len(names) == 1:
-            target = names[0]
-        else:
-            target = se
-            pools[se] = {"type": "random_force_next", "track": snd[names[0]]["track"], "sounds": ", ".join(names)}
-        player["got_sound_" + event] = {target: {"action": "play"}}
-    out = {"sounds": snd}
-    if pools:
-        out["sound_pools"] = pools
-    out["sound_player"] = player
-    return out
+        i = int(r["sound_ids"].split()[0])
+        c = cat[i]
+        track = TRACK.get(c["category"], "sfx")
+        stem = os.path.splitext(c["file"])[0]
+        files[stem] = {"file": c["file"], "track": track}
+        act = {"action": "play", "bus": track}
+        if track == "music":
+            act["loops"] = -1
+        player["got_sound_" + event] = {stem: act}
+    sounds.files = files
+    return {"sound_player": player}
 
 
 def slides(data, rules):
-    vids = {int(r["video_id"]): r for r in rows(data, "dmd_videos.csv")}
-    out_slides, player = {}, {}
+    """GMC slides are scenes (game/slides/vidNNN.tscn, one per DMD video); MPF only gets the slide_player."""
+    player = {}
     for event, vid in rules["dmd"]["videos"].items():
-        v = vids[int(vid)]
-        sname = "vid%03d" % vid
-        out_slides[sname] = {"widgets": [{"type": "image", "image": "dmd_vid%03d_f000" % vid}]}
-        player[event] = {sname: {"expire": "2s"}}
-    return {"slides": out_slides, "slide_player": player}
+        player[event] = {"vid%03d" % vid: {"expire": "2s"}}
+    return {"slide_player": player}
+
+
+SLIDE_TSCN = """[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dmd_video.gd" id="1"]
+
+[node name="MPFSlide" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+video = "%s"
+fps = %d
+"""
+
+
+def slide_scenes(rules):
+    return {"slides/vid%03d.tscn" % v: SLIDE_TSCN % ("vid%03d" % v, rules["dmd"]["fps"])
+            for v in sorted(set(rules["dmd"]["videos"].values()))}
 
 
 def mode_files(rules):
@@ -195,7 +205,9 @@ def build(data):
     for name, fn in (("switches", switches), ("coils", coils), ("lights", lights), ("settings", settings)):
         files["config/rom/%s.yaml" % name] = dump(fn(data))
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
+    files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"
     files["config/rom/slides.yaml"] = dump(slides(data, rules))
+    files.update(slide_scenes(rules))
     for rel, cfg in mode_files(rules).items():
         files["modes/" + rel] = dump(cfg)
     return files

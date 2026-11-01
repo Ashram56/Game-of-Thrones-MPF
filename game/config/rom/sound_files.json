@@ -1,0 +1,86 @@
+{
+ "idx0012__fx__test_enter": {
+  "file": "idx0012__fx__test_enter.wav",
+  "track": "sfx"
+ },
+ "idx0018__other__tilt_warning": {
+  "file": "idx0018__other__tilt_warning.wav",
+  "track": "sfx"
+ },
+ "idx0019__other__tilt": {
+  "file": "idx0019__other__tilt.wav",
+  "track": "sfx"
+ },
+ "idx0020__other__slam_tilt": {
+  "file": "idx0020__other__slam_tilt.wav",
+  "track": "sfx"
+ },
+ "idx0053__other__ball_saved_dragon_roars": {
+  "file": "idx0053__other__ball_saved_dragon_roars.wav",
+  "track": "sfx"
+ },
+ "idx0082__fx__fx_light_extra_ball": {
+  "file": "idx0082__fx__fx_light_extra_ball.wav",
+  "track": "sfx"
+ },
+ "idx0105__fx__fx_pop_bumpers": {
+  "file": "idx0105__fx__fx_pop_bumpers.wav",
+  "track": "sfx"
+ },
+ "idx0118__fx__fx_slingshot": {
+  "file": "idx0118__fx__fx_slingshot.wav",
+  "track": "sfx"
+ },
+ "idx0123__fx__fx_spinner_med": {
+  "file": "idx0123__fx__fx_spinner_med.wav",
+  "track": "sfx"
+ },
+ "idx0141__fx__fx_award_1x_jackpot": {
+  "file": "idx0141__fx__fx_award_1x_jackpot.wav",
+  "track": "sfx"
+ },
+ "idx0151__fx__fx_award_1x_super_jackpot": {
+  "file": "idx0151__fx__fx_award_1x_super_jackpot.wav",
+  "track": "sfx"
+ },
+ "idx0327__other__extra_ball": {
+  "file": "idx0327__other__extra_ball.wav",
+  "track": "sfx"
+ },
+ "idx0735__vo__vo_extra_ball_is_lit": {
+  "file": "idx0735__vo__vo_extra_ball_is_lit.wav",
+  "track": "voice"
+ },
+ "idx0961__vo__vo_tilt_warning": {
+  "file": "idx0961__vo__vo_tilt_warning.wav",
+  "track": "voice"
+ },
+ "idx1476__vo__vo_tilt": {
+  "file": "idx1476__vo__vo_tilt.wav",
+  "track": "voice"
+ },
+ "idx1489__vo__vo_ball_saved": {
+  "file": "idx1489__vo__vo_ball_saved.wav",
+  "track": "voice"
+ },
+ "idx1830__vo__vo_game_over": {
+  "file": "idx1830__vo__vo_game_over.wav",
+  "track": "voice"
+ },
+ "idx1924__tune__tune_blackwater": {
+  "file": "idx1924__tune__tune_blackwater.wav",
+  "track": "music"
+ },
+ "idx1931__tune__tune_main_play": {
+  "file": "idx1931__tune__tune_main_play.wav",
+  "track": "music"
+ },
+ "idx1932__tune__tune_main_play_ball_2": {
+  "file": "idx1932__tune__tune_main_play_ball_2.wav",
+  "track": "music"
+ },
+ "idx1933__tune__tune_main_play_ball_3": {
+  "file": "idx1933__tune__tune_main_play_ball_3.wav",
+  "track": "music"
+ }
+}

@@ -1,0 +1,12 @@
+#config_version=6
+# Overlay for the headless smoke test:  mpf game . -c config,smoke  (plays a sound and a DMD slide through GMC)
+config:
+  - config.yaml
+event_player:
+  reset_complete: smoke_go
+  smoke_go: got_sound_game_started
+  mode_attract_started: smoke_slide
+slide_player:
+  smoke_slide:
+    vid004:
+      expire: 5s

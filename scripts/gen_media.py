@@ -25,7 +25,7 @@ def main():
     ap.add_argument("--assets", default=os.environ.get("GOT_ASSETS", "/mnt/project-files/got/assets"))
     ap.add_argument("--data", default=os.environ.get("GOT_DATA", os.path.join(ROOT, "..", "Game-of-Thrones", "data")))
     a = ap.parse_args()
-    sounds = yaml.safe_load(open(os.path.join(GAME, "config", "rom", "sounds.yaml"), encoding="utf-8"))["sounds"]
+    sounds = json.load(open(os.path.join(GAME, "config", "rom", "sound_files.json"), encoding="utf-8"))
     missing = 0
     for name, s in sounds.items():
         src = os.path.join(a.assets, "audio", s["file"])

@@ -9,7 +9,8 @@ config:
   - rom/coils.yaml
   - rom/lights.yaml
   - rom/settings.yaml
-  # (sounds.yaml/slides.yaml: GMC only, MPF 0.80 removed them)
+  - rom/sounds.yaml        # sound_player only (GMC registers game/sounds/<track>/<stem>)
+  - rom/slides.yaml        # slide_player only (slides are scenes in game/slides/)
   - devices.yaml
 
 modes:

@@ -1,0 +1,17 @@
+; Engine configuration file for the GoT MPF game (Godot 4.5 + mpf-gmc 1.0.0)
+config_version=5
+
+[application]
+config/name="Game of Thrones MPF"
+config/features=PackedStringArray("4.5")
+run/main_scene="res://addons/mpf-gmc/slides/window.tscn"
+
+[autoload]
+MPF="*res://addons/mpf-gmc/mpf_gmc.gd"
+
+[display]
+window/size/viewport_width=1024
+window/size/viewport_height=256
+
+[editor_plugins]
+enabled=PackedStringArray("res://addons/mpf-gmc/plugin.cfg")
