@@ -19,10 +19,12 @@ class AwardMode(Mode):
             self._award.value = getattr(player, self._award_key)
         self._shots = 0
         for sw in cfg["shots"]:
-            self.add_mode_event_handler(sw + "_active", self._shot)
+            self.add_mode_event_handler(sw + "_active", self._shot, sw=sw)
         self.add_mode_event_handler("timer_%s_timer_complete" % cfg["key"], self._timeout)
 
-    def _shot(self, **kwargs):
+    def _shot(self, sw=None, **kwargs):
+        if not self._accepts(sw):
+            return
         cfg = self._cfg
         points = self._award.give(global_mult=self.player.got_multiplier or 1)
         if cfg.get("hurry_up"):
@@ -37,6 +39,10 @@ class AwardMode(Mode):
         if self._shots >= cfg.get("shots_to_complete", 0) > 0 and cfg["kind"] == "house":
             self.machine.events.post("got_house_complete", house_id=cfg["id"], key=cfg["key"])
             self.stop()
+
+    def _accepts(self, sw):
+        """Hook for houses with their own shot logic (got.houses)."""
+        return True
 
     def _timeout(self, **kwargs):
         self.stop()

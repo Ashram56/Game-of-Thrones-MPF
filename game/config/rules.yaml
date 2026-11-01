@@ -85,8 +85,8 @@ houses:
      shots: [s_right_2_bank_top, s_right_2_bank_bottom],
      award: {start: 8250000, bump: 875000, cap: 75000000, conf: M},
      note: "two-bank; timer is the cmode default, no override seen"}
-  - {id: 6, key: martell, label: House Martell, timer_id: 10, timer_s: 10, timer_conf: M, hurry_up: true,
-     shots: [s_left_loop, s_right_loop, s_left_ramp_exit],   # VPX: 3 orbits in a row, left ramp collects (vpx/README.md)
+  - {id: 6, key: martell, label: House Martell, timer_id: 10, timer_s: 30, timer_conf: M, hurry_up: true,    # rulesheet: 30 s mode timer (the ROM's 10 s timer is the orbit window / hurry-up)
+     shots: [s_left_loop, s_right_loop, s_left_ramp_exit, s_right_ramp_exit],   # 3 orbits within 10 s, then either ramp collects (rulesheet; VPX agrees)
      award: {start: 18000000, bump: 1250000, cap: 0, conf: M, cap_conf: CFG},
      note: "mini grace sub-timer (62 ticks) not modelled"}
   - {id: 7, key: winter_is_coming, label: Winter Is Coming, timer_id: 12, timer_s: 16, timer_conf: M, hurry_up: true,

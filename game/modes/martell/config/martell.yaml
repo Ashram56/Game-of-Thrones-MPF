@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_martell, ball_ending, tilt
   priority: 300
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.houses.MartellMode
 mode_settings:
   kind: house
   id: 6
@@ -18,15 +18,16 @@ mode_settings:
   - s_left_loop
   - s_right_loop
   - s_left_ramp_exit
+  - s_right_ramp_exit
   shots_to_complete: 3
   hurry_up: true
-  timer_s: 10
+  timer_s: 30
   confidence:
     timer: M
     award: H
 timers:
   martell_timer:
-    start_value: 10
+    start_value: 30
     end_value: 0
     direction: down
     tick_interval: 1s

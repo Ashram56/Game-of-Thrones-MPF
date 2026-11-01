@@ -166,6 +166,9 @@ def slide_scenes(rules):
             for v in sorted(set(rules["dmd"]["videos"].values()))}
 
 
+HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.StarkMode", "martell": "got.houses.MartellMode"}
+
+
 def mode_files(rules):
     out = {}
     d = rules["defaults"]
@@ -174,7 +177,7 @@ def mode_files(rules):
         award = {k: h["award"].get(k, 0) for k in ("start", "bump", "cap")}
         cfg = {"mode": {"start_events": "start_mode_" + key, "stop_events": "stop_mode_%s, ball_ending, tilt" % key,
                         "priority": 300, "game_mode": True,
-                        "code": "got.winter.WinterMode" if key == "winter_is_coming" else "got.award_mode.AwardMode"},
+                        "code": HOUSE_CODE.get(key, "got.award_mode.AwardMode")},
                "mode_settings": {"kind": "house", "id": h["id"], "key": key, "award": award, "shots": h["shots"],
                                  "shots_to_complete": d["house_shots_to_complete"], "hurry_up": bool(h.get("hurry_up")), "timer_s": h["timer_s"],
                                  "confidence": {"timer": h["timer_conf"], "award": h["award"]["conf"]}},

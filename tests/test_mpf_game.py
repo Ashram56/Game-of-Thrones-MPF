@@ -92,6 +92,20 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(1, self.machine.auditor.current_audits["events"]["game_started"])
         self.assertEqual(1, self.machine.auditor.current_audits["switches"]["s_throne"])
 
+    def _complete_running_house(self):
+        running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house"
+                   and m.config["mode_settings"]["id"] != 7][0]
+        key = running.config["mode_settings"]["key"]
+        if key == "stark":
+            seq = ["s_left_ramp_exit"] * 3 + ["s_left_loop"]
+        elif key == "martell":
+            seq = ["s_left_loop"] * 3 + ["s_left_ramp_exit"]
+        else:
+            seq = [running.config["mode_settings"]["shots"][0]] * 3
+        for sw in seq:
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(0.2)
+
     def _start_game(self):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)
@@ -104,10 +118,7 @@ class TestGotGame(MpfGameTestCase):
         for house in range(4):
             self.hit_and_release_switch("s_throne")      # throne starts the next house
             self.advance_time_and_run(0.5)
-            running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house" and m.config["mode_settings"]["id"] != 7][0]
-            for _ in range(3):
-                self.hit_and_release_switch(running.config["mode_settings"]["shots"][0])
-                self.advance_time_and_run(0.2)
+            self._complete_running_house()
             self.advance_time_and_run(0.5)
         self.assertIn("hand_of_the_king", self.machine.game.player.got_progression.ready)
         self.hit_and_release_switch("s_left_ramp_exit")        # do_left_ramp_exit_work starts Hand (docs/06, H)
@@ -297,9 +308,43 @@ class TestGotGame(MpfGameTestCase):
         for house in range(3):
             self.hit_and_release_switch("s_throne")
             self.advance_time_and_run(0.5)
-            running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house" and m.config["mode_settings"]["id"] != 7][0]
-            for _ in range(3):
-                self.hit_and_release_switch(running.config["mode_settings"]["shots"][0])
-                self.advance_time_and_run(0.2)
+            self._complete_running_house()
             self.advance_time_and_run(0.5)
         self.assertEqual([1], events)
+
+    def _start_house(self, key):
+        self._start_game()
+        self.post_event("start_mode_" + key)
+        self.advance_time_and_run(0.3)
+        self.assertTrue(self.machine.modes[key].active)
+
+    def test_stark_needs_three_ramps_then_an_orbit(self):
+        self._start_house("stark")
+        self._hit("s_left_loop")                              # orbit before the kill list is done: nothing
+        self.assertTrue(self.machine.modes["stark"].active)
+        self._hit("s_right_ramp_exit", 2)
+        self._hit("s_left_loop")
+        self.assertTrue(self.machine.modes["stark"].active)
+        self._hit("s_left_ramp_exit")                          # 3rd ramp shot
+        before = self.machine.game.player.score
+        self._hit("s_right_loop")                              # payoff
+        self.assertFalse(self.machine.modes["stark"].active)
+        self.assertIn(1, self.machine.game.player.got_progression.complete)
+        self.assertGreater(self.machine.game.player.score - before, 500000 + 3 * 375000 - 1)   # bumped value (ROM award)
+
+    def test_martell_orbits_then_ramp(self):
+        self._start_house("martell")
+        self._hit("s_left_ramp_exit")                          # ramp too early: nothing
+        self.assertTrue(self.machine.modes["martell"].active)
+        self._hit("s_left_loop", 3)
+        self._hit("s_right_ramp_exit")
+        self.assertFalse(self.machine.modes["martell"].active)
+        self.assertIn(6, self.machine.game.player.got_progression.complete)
+
+    def test_martell_orbit_window(self):
+        self._start_house("martell")
+        self._hit("s_left_loop")
+        self.advance_time_and_run(11)                          # window missed: the count starts again
+        self._hit("s_right_loop", 2)
+        self._hit("s_left_ramp_exit")
+        self.assertTrue(self.machine.modes["martell"].active)
