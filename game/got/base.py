@@ -3,7 +3,7 @@ import time
 
 from mpf.core.mode import Mode
 
-from got import state
+from got import powers, state
 from got.rules_core import Progression, load_rules
 
 
@@ -26,6 +26,12 @@ class GotBase(Mode):
         for sw in pr["castle_standups"]:
             self.add_mode_event_handler(sw + "_active", self._standup, sw=sw)
         # Wall: advances counter, lit at min(11, 6 + 5 x advances awarded) (docs/06, H); starts from the elevator kick
+        # House choice (rulesheet): on the first ball the flippers cycle the houses until the ball leaves the shooter lane.
+        # The house id is the ROM's (0 Targaryen .. 6 Martell); casual mode is not modelled (Stark is the default).
+        self.add_mode_event_handler("s_l_flipper_button_active", self._choose, step=-1)
+        self.add_mode_event_handler("s_r_flipper_button_active", self._choose, step=1)
+        self.add_mode_event_handler("s_shooter_lane_inactive", self._house_confirmed)
+        self.add_mode_event_handler(powers.ACTION_SWITCH + "_active", self._action)
         self._bank_hit = set()
         for sw in pr["wall_bank_switches"]:
             self.add_mode_event_handler(sw + "_active", self._bank_switch, sw=sw)
@@ -145,3 +151,57 @@ class GotBase(Mode):
                 and not self._multiball_running() and self.machine.game and self.machine.game.balls_in_play:
             self._madness_day = day
             self.machine.events.post("start_mode_midnight_madness")
+
+    # --- House choice and powers
+    def _choosing(self):
+        p = self.player
+        return not p.got_house_confirmed and self.machine.game.player.ball == 1
+
+    def _choose(self, step, **kwargs):
+        if not self._choosing():
+            return
+        p = self.player
+        p.got_house_index = (int(p.got_house_index or 1) + step) % len(powers.HOUSES)     # default Stark (1)
+        p.got_house_picked = 1
+        self.machine.events.post("got_house_chosen", house=powers.HOUSES[p.got_house_index])
+
+    def _house_confirmed(self, **kwargs):
+        p = self.player
+        if p.got_house_confirmed or self.machine.game.player.ball != 1:
+            return
+        p.got_house_confirmed = 1
+        idx = int(p.got_house_index) if p.got_house_picked else 1
+        p.got_house_index = idx
+        p.got_house = powers.HOUSES[idx]
+        prog = self._progression()
+        if idx in (0, 4):                              # Targaryen / Greyjoy start with their house complete
+            self.machine.events.post("got_house_complete", house_id=idx, key=p.got_house)
+        if p.got_house == "baratheon":
+            p.got_wall_advances += powers.BARATHEON_WALL_ADVANCES
+        self.machine.events.post("got_house_confirmed", house=p.got_house)
+
+    def _action(self, **kwargs):
+        """Action button: once per ball (rulesheet)."""
+        p = self.player
+        house = p.got_house
+        if not house or p.got_action_used_ball == self.machine.game.player.ball:
+            return
+        if house == "stark":
+            for m in self.machine.modes:
+                cfg = m.config.get("mode_settings", {})
+                if m.active and cfg.get("kind") == "house" and cfg["id"] != 7:
+                    p.got_action_used_ball = self.machine.game.player.ball
+                    p.score += powers.DIREWOLF_AWARD
+                    self.machine.events.post("got_house_complete", house_id=cfg["id"], key=cfg["key"])
+                    m.stop()
+                    return
+        elif house == "targaryen":
+            p.got_action_used_ball = self.machine.game.player.ball
+            for t in self.machine.timers.values():
+                if t.running:
+                    t.pause()
+                    self.delay.add(powers.FREEZE_S * 1000, t.start, "unfreeze_" + t.name)
+        elif house == "martell" and self._multiball_running():
+            p.got_action_used_ball = self.machine.game.player.ball
+            self.machine.playfield.add_ball(1)
+            self.machine.events.post("got_add_a_ball")

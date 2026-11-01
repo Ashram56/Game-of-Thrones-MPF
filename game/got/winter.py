@@ -7,7 +7,7 @@ Which switches are the lit shots is PROVISIONAL (docs/06: the shot-to-switch map
 """
 from mpf.core.mode import Mode
 
-from got import state
+from got import powers, state
 from got.rules_core import Award
 
 
@@ -19,6 +19,8 @@ class WinterMode(Mode):
         if self.player.got_winter_award:               # the award grows by BumpAward per completion, kept per player
             self._award.value = self.player.got_winter_award
         self._hurry = False
+        if self.player.got_house == "stark" and not self.player.got_winter_award:        # Stark persistent (rulesheet)
+            self._award.value += powers.STARK_WINTER_BONUS
         for sw in cfg["shots"]:
             self.add_mode_event_handler(sw + "_active", self._shot)
         self.add_mode_event_handler("timer_winter_is_coming_timer_complete", self._timeout)

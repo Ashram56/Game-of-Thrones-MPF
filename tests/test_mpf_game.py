@@ -509,3 +509,56 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual("horde", mb._phase)                    # 5 collected: Super paid, back to Horde
         self.assertGreaterEqual(player.score - before, 3000000)
         self.assertEqual(0, player.got_winter_super)
+
+    def test_house_choice_cycles_with_flippers_and_baratheon_advances(self):
+        self._start_game()
+        player = self.machine.game.player
+        self.hit_and_release_switch("s_r_flipper_button")      # Stark -> Baratheon
+        self.advance_time_and_run(0.1)
+        self.assertEqual(2, player.got_house_index)
+        self.hit_and_release_switch("s_shooter_lane")          # (re)seat then release: the ball leaves the lane
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertEqual("baratheon", player.got_house)
+        self.assertEqual(2, player.got_wall_advances)
+        self.hit_and_release_switch("s_r_flipper_button")      # later flipper hits no longer change the house
+        self.assertEqual("baratheon", player.got_house)
+
+    def test_targaryen_starts_with_house_complete(self):
+        self._start_game()
+        player = self.machine.game.player
+        self.hit_and_release_switch("s_l_flipper_button")      # Stark -> Targaryen (wraps from 1 to 0)
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertEqual("targaryen", player.got_house)
+        self.assertIn(0, player.got_progression.complete)
+
+    def test_stark_direwolf_completes_current_house_once_per_ball(self):
+        self._start_game()
+        player = self.machine.game.player
+        self.release_switch_and_run("s_shooter_lane", 0.5)     # default Stark
+        self.assertEqual("stark", player.got_house)
+        self.post_event("start_mode_tyrell")
+        self.advance_time_and_run(0.3)
+        before = player.score
+        self.hit_and_release_switch("s_lockdown")
+        self.advance_time_and_run(0.3)
+        self.assertEqual(5000000, player.score - before)
+        self.assertIn(5, player.got_progression.complete)
+        self.assertFalse(self.machine.modes["tyrell"].active)
+        self.post_event("start_mode_lannister")
+        self.advance_time_and_run(0.3)
+        self.hit_and_release_switch("s_lockdown")              # second press on the same ball: nothing
+        self.advance_time_and_run(0.3)
+        self.assertTrue(self.machine.modes["lannister"].active)
+
+    def test_targaryen_action_freezes_timers_15s(self):
+        self._start_game()
+        player = self.machine.game.player
+        self.hit_and_release_switch("s_l_flipper_button")
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.post_event("start_mode_greyjoy")
+        self.advance_time_and_run(0.3)
+        self.hit_and_release_switch("s_lockdown")
+        self.advance_time_and_run(10)
+        self.assertTrue(self.machine.modes["greyjoy"].active)  # the 15 s Greyjoy timer is frozen
+        self.advance_time_and_run(30)
+        self.assertFalse(self.machine.modes["greyjoy"].active)  # it runs again after the freeze
