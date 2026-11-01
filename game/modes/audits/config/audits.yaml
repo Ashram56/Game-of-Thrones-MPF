@@ -1,0 +1,8 @@
+#config_version=6
+# ROM audit counters (data/audits.csv names) counted into MPF's auditor, shown under Event Audits in the service menu.
+mode:
+  start_events: reset_complete
+  stop_events: shutdown
+  priority: 50
+  game_mode: false
+  code: got.audits.RomAudits

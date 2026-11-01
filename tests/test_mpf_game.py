@@ -598,3 +598,28 @@ class TestGotGame(MpfGameTestCase):
         self.hit_switch_and_run("s_elevator_popper", 0.5)
         self.assertFalse(player.got_mystery_lit)
         self.assertLess(player.got_gold, 1500)                 # an affordable award was bought
+
+    def test_rom_audits_are_counted(self):
+        self._start_game()
+        self._hit("s_left_loop", 2)
+        self._hit("s_battering_ram")
+        self._hit("s_l_flipper_button")
+        self.post_event("start_mode_blackwater")
+        self.advance_time_and_run(0.3)
+        audits = self.machine.auditor.current_audits["events"]
+        self.assertEqual(2, audits["au_left_loop"])
+        self.assertEqual(1, audits["au_battering_ram"])
+        self.assertEqual(1, audits["au_blackwater_multiball_started"])
+        self.assertGreaterEqual(audits["au_total_left_flipper"], 1)
+
+    def test_rom_audit_names_exist_in_audits_csv(self):
+        import csv
+        from got import audit_map as am
+        names = {r["name"] for r in csv.DictReader(open(os.path.join(os.path.dirname(__file__), "..", "..", "Game-of-Thrones", "data", "audits.csv")))} \
+            if os.path.exists(os.path.join(os.path.dirname(__file__), "..", "..", "Game-of-Thrones", "data", "audits.csv")) else None
+        if names is None:
+            self.skipTest("Game-of-Thrones data not next to this repo")
+        mapped = set(am.SWITCH_AUDITS) | set(am.EVENT_AUDITS.values()) | set(am.MYSTERY_AUDITS.values()) | set(am.HOUSE_SELECT.values()) \
+            | set(am.BATTLE_START.values()) | set(am.BATTLE_COMPLETE.values()) | set(am.TARGARYEN_START) | set(am.TARGARYEN_COMPLETE) \
+            | set(am.PLAYER_GAMES.values())
+        self.assertEqual(set(), mapped - names)
