@@ -39,7 +39,8 @@ class GotBase(Mode):
     def _progression(self):
         p = self.player
         if not p.got_progression:               # MPF player variables default to 0
-            p.got_progression = Progression(self._rules)
+            p.got_progression = Progression(
+                self._rules, extra_ball_after=int(self.machine.settings.get_setting_value("ad_house_complete_extra_ball")))   # service menu
         return p.got_progression
 
     def _house_complete(self, house_id, **kwargs):

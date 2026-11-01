@@ -288,3 +288,18 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_kickback", 3)
         self.assertEqual(0, self.machine.game.player.got_winter_lit_shots)
         self.assertFalse(self.machine.modes["winter_is_coming"].config and getattr(self.machine.modes["winter_is_coming"], "_hurry", False))
+
+    def test_extra_ball_house_count_follows_setting(self):
+        self.machine.settings.set_setting_value("ad_house_complete_extra_ball", 3)
+        self._start_game()
+        events = []
+        self.machine.events.add_handler("got_light_extra_ball", lambda **kwargs: events.append(1))
+        for house in range(3):
+            self.hit_and_release_switch("s_throne")
+            self.advance_time_and_run(0.5)
+            running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house" and m.config["mode_settings"]["id"] != 7][0]
+            for _ in range(3):
+                self.hit_and_release_switch(running.config["mode_settings"]["shots"][0])
+                self.advance_time_and_run(0.2)
+            self.advance_time_and_run(0.5)
+        self.assertEqual([1], events)
