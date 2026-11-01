@@ -1,0 +1,40 @@
+#config_version=6
+# Headless display test of Choose Your Battle: mpf game . -c smoke_cyb  (three kickback shots light Targaryen, then the throne)
+config:
+  - config.yaml
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 0.1s
+      switch: s_trough_1
+      action: activate
+    - time: 0.1s
+      switch: s_trough_2
+      action: activate
+    - time: 0.1s
+      switch: s_trough_3
+      action: activate
+    - time: 0.1s
+      switch: s_trough_4
+      action: activate
+    - time: 0.1s
+      switch: s_trough_5
+      action: activate
+    - time: 0.1s
+      switch: s_trough_6
+      action: activate
+    - time: 3s
+      switch: s_start_button
+      action: hit
+    - time: 0.7s
+      switch: s_kickback
+      action: hit
+    - time: 0.7s
+      switch: s_kickback
+      action: hit
+    - time: 0.7s
+      switch: s_kickback
+      action: hit
+    - time: 1s
+      switch: s_throne
+      action: hit

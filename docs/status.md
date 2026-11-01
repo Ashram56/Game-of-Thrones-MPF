@@ -96,3 +96,5 @@ With lit houses (tickle or Mystery) the throne opens Choose Your Battle in `Comb
 
 ## Casual mode and a settings fix
 Casual mode (`ad_casual_mode`, default off): the right flipper starts a game in attract (`got.casual.Attract` subclasses MPF's attract), the house choice is skipped, and Choose Your Battle auto-picks its first entry. Fix: earlier code that read service-menu settings through a non-existent `setting_definitions` attribute silently used the defaults (Special award/limit, video-mode difficulty and permission); it now reads `settings._settings`, with a test.
+
+Choose Your Battle slide (`slides/cyb.tscn`, `-c smoke_cyb`) checked on Xvfb: shows the highlighted entry (TARGARYEN) after three kickback shots and the throne.

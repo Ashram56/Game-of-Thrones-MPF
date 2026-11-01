@@ -36,3 +36,11 @@ slide_player:
   got_video_mode_finished:
     videomode:
       action: remove
+  got_cyb_menu:
+    cyb:
+      priority: 55
+      tokens:
+        label: "{label}"
+  got_cyb_done:
+    cyb:
+      action: remove
