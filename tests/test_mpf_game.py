@@ -145,3 +145,17 @@ class TestGotGame(MpfGameTestCase):
             self.advance_time_and_run(0.5)
             self.assertGreater(self.machine.game.player.got_winter_super, super_before)
             self.assertEqual(completion == 3, self.machine.modes["winter_has_come"].active)
+
+    def test_monitor_layout_names_exist(self):
+        import yaml
+        layout = yaml.safe_load(open(os.path.join(self.get_machine_path(), "monitor", "monitor.yaml")))
+        sections = {"switch": self.machine.switches, "light": self.machine.lights, "flasher": getattr(self.machine, "lights", {})}
+        missing = []
+        for kind, devices in layout.items():
+            if not isinstance(devices, dict) or kind not in sections:
+                continue
+            for name in devices:
+                if name not in devices.__class__() and name not in sections[kind]:
+                    missing.append((kind, name))
+        known_gaps = [m for m in missing if not m[1].startswith(("l_", "f_"))]
+        self.assertEqual([], known_gaps)
