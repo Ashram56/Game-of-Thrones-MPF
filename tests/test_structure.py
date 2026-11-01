@@ -163,7 +163,7 @@ def test_progression_wizard_path():
     p.house_complete(4)
     p.house_complete(5)
     assert p.house_complete(6) == ["ready_iron_throne"]
-    assert p.house_complete(7) == ["ready_winter_has_come"]
+    assert p.house_complete(7) == []      # the Winter link is in got.winter (4th hurry-up completion)
 
 
 def test_extra_ball_light_at_adjustment():

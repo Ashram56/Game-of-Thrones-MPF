@@ -104,7 +104,7 @@ class TestGotGame(MpfGameTestCase):
         for house in range(4):
             self.hit_and_release_switch("s_throne")      # throne starts the next house
             self.advance_time_and_run(0.5)
-            running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house"][0]
+            running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house" and m.config["mode_settings"]["id"] != 7][0]
             for _ in range(3):
                 self.hit_and_release_switch(running.config["mode_settings"]["shots"][0])
                 self.advance_time_and_run(0.2)
@@ -125,3 +125,23 @@ class TestGotGame(MpfGameTestCase):
         gain = self.machine.game.player.score - s0
         self.assertGreater(gain, 0)
         self.assertLess(gain, 8000000 * 0.6)       # decayed by about half
+
+    def test_winter_chain(self):
+        self._start_game()
+        self.hit_and_release_switch("s_throne")           # a house and Winter Is Coming start together
+        self.advance_time_and_run(0.5)
+        self.assertTrue(self.machine.modes["winter_is_coming"].active)
+        for completion in range(4):
+            if not self.machine.modes["winter_is_coming"].active:
+                self.post_event("start_mode_winter_is_coming")
+                self.advance_time_and_run(0.2)
+            sw = "s_left_loop"
+            for _ in range(3):                             # 3 lit shots start the hurry-up
+                self.hit_and_release_switch(sw)
+                self.advance_time_and_run(0.1)
+            self.advance_time_and_run(4)
+            super_before = self.machine.game.player.got_winter_super
+            self.hit_and_release_switch(sw)                # hurry-up shot
+            self.advance_time_and_run(0.5)
+            self.assertGreater(self.machine.game.player.got_winter_super, super_before)
+            self.assertEqual(completion == 3, self.machine.modes["winter_has_come"].active)

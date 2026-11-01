@@ -18,7 +18,8 @@ Done
 - Tests: 11 pass without MPF (`tests/run_without_pytest.py`; pytest not installed here either).
 - Service menu: MPF's built-in service mode on the four service buttons; the ROM's 159 adjustments appear in its settings menu and drive balls per game, ball save time and tilt warnings (tests). Audits: MPF's auditor (switches, shots, score, key events) shows in the menu; the ROM's 207 own audit counters are not mapped yet.
 - Hurry-up (Targaryen): award decays linearly over the mode timer (PROVISIONAL: the ROM's decay amounts are not recovered). Tested.
-- Multiball triggers (PROVISIONAL, trigger in the ROM not recovered): a ready wizard multiball (Hand after 4 houses, Iron Throne after all, Winter Has Come after Winter Is Coming) starts on the next throne hit; three locked balls start Blackwater. Tested for Hand of the King.
+- Winter Is Coming chain (from Game-of-Thrones docs/06, H from code, not seen live): offered with a house while completed+running <= 6; 3 accepted lit shots start the hurry-up; each completion adds its decayed award to the Winter super jackpot (`got_winter_super`); the 4th completion starts Winter Has Come (`got/winter.py`, tested). Which switches are Winter's lit shots is still a placeholder.
+- Multiball triggers (PROVISIONAL, trigger in the ROM not recovered): a ready wizard multiball (Hand after 4 houses, Iron Throne after all houses; ready conditions H, start shot M) starts on the next throne hit; three locked balls start Blackwater. Tested for Hand of the King.
 - Emulator facts (Game-of-Thrones docs/05): the left bumper adds 1,170 per scoring call; n x 1170 counts switch events, not a multiplier. Winter link still unconfirmed.
 
 Open (owner/emulation): exact award growth, shot-to-switch mapping, Winter link, multiball triggers, coil timings,

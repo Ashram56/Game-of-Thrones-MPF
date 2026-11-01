@@ -72,9 +72,6 @@ class Progression:
             if self.houses <= self.complete:
                 self.ready.add("iron_throne")
                 events.append("ready_iron_throne")
-        if house_id == 7:            # Winter Is Coming -> Winter Has Come (M)
-            self.ready.add("winter_has_come")
-            events.append("ready_winter_has_come")
         return events
 
 

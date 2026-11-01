@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_winter_is_coming, ball_ending, tilt
   priority: 300
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.winter.WinterMode
 mode_settings:
   kind: house
   id: 7
@@ -31,6 +31,6 @@ timers:
     end_value: 0
     direction: down
     tick_interval: 1s
-    start_running: true
+    start_running: false
 event_player:
   timer_winter_is_coming_timer_complete: stop_mode_winter_is_coming

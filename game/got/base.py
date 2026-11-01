@@ -23,7 +23,7 @@ class GotBase(Mode):
 
     def _start_next_house(self, **kwargs):
         prog = self._progression()
-        # PROVISIONAL (the ROM's start trigger for the wizard multiballs is not recovered): a multiball that became
+        # PROVISIONAL (Hand 'StartReady' / Iron Throne 'SetReady' are H in docs/06, but their start shot is M): a multiball that became
         # ready starts on the next throne hit, before the next house.
         for key in sorted(prog.ready):
             if key not in prog.started:
@@ -34,10 +34,13 @@ class GotBase(Mode):
         for h in self._rules["houses"]:
             if h["id"] not in prog.complete and not self._house_running():
                 self.machine.events.post("start_mode_" + h["key"])
+                # Winter Is Coming is offered with it when completed + running houses <= 6 (docs/06, SelectModesToStart; H)
+                if len(prog.complete & prog.houses) + 1 <= 6 and not self.machine.modes["winter_has_come"].active:
+                    self.machine.events.post("start_mode_winter_is_coming")
                 return
 
     def _house_running(self):
-        return any(m.active for m in self.machine.modes if m.config.get("mode_settings", {}).get("kind") == "house")
+        return any(m.active for m in self.machine.modes if m.config.get("mode_settings", {}).get("kind") == "house" and m.config["mode_settings"]["id"] != 7)
 
     def _lock_entered(self, **kwargs):
         # PROVISIONAL: three balls locked (S lock_1..3) start Blackwater (03 s3: locks 1-3 hold balls for Blackwater).
