@@ -119,14 +119,19 @@ class Mystery:
             return False
         self.player.got_mystery_lit = 0
         self.mode.delay.add(TIMEOUT_S * 1000, self.confirm, name="mystery_timeout")
-        self.machine.events.post("got_mystery_menu", cursor=2, keep=KEEP_GOLD,
-                                 middle=(self.menu["slots"][1] or {}).get("name", ""), top=self.menu["slots"][2]["name"])
+        self.machine.events.post("got_mystery_menu", **self._labels())
         return True
+
+    def _labels(self):
+        """Slide text with the cursor marked: slot 2 top, slot 1 middle, slot 0 keep gold."""
+        slots, cur = self.menu["slots"], self.menu["cursor"]
+        names = {2: slots[2]["name"], 1: (slots[1] or {}).get("name", ""), 0: KEEP_GOLD}
+        return {k: ("> " if cur == i else "  ") + names[i] for k, i in (("top", 2), ("middle", 1), ("keep", 0))}
 
     def move(self, step):
         if self.menu:
             self.menu["cursor"] = (self.menu["cursor"] + step) % 3
-            self.machine.events.post("got_mystery_cursor", cursor=self.menu["cursor"])
+            self.machine.events.post("got_mystery_cursor", cursor=self.menu["cursor"], **self._labels())
 
     def confirm(self, **kwargs):
         if not self.menu:

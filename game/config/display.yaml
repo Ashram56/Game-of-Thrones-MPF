@@ -15,6 +15,14 @@ slide_player:
         middle: "{middle}"
         keep: "{keep}"
       expire: 10s
+  got_mystery_cursor:
+    mystery:
+      priority: 50
+      tokens:
+        top: "{top}"
+        middle: "{middle}"
+        keep: "{keep}"
+      expire: 10s
   got_mystery_award:
     mystery:
       action: remove
