@@ -20,6 +20,7 @@ mode_settings:
   - s_left_ramp_exit
   shots_to_complete: 3
   hurry_up: true
+  timer_s: 10
   confidence:
     timer: M
     award: M

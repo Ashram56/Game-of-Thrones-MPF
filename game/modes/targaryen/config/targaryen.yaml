@@ -20,6 +20,7 @@ mode_settings:
   - s_u_p_left_loop
   shots_to_complete: 3
   hurry_up: true
+  timer_s: 20
   confidence:
     timer: M
     award: H

@@ -52,6 +52,7 @@ class Progression:
         self.eb_after = extra_ball_after or 8   # ad_house_complete_extra_ball default 8, range 2-8
         self.complete = set()
         self.ready = set()          # multiball keys that became ready
+        self.started = set()        # ready multiballs already started
         self.extra_ball_lit = False
 
     def house_complete(self, house_id):

@@ -21,6 +21,7 @@ mode_settings:
   - s_3_bank_drop_tgt_btm
   shots_to_complete: 3
   hurry_up: false
+  timer_s: 40
   confidence:
     timer: M
     award: M

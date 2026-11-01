@@ -21,6 +21,7 @@ mode_settings:
   - s_right_loop
   shots_to_complete: 3
   hurry_up: false
+  timer_s: 15
   confidence:
     timer: M
     award: M

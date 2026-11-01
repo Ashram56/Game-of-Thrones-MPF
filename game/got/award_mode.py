@@ -25,6 +25,10 @@ class AwardMode(Mode):
     def _shot(self, **kwargs):
         cfg = self._cfg
         points = self._award.give(global_mult=self.player.got_multiplier or 1)
+        if cfg.get("hurry_up"):
+            # CFG/provisional: the ROM's hurry-up decay amounts are not recovered; linear decay over the mode timer.
+            timer = self.machine.timers[cfg["key"] + "_timer"]
+            points = self._award.hurry_up(timer.ticks, cfg["timer_s"]) * (self.player.got_multiplier or 1)
         self.player.score += points
         self._award.bump()
         setattr(self.player, self._award_key, self._award.value)

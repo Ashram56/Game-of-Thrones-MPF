@@ -175,7 +175,7 @@ def mode_files(rules):
         cfg = {"mode": {"start_events": "start_mode_" + key, "stop_events": "stop_mode_%s, ball_ending, tilt" % key,
                         "priority": 300, "game_mode": True, "code": "got.award_mode.AwardMode"},
                "mode_settings": {"kind": "house", "id": h["id"], "key": key, "award": award, "shots": h["shots"],
-                                 "shots_to_complete": d["house_shots_to_complete"], "hurry_up": bool(h.get("hurry_up")),
+                                 "shots_to_complete": d["house_shots_to_complete"], "hurry_up": bool(h.get("hurry_up")), "timer_s": h["timer_s"],
                                  "confidence": {"timer": h["timer_conf"], "award": h["award"]["conf"]}},
                "timers": {key + "_timer": {"start_value": h["timer_s"], "end_value": 0, "direction": "down",
                                            "tick_interval": "1s", "start_running": True}},

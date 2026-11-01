@@ -91,3 +91,37 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(1)
         self.assertEqual(1, self.machine.auditor.current_audits["events"]["game_started"])
         self.assertEqual(1, self.machine.auditor.current_audits["switches"]["s_throne"])
+
+    def _start_game(self):
+        for i in range(1, 7):
+            self.hit_switch_and_run("s_trough_%d" % i, 0.1)
+        self.advance_time_and_run(3)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+
+    def test_houses_ready_and_start_hand_multiball(self):
+        self._start_game()
+        for house in range(4):
+            self.hit_and_release_switch("s_throne")      # throne starts the next house
+            self.advance_time_and_run(0.5)
+            running = [m for m in self.machine.modes if m.active and m.config.get("mode_settings", {}).get("kind") == "house"][0]
+            for _ in range(3):
+                self.hit_and_release_switch(running.config["mode_settings"]["shots"][0])
+                self.advance_time_and_run(0.2)
+            self.advance_time_and_run(0.5)
+        self.assertIn("hand_of_the_king", self.machine.game.player.got_progression.ready)
+        self.hit_and_release_switch("s_throne")
+        self.advance_time_and_run(1)
+        self.assertTrue(self.machine.modes["hand_of_the_king"].active)
+
+    def test_hurry_up_decays(self):
+        self._start_game()
+        self.hit_and_release_switch("s_throne")
+        self.advance_time_and_run(0.5)
+        self.assertTrue(self.machine.modes["targaryen"].active)
+        s0 = self.machine.game.player.score
+        self.advance_time_and_run(10)
+        self.hit_and_release_switch("s_left_ramp_exit")
+        gain = self.machine.game.player.score - s0
+        self.assertGreater(gain, 0)
+        self.assertLess(gain, 8000000 * 0.6)       # decayed by about half
