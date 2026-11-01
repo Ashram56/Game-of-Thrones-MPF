@@ -63,3 +63,7 @@ Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays t
 
 ## Mystery DMD slide (not yet checked on a display)
 `game/slides/mystery.tscn` shows the top and middle awards and "Keep gold" for 10 s from `got_mystery_menu` (tokens top/middle/keep, `config/display.yaml`); removed on `got_mystery_award`. No cursor highlight yet (event `got_mystery_cursor` carries the position). Needs a Xvfb run with enough gold to open the menu.
+
+## Ram Super Jackpot and Blackwater lock (docs/12, H)
+- Lock: flag 36 (`got_lock_lit`) is cleared at ball start, lit by Mystery "Light Lock" and by the right two-bank completion (only while Blackwater was never played; later relights are M). A ball locks only when lit and no multiball runs: count + 1, gold +75 (+250 during Lannister), +5 Wildfire, flag cleared; the 3rd lock starts Blackwater. The lock switches no longer lock unlit.
+- Ram Super Jackpot (`got_super_lit` 1-3, lit by Mystery): the next ram shot pays V x 6 x level + 10M (x playfield multiplier), V = `got_bw_jackpot` or, when Blackwater is not running, `jackpot_value(wildfire)`. No timeout; reset at ball start. Not wired: pop-award source (M), Blackwater's own in-multiball Super.

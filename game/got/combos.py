@@ -33,6 +33,9 @@ BANK = ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm
 SPINNER_START, SPINNER_STEP, SPINNER_CAP = 2500, 150, 250000
 B_INC = (0, 10000, 25000, 50000, 75000, 100000, 125000, 150000, 175000, 200000)
 B_CAP = (0, 50000, 125000, 250000, 375000, 500000, 625000, 750000, 875000, 1000000)
+TWO_BANK = ("s_right_2_bank_top", "s_right_2_bank_bottom")
+SJ_BASE, SJ_PER_LEVEL, SJ_BONUS = 250000, 6, 10000000
+TWO_BANK_DIFFICULTY = 2               # adjustment 122 default
 LORD_LIMIT = 10                       # adjustment 123 default (10 = unlimited)
 
 
@@ -88,6 +91,13 @@ class Combos(Mode):
         self.add_mode_event_handler("s_right_outlane_active", self._outlane)
         self.add_mode_event_handler("got_light_lord_of_light", self._light_lol)
         self.add_mode_event_handler("got_video_mode_result", self._video_result)
+        # ram Super Jackpot (docs/12) and the lock (flag 36), both reset at ball start (InitializeFirstBall)
+        p.got_super_lit = 0
+        p.got_lock_lit = 0
+        for sw in TWO_BANK:
+            self.add_mode_event_handler(sw + "_active", self._two_bank, sw=sw)
+        self._two_bank_hit = set()
+        self.add_mode_event_handler("mode_blackwater_started", self._bw_played)
 
     # --- Combo X
     def max_level(self):
@@ -153,6 +163,8 @@ class Combos(Mode):
 
     def _ram(self, **kwargs):
         p = self.player
+        if p.got_super_lit:
+            self._super_jackpot()
         if getattr(self, "_wf_running", False):
             self._wildfire_bump(WILDFIRE_RAM_POINTS)
             self.delay.remove("wildfire_end")
@@ -209,3 +221,33 @@ class Combos(Mode):
     # --- video mode: the duel runs in the display; its result pays here
     def _video_result(self, outcome="tie", n=1, level=2, **kwargs):
         self.player.score += video_mode_score(outcome, int(n), int(level))
+
+    # --- ram Super Jackpot: V x 6 x level + 10M, V = Blackwater jackpot (award #8); recomputed from Wildfire when idle
+    def _super_jackpot(self):
+        p = self.player
+        level = int(p.got_super_lit)
+        if not self.machine.modes["blackwater"].active:
+            p.got_bw_jackpot = jackpot_value(int(p.got_wildfire or 0))
+        v = int(p.got_bw_jackpot or SJ_BASE)
+        points = (v * SJ_PER_LEVEL * level + SJ_BONUS) * (p.got_multiplier or 1)
+        p.got_super_lit = 0
+        p.score += points
+        self.machine.events.post("got_ram_super_jackpot", level=level, points=points)
+
+    # --- Light Lock from the right two-bank (two_bank_light_lock): never in a multiball; before Blackwater was ever played it
+    # lights when adjustment 122 <= 2 (default). The bool of later banks is M, so later completions do not relight here.
+    def _two_bank(self, sw, **kwargs):
+        p = self.player
+        self._two_bank_hit.add(sw)
+        if self._two_bank_hit < set(TWO_BANK):
+            return
+        self._two_bank_hit = set()
+        from got import state
+        if state.multiball_running(self.machine) or p.got_lock_lit:
+            return
+        if not p.got_bw_played and TWO_BANK_DIFFICULTY <= 2:
+            p.got_lock_lit = 1
+            self.machine.events.post("got_lock_lit")
+
+    def _bw_played(self, **kwargs):
+        self.player.got_bw_played = int(self.player.got_bw_played or 0) + 1

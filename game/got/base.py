@@ -82,10 +82,16 @@ class GotBase(Mode):
             self._blackwater_lock()
 
     def _blackwater_lock(self):
-        """cblackwater::AwardLock (H): needs the lock lit, no multiball and Iron not startable; when the player's locked count
-        reaches the requirement Blackwater starts. The requirement (3) and the lit-lock logic are M."""
+        """cblackwater::AwardLock / DoAwardLock (docs/12, H): CanWeLockNow needs the lock lit (flag 36), no multiball and Iron
+        not startable. Each lock: count + 1, gold +75 (+250 while Lannister ticks, M), +5 Wildfire, flag 36 cleared (it must
+        be relit); the 3rd lock starts Blackwater."""
         p = self.player
+        if not p.got_lock_lit or self._multiball_running():
+            return
+        p.got_lock_lit = 0
         p.got_locked_balls += 1
+        p.got_gold += 250 if self.machine.modes["lannister"].active else 75
+        self.machine.events.post("got_wildfire_bump", n=5)
         if p.got_locked_balls >= 3:
             p.got_locked_balls = 0
             self.machine.events.post("start_mode_blackwater")

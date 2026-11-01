@@ -305,9 +305,37 @@ class TestGotGame(MpfGameTestCase):
 
     def test_blackwater_starts_when_third_ball_locked(self):
         self._start_game()
-        for sw in ("s_lock_1", "s_lock_2", "s_lock_3"):
-            self.hit_switch_and_run(sw, 1)
+        player = self.machine.game.player
+        self.hit_switch_and_run("s_lock_1", 1)                 # lock not lit: the ball is kicked on, nothing locks
+        self.assertEqual(0, player.got_locked_balls)
+        self.hit_and_release_switch("s_lock_1")
+        for i, sw in enumerate(("s_lock_1", "s_lock_2", "s_lock_3")):
+            player.got_lock_lit = 1                            # Mystery / two-bank relights it before each lock (flag 36)
+            gold = player.got_gold
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(1)
+            if i < 2:
+                self.assertEqual(gold + 75, player.got_gold)
+            self.assertEqual(0, player.got_lock_lit)
         self.assertTrue(self.machine.modes["blackwater"].active)
+        self.assertGreaterEqual(player.got_wildfire, 15)
+
+    def test_two_bank_lights_lock_and_ram_super_jackpot(self):
+        self._start_game()
+        player = self.machine.game.player
+        self._hit("s_right_2_bank_top")
+        self.assertFalse(player.got_lock_lit)
+        self._hit("s_right_2_bank_bottom")
+        self.assertTrue(player.got_lock_lit)                   # never played Blackwater, difficulty 2
+        from got.combos import jackpot_value
+        player.got_wildfire = 10
+        player.got_super_lit = 2
+        before = player.score
+        self._hit("s_battering_ram")
+        self.assertEqual(0, player.got_super_lit)
+        value = jackpot_value(10) * 6 * 2 + 10000000
+        self.assertGreaterEqual(player.score - before, value)
+        self.assertLess(player.score - before, value + 100000)   # plus the ram switch's own score
 
     def test_winter_lit_shots_ignored_while_house_runs(self):
         self._start_game()
