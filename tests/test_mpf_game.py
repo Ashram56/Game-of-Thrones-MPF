@@ -481,6 +481,28 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_battering_ram")                             # +10 while running
         self.assertEqual(15, player.got_wildfire)
 
+    def test_spinner_lord_of_light_video_mode(self):
+        from got.combos import video_mode_score
+        self.assertEqual(20000000 + 5000000 * 2, video_mode_score("win", 1, 2) // 1)
+        self.assertEqual(3 * (2500000 + 3000000), video_mode_score("tie", 3, 2))
+        self.assertEqual(1000000, video_mode_score("loss", 1, 2))
+        self._start_game()
+        player = self.machine.game.player
+        combos = self.machine.modes["combos"]
+        before = player.score
+        self._hit("s_left_spinner")
+        self.assertGreaterEqual(player.score - before, 2500)
+        self._hit("s_3_bank_drop_tgt_top")
+        self.assertEqual(2650, player.got_spinner_v)
+        for sw in ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm"):
+            self._hit(sw)
+        self.assertEqual(1, combos._banks)
+        self.assertTrue(combos._lol)                        # bank completion lights Lord of Light
+        self._hit("s_left_outlane")
+        self.assertFalse(combos._lol)
+        self.post_event_with_params("got_video_mode_result", outcome="win", n=1, level=2)
+        self.advance_time_and_run(0.1)
+
     def _start_mb(self, key):
         self._start_game()
         self.post_event("start_mode_" + key)

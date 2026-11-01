@@ -29,6 +29,22 @@ def load_swords():
     raise FileNotFoundError("swords.csv")
 
 
+BANK = ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm")
+SPINNER_START, SPINNER_STEP, SPINNER_CAP = 2500, 150, 250000
+B_INC = (0, 10000, 25000, 50000, 75000, 100000, 125000, 150000, 175000, 200000)
+B_CAP = (0, 50000, 125000, 250000, 375000, 500000, 625000, 750000, 875000, 1000000)
+LORD_LIMIT = 10                       # adjustment 123 default (10 = unlimited)
+
+
+def video_mode_score(outcome, n, level):
+    """cvideomode scores (docs/10 section 6): win / tie / loss, times the Mystery multiplier n (1-3)."""
+    if outcome == "win":
+        return (5000000 * level + 20000000) * n
+    if outcome == "tie":
+        return (1500000 * level + 2500000) * n
+    return 500000 * level * n
+
+
 def jackpot_value(n):
     """cblackwater::CalcJackpotValue(n): 250,000 + sum(55,000 - 10 i^2), each term floored at 1,000 (docs/10 section 3)."""
     total = 250000
@@ -54,6 +70,23 @@ class Combos(Mode):
         self.add_mode_event_handler("got_light_swords", self._light_sword)
         self.add_mode_event_handler(RAM + "_active", self._ram)
         self.add_mode_event_handler("got_wildfire_bump", self._wildfire_bump)
+        # spinner (docs/10 section 4) and Lord of Light (section 5)
+        self._lol = False
+        self._b = 0
+        self._level = 0
+        self._banks = 0
+        if p.got_spinner_v is None or not p.got_spinner_v:
+            p.got_spinner_v = SPINNER_START
+        for sw in BANK:
+            self.add_mode_event_handler(sw + "_active", self._spinner_bump)
+        self.add_mode_event_handler("s_1_bank_drop_active", self._spinner_bump)
+        self.add_mode_event_handler("got_pfx", self._spinner_bump)
+        self.add_mode_event_handler("got_bank_complete", self._bank_complete)
+        self.add_mode_event_handler("s_left_spinner_active", self._spin)
+        self.add_mode_event_handler("s_left_outlane_active", self._outlane)
+        self.add_mode_event_handler("s_right_outlane_active", self._outlane)
+        self.add_mode_event_handler("got_light_lord_of_light", self._light_lol)
+        self.add_mode_event_handler("got_video_mode_result", self._video_result)
 
     # --- Combo X
     def max_level(self):
@@ -128,3 +161,44 @@ class Combos(Mode):
     def _wf_end(self, **kwargs):
         self._wf_running = False
         self.machine.events.post("got_wildfire_end")
+
+    # --- spinner (cspinner): per spin V[p] + B, V rises 150 per bump, B by level (reset each ball)
+    def spin_value(self):
+        return int(self.player.got_spinner_v) + self._b
+
+    def _spin(self, **kwargs):
+        self.player.score += self.spin_value() * (self.player.got_multiplier or 1)
+
+    def _spinner_bump(self, **kwargs):
+        p = self.player
+        p.got_spinner_v = min(SPINNER_CAP, int(p.got_spinner_v) + SPINNER_STEP)
+        self._b = min(B_CAP[self._level], self._b + B_INC[self._level])
+
+    def _bank_complete(self, **kwargs):
+        """BumpLevel on the 1st and every 3rd completion (1, 3, 6, 9...) when completed houses > level (max 9)."""
+        self._banks += 1
+        if self._banks == 1 or self._banks % 3 == 0:
+            prog = self.player.got_progression
+            done = len(prog.complete) if prog else 0
+            if done > self._level and self._level < 9:
+                self._level += 1
+            self._light_lol()
+
+    # --- Lord of Light: both outlanes save one ball until used or end of ball
+    def _light_lol(self, **kwargs):
+        p = self.player
+        if self._lol or int(p.got_lol_count or 0) >= LORD_LIMIT:
+            return
+        self._lol = True
+        p.got_lol_count = int(p.got_lol_count or 0) + 1
+        self.machine.events.post("got_lord_of_light_lit")
+
+    def _outlane(self, **kwargs):
+        if self._lol:
+            self._lol = False
+            self.machine.playfield.add_ball(1)
+            self.machine.events.post("got_lord_of_light_save")
+
+    # --- video mode: the duel runs in the display; its result pays here
+    def _video_result(self, outcome="tie", n=1, level=2, **kwargs):
+        self.player.score += video_mode_score(outcome, int(n), int(level))

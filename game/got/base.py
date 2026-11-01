@@ -121,6 +121,7 @@ class GotBase(Mode):
         self._bank_hit.add(sw)
         if self._bank_hit >= set(self._rules["progression"]["wall_bank_switches"]):
             self._bank_hit = set()
+            self.machine.events.post("got_bank_complete")
             self._wall_advance()
 
     def _wall_advance(self, **kwargs):

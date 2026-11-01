@@ -46,3 +46,8 @@ Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays t
 - Swords: lit by each completed house, Mystery/pop "Light Swords"; collected at the right ramp exit, weighted pick from data/swords.csv (copied by gen_config). The Mystery table (rulesheet) has no sword entry, so only the pop award and houses light swords.
 - Wildfire: counter bumped through event `got_wildfire_bump` (pop +5); ram hit while running +10 and +2 s, 20 s timer, lit by pop "Light Wild Fire". `jackpot_value(n)` implements CalcJackpotValue but is not yet wired to the Blackwater award #8.
 - Pending: spinner, Lord of Light, video mode (docs/10 part 2).
+
+## Spinner, Lord of Light, video mode (docs/10 part 2, H) - in got/combos.py
+- Spinner: per spin V[p] + B (V starts 2,500, +150 per left-bank/single-drop/PFx bump, cap 250k; B by level table, reset per ball); level rises on the 1st and every 3rd left-bank completion when completed houses > level. The usual 970 per switch stays in scoring.yaml. Baratheon's own spinner logic is unchanged.
+- Lord of Light: lit by bank completion rise (M gating), Mystery/pop "Light Lord of Light"; either outlane then adds a ball once (limit 10 per player, adjustment 123). Not modelled: timer-38 ability, adjustment 124.
+- Video mode: only the scoring is in (`video_mode_score`, event `got_video_mode_result` outcome/n/level). The duel itself (20 s, AI, flipper buttons) and the Mystery "Video Mode nX" awards are not built; needs a Godot scene.

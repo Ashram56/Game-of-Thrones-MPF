@@ -153,6 +153,8 @@ class Extras(Mode):
             self.machine.events.post("got_wildfire_bump", n=5)
         elif name == "Light Wild Fire":
             p.got_wildfire_lit = 1
+        elif name == "Light Lord of Light":
+            self.machine.events.post("got_light_lord_of_light")
         elif name == "Light Swords":
             self.machine.events.post("got_light_swords")
         elif name == "Light Mystery":
