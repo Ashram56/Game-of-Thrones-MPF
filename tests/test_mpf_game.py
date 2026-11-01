@@ -650,8 +650,10 @@ class TestGotGame(MpfGameTestCase):
         self.hit_and_release_switch("s_throne")                # lit houses start first
         self.advance_time_and_run(0.5)
         self.assertTrue(self.machine.modes["lannister"].active)
+        gold = player.got_gold
         self.post_event_with_params("got_house_complete", house_id=3, key="lannister")
         self.advance_time_and_run(0.1)
+        self.assertEqual(gold + 200, player.got_gold)
         self.assertEqual(4, player.got_button_ability)
         self.assertEqual(8, player.got_ability_uses)
         self.assertEqual("", player.got_lit_houses or "")

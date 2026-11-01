@@ -325,6 +325,8 @@ class Combos(Mode):
 
     def _ability_on_complete(self, key=None, **kwargs):
         ab = ABILITY_ON_COMPLETE.get(key)
+        if key == "lannister":                                 # docs/14: completing Lannister gives 200 gold (400 with the ability)
+            self.player.got_gold += 400 if int(self.player.got_button_ability or 0) == 4 else 200
         if ab:
             p = self.player
             p.got_button_ability = ab

@@ -88,4 +88,5 @@ Mystery "Video Mode nX" starts `modes/videomode`: 20 s, either flipper button hi
 - Blackwater upper playfield: standup, left/right standup, centre standup, upper rollover = Super Jackpot (V x 6 + 10M; upper multiplier fixed at 1: M); steps 0-2 pay jackpots.
 - Video duel: player health 3, AI 3-7 by level, damage 1 (heavy 2: 30% share is CFG).
 - First-ball semantics: lock flag, ram SJ per player once (already so). Hand ready persists (the progression object is per player).
-- Not done: Choose Your Battle / PASS / two stacked houses (our throne-starts-house departure stays), casual mode (adj 108), Greyjoy start-of-ball award, Lannister +200/400 gold on completion, audits_meaning.csv (the 137 uncounted audits), Special extra-ball payout.
+- Not done: Choose Your Battle / PASS / two stacked houses (our throne-starts-house departure stays), casual mode (adj 108), Greyjoy start-of-ball award, audits_meaning.csv (the 137 uncounted audits), Special extra-ball payout.
+- Lannister completion pays 200 gold (400 if the Lannister ability was already set).
