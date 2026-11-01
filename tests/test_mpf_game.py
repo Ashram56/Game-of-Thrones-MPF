@@ -583,7 +583,7 @@ class TestGotGame(MpfGameTestCase):
         player = self.machine.game.player
         self._hit("s_left_top_lane")
         self._hit("s_left_top_lane")
-        self.assertEqual(0, player.got_bonus_x)
+        self.assertEqual(1, player.got_bonus_x)
         self._hit("s_right_top_lane")
         self.assertEqual(2, player.got_bonus_x)
 
@@ -623,3 +623,55 @@ class TestGotGame(MpfGameTestCase):
             | set(am.BATTLE_START.values()) | set(am.BATTLE_COMPLETE.values()) | set(am.TARGARYEN_START) | set(am.TARGARYEN_COMPLETE) \
             | set(am.PLAYER_GAMES.values())
         self.assertEqual(set(), mapped - names)
+
+    def test_end_of_ball_bonus_formula(self):
+        self._start_game()
+        player = self.machine.game.player
+        self._hit("s_left_loop", 4)                              # 4 playfield switch events (every_sw_work)
+        extras = self.machine.modes["extras"]
+        self.assertEqual(125000 + 4 * 3330, extras.bonus_total())
+        player.got_gold = 1000
+        player.got_bonus_x = 3
+        self.assertEqual((125000 + 4 * 3330 + 300 * 1000) * 3, extras.bonus_total())
+        before = player.score
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.advance_time_and_run(12)                            # ball save over
+        self.drain_all_balls()
+        self.advance_time_and_run(5)
+        self.assertGreaterEqual(player.score - before, (125000 + 4 * 3330 + 300000) * 3)
+
+    def test_hold_bonus_keeps_value_and_x_to_next_ball(self):
+        self._start_game()
+        player = self.machine.game.player
+        self._hit("s_left_loop", 2)
+        player.got_bonus_x = 4
+        player.got_hold_bonus = 1
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.advance_time_and_run(12)
+        self.drain_all_balls()
+        self.advance_time_and_run(10)
+        self.assertEqual(2, player.ball)                         # the next ball started
+        self.assertEqual(4, player.got_bonus_x)
+        self.assertEqual(2, player.got_bonus_hits)
+
+    def test_pop_reels_pair_completes_and_never_repeats_last_award(self):
+        from got import pops
+        tape, names = pops.load_tape()
+        self.assertEqual(112, len(tape))
+        reels = pops.Reels(tape)
+        awards = []
+        for i in range(60):
+            win = reels.hit((30, 32, 31)[i % 3], lambda x: x != reels.last)
+            if win is not None:
+                awards.append(win)
+        self.assertGreater(len(awards), 3)
+        self.assertTrue(all(a != b for a, b in zip(awards, awards[1:])))
+
+    def test_pop_award_is_paid_in_game(self):
+        self._start_game()
+        player = self.machine.game.player
+        got = []
+        self.machine.events.add_handler("got_pop_award", lambda **kwargs: got.append(kwargs["award"]))
+        for i in range(40):
+            self._hit(("s_left_pop_bumper", "s_bottom_pop_bumper", "s_right_pop_bumper")[i % 3])
+        self.assertTrue(got)

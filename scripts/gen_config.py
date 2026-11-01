@@ -262,9 +262,11 @@ def apply_scoring(rules, data):
 def switch_scores(data, rules):
     """Fixed switch scores: data/switch_events.csv base_points (docs/08, H) over the 03 s4 base scoring; pops 1,170 (traced live)."""
     pts = {}
+    switch_scores.bonus_hits = []                       # every_sw_work callers: each adds a switch hit to the end-of-ball bonus (docs/09)
     for r in rows(data, "switch_events.csv"):
         if r["kind"] == "node" and r["base_points"] and good(r["name"]):
             pts["s_" + r["name"]] = int(r["base_points"])
+            switch_scores.bonus_hits.append("s_" + r["name"])
     for sw in ("s_left_pop_bumper", "s_right_pop_bumper", "s_bottom_pop_bumper"):
         pts[sw] = 1170
     for sw, v in rules["defaults"]["base_scoring"].items():
@@ -282,6 +284,10 @@ def build(data):
         files["config/rom/%s.yaml" % name] = dump(fn(data))
     sc = {"mode": {"start_events": "ball_starting", "stop_events": "ball_ending", "priority": 90, "game_mode": True}}
     sc.update(switch_scores(data, rules))
+    sc["mode_settings"] = {"bonus_hit_switches": sorted(switch_scores.bonus_hits)}
+    files["config/rom/pop_awards.json"] = json.dumps(
+        [{"id": int(r["symbol_id"]), "award": r["award"], "tape": int(r["tape_count_of_112"])} for r in rows(data, "pop_awards.csv")],
+        indent=1) + "\n"                                   # Pict-O-Pops awards and tape frequency (docs/09)
     files["modes/scoring/config/scoring.yaml"] = dump(sc)       # variable_player is only valid inside a game mode
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"

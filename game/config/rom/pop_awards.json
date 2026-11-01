@@ -1,0 +1,92 @@
+[
+ {
+  "id": 0,
+  "award": "Big Points",
+  "tape": 10
+ },
+ {
+  "id": 1,
+  "award": "Light Wild Fire",
+  "tape": 4
+ },
+ {
+  "id": 2,
+  "award": "Light Lock",
+  "tape": 3
+ },
+ {
+  "id": 3,
+  "award": "Light Mystery",
+  "tape": 3
+ },
+ {
+  "id": 4,
+  "award": "+5 Wild Fire",
+  "tape": 9
+ },
+ {
+  "id": 5,
+  "award": "Bump Wall Jackpot",
+  "tape": 9
+ },
+ {
+  "id": 6,
+  "award": "Advance Toward Wall MB",
+  "tape": 6
+ },
+ {
+  "id": 7,
+  "award": "Light Lord of Light",
+  "tape": 2
+ },
+ {
+  "id": 8,
+  "award": "+1 Bonus X",
+  "tape": 4
+ },
+ {
+  "id": 9,
+  "award": "+3 Bonus X",
+  "tape": 8
+ },
+ {
+  "id": 10,
+  "award": "Light Swords",
+  "tape": 2
+ },
+ {
+  "id": 11,
+  "award": "Gold",
+  "tape": 11
+ },
+ {
+  "id": 12,
+  "award": "Lannister Gold",
+  "tape": 11
+ },
+ {
+  "id": 13,
+  "award": "Add Mode Time",
+  "tape": 8
+ },
+ {
+  "id": 14,
+  "award": "Add A Ball",
+  "tape": 8
+ },
+ {
+  "id": 15,
+  "award": "Light Extra Ball",
+  "tape": 3
+ },
+ {
+  "id": 16,
+  "award": "Special",
+  "tape": 2
+ },
+ {
+  "id": 17,
+  "award": "Bump Winter Is Coming value",
+  "tape": 9
+ }
+]
