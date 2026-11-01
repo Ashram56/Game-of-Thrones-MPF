@@ -7,3 +7,14 @@ slide_player:
   game_ended:
     score:
       action: remove
+  got_mystery_menu:
+    mystery:
+      priority: 50
+      tokens:
+        top: "{top}"
+        middle: "{middle}"
+        keep: "{keep}"
+      expire: 10s
+  got_mystery_award:
+    mystery:
+      action: remove
