@@ -35,3 +35,8 @@ Done
 
 Open (owner/emulation): exact award growth, shot-to-switch mapping, Winter link, multiball triggers, coil timings,
 Godot project (project.godot, GMC add-on, frame playback), service menu, audits, high scores, remaining modes.
+
+## Godot display test (Xvfb, opengl3)
+Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays the ROM video frames at 8x (1024x256 window
+= 128x32 DMD). The frame on screen matches the source frame scaled 8x, so the scaling code is correct; the earlier
+"cropped" view was just a close-up video frame. Not yet checked: text/score overlays and MPF Monitor on a real display.
