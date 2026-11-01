@@ -6,6 +6,7 @@ import random
 from mpf.core.mode import Mode
 
 from got import pops
+from got.mystery import Mystery
 
 STANDUPS = ("s_target_1", "s_target_2", "s_target_3", "s_target_4", "s_target_5")
 GOLD_PER_STANDUP = 100                 # CFG
@@ -19,31 +20,6 @@ MYSTERY_SWITCH = "s_elevator_popper"   # StartMystery is called from the elevato
 PFX_FIRST = 4
 PFX_STEP = 4
 PFX_MAX = 5
-
-# name: (gold cost, effect)  effects: ("points", n) ("bonus_x", n) ("wall_advance", 1) ("light_extra_ball",) ("hold_bonus",)
-MYSTERY = {
-    "big_points": (120, ("points", 1000000)),
-    "bonus_x_1": (160, ("bonus_x", 1)),
-    "advance_wall": (830, ("wall_advance", 1)),
-    "bonus_x_2": (1430, ("bonus_x", 2)),
-    "bigger_points": (2600, ("points", 5000000)),
-    "bonus_x_3": (2970, ("bonus_x", 3)),
-    "hold_bonus": (4200, ("hold_bonus",)),
-    "light_extra_ball": (4500, ("light_extra_ball",)),
-    "biggest_points": (6000, ("points", 25000000)),
-    # ROM awards (docs/03 menu, docs/10); prices are CFG (the ROM's are not recovered), effects and go/no-go are H
-    "wildfire_5": (400, ("wildfire", 5)),
-    "wildfire_10": (700, ("wildfire", 10)),
-    "light_wildfire": (500, ("light_wildfire",)),
-    "light_lord_of_light": (550, ("light_lol",)),
-    "light_swords": (900, ("light_swords",)),
-    "award_sword": (1500, ("award_sword",)),
-    "golden_hand": (3500, ("golden_hand",)),
-    "video_1x": (300, ("video", 1)),
-    "video_2x": (900, ("video", 2)),
-    "video_3x": (1800, ("video", 3)),
-}
-
 
 class Extras(Mode):
     rng = None
@@ -63,6 +39,11 @@ class Extras(Mode):
         self._lanes = set()
         self.add_mode_event_handler(RAM + "_active", self._ram)
         self.add_mode_event_handler(MYSTERY_SWITCH + "_active", self._mystery_shot)
+        self.mystery = Mystery(self)
+        self.mystery.rng = self.rng
+        self.add_mode_event_handler("s_l_flipper_button_active", self._mystery_cursor, step=-1)
+        self.add_mode_event_handler("s_r_flipper_button_active", self._mystery_cursor, step=1)
+        self.add_mode_event_handler("s_lockdown_active", self.mystery.confirm)
         self.add_mode_event_handler("got_house_chosen", self._house_chosen)
         self._bonus_start()
         for sw in self.machine.modes["scoring"].config.get("mode_settings", {}).get("bonus_hit_switches", []):
@@ -198,69 +179,11 @@ class Extras(Mode):
             self.machine.events.post("got_mystery_lit")
 
     def _mystery_shot(self, **kwargs):
-        p = self.player
-        if not p.got_mystery_lit:
-            return
-        p.got_mystery_lit = 0
-        affordable = [n for n, (cost, eff) in MYSTERY.items() if cost <= p.got_gold and self._mystery_ok(eff)]
-        if not affordable:
-            return
-        name = self.rng.choice(affordable)        # rulesheet: keep gold / random affordable / most expensive; random here
-        cost, effect = MYSTERY[name]
-        p.got_gold -= cost
-        self._apply(name, effect)
+        if self.mystery.can_start():
+            self.mystery.start()
 
-    def _mystery_ok(self, eff):
-        """GoNoGo of each Mystery award (docs/10): an award that could not change anything is not offered."""
-        p = self.player
-        kind = eff[0]
-        if kind == "light_swords":
-            return not p.got_swords_lit and int(p.got_swords or 0) < 7
-        if kind == "award_sword":
-            return int(p.got_swords or 0) <= 2
-        if kind == "light_lol":
-            return not self.machine.modes["combos"]._lol
-        if kind == "light_wildfire":
-            return not p.got_wildfire_lit
-        if kind == "golden_hand":
-            return not p.got_golden_hand
-        if kind == "video":
-            return bool(self.machine.settings.get_setting_value("ad_allow_video_mode") if self._has_setting("ad_allow_video_mode") else 1)
-        if kind == "bonus_x":
-            return int(p.got_bonus_x or 1) + eff[1] <= BONUS_X_MAX
-        return True
-
-    def _has_setting(self, name):
-        return name in getattr(self.machine.settings, "setting_definitions", {})
-
-    def _apply(self, name, effect):
-        p = self.player
-        kind = effect[0]
-        if kind == "points":
-            p.score += effect[1] * (p.got_multiplier or 1)
-        elif kind == "bonus_x":
-            p.got_bonus_x = min(BONUS_X_MAX, max(1, int(p.got_bonus_x or 1)) + effect[1])
-        elif kind == "wall_advance":
-            p.got_wall_advances += 1
-        elif kind == "light_extra_ball":
-            self.machine.events.post("got_light_extra_ball")
-        elif kind == "hold_bonus":
-            p.got_hold_bonus = 1
-        elif kind == "wildfire":
-            self.machine.events.post("got_wildfire_bump", n=effect[1])
-        elif kind == "light_wildfire":
-            p.got_wildfire_lit = 1
-        elif kind == "light_lol":
-            self.machine.events.post("got_light_lord_of_light")
-        elif kind == "light_swords":
-            self.machine.events.post("got_light_swords")
-        elif kind == "award_sword":
-            self.machine.events.post("got_award_sword")
-        elif kind == "golden_hand":
-            p.got_golden_hand = 1
-        elif kind == "video":
-            self.machine.events.post("got_video_mode_start", n=effect[1])
-        self.machine.events.post("got_mystery_award", award=name)
+    def _mystery_cursor(self, step, **kwargs):
+        self.mystery.move(step)
 
     # --- Bonus X
     def _top_lane(self, sw, **kwargs):

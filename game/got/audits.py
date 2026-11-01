@@ -2,10 +2,12 @@
 from mpf.core.mode import Mode
 
 from got import audit_map as am
+from got.mystery import load_table
 
 
 class RomAudits(Mode):
     def mode_start(self, **kwargs):
+        self._mystery_audits = {e["name"]: e["audit"] for e in load_table()}
         for au, sw in am.SWITCH_AUDITS.items():
             self.add_mode_event_handler(sw + "_active", self._count, name=au)
         for ev, au in am.EVENT_AUDITS.items():
@@ -27,8 +29,8 @@ class RomAudits(Mode):
         self._audit(name)
 
     def _mystery(self, award=None, **kwargs):
-        if award in am.MYSTERY_AUDITS:
-            self._audit(am.MYSTERY_AUDITS[award])
+        if award in self._mystery_audits:
+            self._audit(self._mystery_audits[award])
 
     def _house_select(self, house=None, **kwargs):
         if house in am.HOUSE_SELECT:

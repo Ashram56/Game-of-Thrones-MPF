@@ -56,7 +56,9 @@ class GotBase(Mode):
     def _start_next_house(self, **kwargs):
         # Departure (docs/rom_differences.md): the ROM's Choose Your Battle is replaced by "throne starts the next house".
         prog = self._progression()
-        for h in self._rules["houses"]:
+        lit = [x for x in (self.player.got_lit_houses or "").split(",") if x]
+        order = sorted(self._rules["houses"], key=lambda h: h["key"] not in lit)       # Mystery "Light <house>" goes first
+        for h in order:
             if h["id"] not in prog.complete and not self._house_running():
                 self.machine.events.post("start_mode_" + h["key"])
                 # Winter Is Coming is offered with it when completed + running houses <= 6 (docs/06, SelectModesToStart; H)
@@ -181,9 +183,36 @@ class GotBase(Mode):
             p.got_wall_advances += powers.BARATHEON_WALL_ADVANCES
         self.machine.events.post("got_house_confirmed", house=p.got_house)
 
+    def _ability(self):
+        """Mystery button abilities (docs/11 section 4): 3 Baratheon = Lord of Light, 4 Lannister = buy a playfield
+        multiplier with gold, 6 Martell = add a ball in multiball."""
+        p = self.player
+        ab = int(p.got_button_ability or 0)
+        if ab == 3:
+            p.got_button_ability = 0
+            self.machine.events.post("got_light_lord_of_light")
+            return True
+        if ab == 4 and int(p.got_ability_uses or 0) > 0:
+            cost = {1: 1200, 2: 1800, 3: 2400, 4: 3000}.get(int(p.got_multiplier or 1))
+            if cost and p.got_gold >= cost:
+                p.got_gold -= cost
+                p.got_multiplier = int(p.got_multiplier or 1) + 1
+                p.got_ability_uses -= 1
+                self.machine.events.post("got_pfx", value=p.got_multiplier)
+                return True
+        if ab == 6 and self._multiball_running():
+            self.machine.playfield.add_ball(1)
+            self.machine.events.post("got_add_a_ball")
+            return True
+        return False
+
     def _action(self, **kwargs):
         """Action button: once per ball (rulesheet)."""
         p = self.player
+        if self.machine.modes["extras"].mystery.menu:           # the button confirms the Mystery menu instead
+            return
+        if self._ability():
+            return
         house = p.got_house
         if not house or p.got_action_used_ball == self.machine.game.player.ball:
             return

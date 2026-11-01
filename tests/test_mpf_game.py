@@ -504,29 +504,68 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
 
     def test_mystery_rom_awards(self):
+        from got.mystery import Mystery
         self._start_game()
         player = self.machine.game.player
-        extras = self.machine.modes["extras"]
-        extras._apply("light_swords", ("light_swords",))
-        extras._apply("wf", ("wildfire", 10))
-        extras._apply("gh", ("golden_hand",))
-        extras._apply("lol", ("light_lol",))
+        mys = self.machine.modes["extras"].mystery
+        by = {e["name"]: e for e in mys.table}
+        self.assertEqual(40, len(mys.table))
+        self.assertEqual(4020, by["Award Sword"]["price"])
+        for name in ("Light Swords", "+10 Wild Fire", "Golden Hand", "Light Lord of Light", "Light Stark", "Hold Bonus"):
+            mys.give(name)
         self.advance_time_and_run(0.1)
         self.assertEqual(1, player.got_swords_lit)
         self.assertEqual(10, player.got_wildfire)
         self.assertEqual(1, player.got_golden_hand)
         self.assertTrue(self.machine.modes["combos"]._lol)
-        self.assertFalse(extras._mystery_ok(("light_swords",)))     # already lit: no-go
-        self.assertFalse(extras._mystery_ok(("golden_hand",)))
-        extras._apply("sword", ("award_sword",))
+        self.assertEqual("stark", player.got_lit_houses)
+        self.assertFalse(mys.go(by["Light Swords"]))             # already lit: no-go
+        self.assertFalse(mys.go(by["Golden Hand"]))
+        self.assertFalse(mys.go(by["Light Stark"]))
+        self.assertTrue(mys.go(by["Light Targaryen"]))
+        mys.give("Award Sword")
         self.advance_time_and_run(0.1)
         self.assertEqual(1, player.got_swords)
-        self.assertTrue(extras._mystery_ok(("award_sword",)))
-        player.got_gold = 100000
+        mys.give("Charge")
+        self.assertEqual(2, player.got_upper_level)
+        self.assertFalse(mys.go(by["Arrows"]))
+        mys.give("Lannister button ability")
+        self.assertEqual(4, player.got_button_ability)
+
+    def _popper(self):
+        self.hit_and_release_switch("s_elevator_popper")
+        self.advance_time_and_run(0.5)
+
+    def test_mystery_menu_selection_and_payment(self):
+        self._start_game()
+        player = self.machine.game.player
+        mys = self.machine.modes["extras"].mystery
         player.got_mystery_lit = 1
+        player.got_gold = 299
+        self._popper()
+        self.assertTrue(player.got_mystery_lit)                  # < 300 gold: cannot start
+        player.got_gold = 2700
+        self._popper()
+        self.assertFalse(player.got_mystery_lit)
+        top = mys.menu["slots"][2]
+        self.assertEqual("Bigger Points", top["name"])           # most expensive affordable (2,600)
+        mid = mys.menu["slots"][1]
+        self.assertNotEqual(top["category"], mid["category"])
+        self.assertEqual(2, mys.menu["cursor"])
+        self._hit("s_l_flipper_button")                          # cursor 1: the random middle award
+        self.assertEqual(1, mys.menu["cursor"])
+        self._hit("s_l_flipper_button")                          # cursor 0: keep gold
         before = player.score
-        self._hit("s_elevator_popper")                               # random affordable award, must not crash
+        self.advance_time_and_run(11)                            # timer 22 confirms
+        self.assertIsNone(mys.menu)
+        self.assertEqual(2700, player.got_gold)                  # keep gold pays nothing
+        # buy the top award
+        player.got_mystery_lit = 1
+        self._popper()
+        self.hit_and_release_switch("s_lockdown")
         self.advance_time_and_run(0.2)
+        self.assertEqual(100, player.got_gold)
+        self.assertGreaterEqual(player.score - before, 5000000)
 
     def _start_mb(self, key):
         self._start_game()
@@ -687,7 +726,8 @@ class TestGotGame(MpfGameTestCase):
         self.assertTrue(player.got_mystery_lit)
         self.hit_switch_and_run("s_elevator_popper", 0.5)
         self.assertFalse(player.got_mystery_lit)
-        self.assertLess(player.got_gold, 1500)                 # an affordable award was bought
+        self.advance_time_and_run(11)                          # the menu confirms itself (timer 22)
+        self.assertLess(player.got_gold, 1500)                 # the preselected (most expensive) award was bought
 
     def test_rom_audits_are_counted(self):
         self._start_game()

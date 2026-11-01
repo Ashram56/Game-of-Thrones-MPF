@@ -129,7 +129,7 @@ class Combos(Mode):
         """Mystery "Award Sword": the same pick and pay as a collection, without needing a lit sword."""
         p = self.player
         p.got_swords_lit = int(p.got_swords_lit or 0) + 1
-        self._collect_sword(1)
+        self._collect_sword(int(p.got_mystery_arg or 1))
 
     def _collect_sword(self, mult):
         p = self.player

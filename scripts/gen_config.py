@@ -291,6 +291,7 @@ def build(data):
     files["modes/scoring/config/scoring.yaml"] = dump(sc)       # variable_player is only valid inside a game mode
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"
+    files["config/rom/mystery_awards.csv"] = open(os.path.join(data, "mystery_awards.csv")).read()
     files["config/rom/swords.csv"] = open(os.path.join(data, "swords.csv")).read()
     files["config/rom/slides.yaml"] = dump(slides(data, rules))
     files.update(slide_scenes(rules))
