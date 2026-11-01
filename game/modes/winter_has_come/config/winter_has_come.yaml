@@ -15,10 +15,10 @@ mode_settings:
     bump: 375000
     cap: 25000000
   shots:
-  - s_left_ramp_exit
-  - s_right_ramp_exit
   - s_left_loop
+  - s_left_ramp_exit
   - s_right_loop
+  - s_right_ramp_exit
   shots_to_complete: 0
   start_bonus: 25000000
   flag: 42

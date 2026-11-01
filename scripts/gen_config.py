@@ -169,6 +169,19 @@ def slide_scenes(rules):
 HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.StarkMode", "martell": "got.houses.MartellMode",
               "baratheon": "got.houses.BaratheonMode", "lannister": "got.houses.LannisterMode",
               "greyjoy": "got.houses.GreyjoyMode", "tyrell": "got.houses.TyrellMode", "targaryen": "got.houses.TargaryenMode"}
+MB_CODE = {k: "got.multiballs.SetMultiball" for k in ("blackwater", "wall", "hand_of_the_king", "iron_throne")}
+
+
+def phase_switches(key):
+    sys.path.insert(0, os.path.join(GAME))
+    from got.phases import PHASES, RAM
+    ph = PHASES.get(key)
+    if not ph:
+        return set()
+    out = {RAM, ph.get("super_switch", RAM)}
+    for g in ph["groups"]:
+        out |= set(g)
+    return out
 
 
 def mode_files(rules):
@@ -191,8 +204,8 @@ def mode_files(rules):
         key = m["key"]
         a = {k: m["jackpot"].get(k, 0) for k in ("start", "bump", "cap")}
         cfg = {"mode": {"start_events": "start_mode_" + key, "stop_events": "stop_mode_%s, multiball_%s_ended, tilt" % (key, key),
-                        "priority": 400, "game_mode": True, "code": "got.award_mode.AwardMode"},
-               "mode_settings": {"kind": "multiball", "id": m["id"], "key": key, "award": a, "shots": m["jackpot_switches"],
+                        "priority": 400, "game_mode": True, "code": MB_CODE.get(key, "got.award_mode.AwardMode")},
+               "mode_settings": {"kind": "multiball", "id": m["id"], "key": key, "award": a, "shots": sorted(set(m["jackpot_switches"]) | phase_switches(key)),
                                  "shots_to_complete": 0, "start_bonus": m["start_bonus"], "flag": m["flag"],
                                  "ball_save_adjustment": m["ball_save_adjustment"],
                                  "confidence": {"award": m["jackpot"]["conf"]}},

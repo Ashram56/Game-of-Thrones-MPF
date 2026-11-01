@@ -15,10 +15,10 @@ mode_settings:
     bump: 0
     cap: 0
   shots:
-  - s_left_pop_bumper
-  - s_right_pop_bumper
   - s_bottom_pop_bumper
+  - s_left_pop_bumper
   - s_left_slingshot
+  - s_right_pop_bumper
   - s_right_slingshot
   shots_to_complete: 0
   start_bonus: 3000000

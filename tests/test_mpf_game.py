@@ -437,3 +437,53 @@ class TestGotGame(MpfGameTestCase):
             self.assertTrue(values[stage] * 0.9 < gained < values[stage] * 1.05, (stage, gained))
             self.assertFalse(self.machine.modes["targaryen"].active)
         self.assertIn(0, player.got_progression.complete)
+
+    def _start_mb(self, key):
+        self._start_game()
+        self.post_event("start_mode_" + key)
+        self.advance_time_and_run(0.5)
+        self.assertTrue(self.machine.modes[key].active)
+
+    def test_blackwater_five_majors_light_super_at_ram(self):
+        self._start_mb("blackwater")
+        player = self.machine.game.player
+        majors = ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_right_2_bank_top")
+        self._hit(majors[0], 2)                               # a repeated shot pays once
+        for sw in majors[1:]:
+            self._hit(sw)
+        before = player.score
+        self._hit("s_battering_ram")                          # Super collected at the ram
+        self.assertGreater(player.score - before, 6 * 250000)
+        self.assertTrue(self.machine.modes["blackwater"].active)
+
+    def test_blackwater_super_times_out(self):
+        self._start_mb("blackwater")
+        for sw in ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_right_2_bank_top"):
+            self._hit(sw)
+        self.advance_time_and_run(21)                         # Super lit 20 s only
+        before = self.machine.game.player.score
+        self._hit("s_battering_ram")
+        self.assertLess(self.machine.game.player.score - before, 1000000)
+
+    def test_hand_ends_after_three_sets(self):
+        self._start_mb("hand_of_the_king")
+        for _ in range(3):
+            for sw in ("s_left_return_lane", "s_right_return_lane", "s_left_ramp_exit", "s_right_ramp_exit"):
+                self._hit(sw)
+            self._hit("s_battering_ram")
+        self.assertFalse(self.machine.modes["hand_of_the_king"].active)
+
+    def test_wall_ramps_then_dragon_super_then_loops(self):
+        self._start_mb("wall")
+        player = self.machine.game.player
+        for sw in ("s_left_ramp_exit", "s_right_ramp_exit", "s_u_p_left_loop"):
+            self._hit(sw)
+        before = player.score
+        self._hit("s_kickback")                               # dragon Super
+        self.assertGreater(player.score - before, 3 * 3250000 - 1)
+        before = player.score
+        self._hit("s_left_ramp_exit")                         # jackpots moved to the loops: a ramp no longer pays a jackpot
+        self.assertLess(player.score - before, 3250000)
+        for sw in ("s_left_loop", "s_right_loop", "s_right_2_bank_top"):
+            self._hit(sw)
+        self.assertGreater(self.machine.modes["wall"]._set_points, 0)

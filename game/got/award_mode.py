@@ -35,6 +35,7 @@ class AwardMode(Mode):
             timer = self.machine.timers[cfg["key"] + "_timer"]
             points = self._award.hurry_up(timer.ticks, cfg["timer_s"]) * (self.player.got_multiplier or 1)
         self.player.score += points
+        self._last_points = points
         self._award.bump()
         setattr(self.player, self._award_key, self._award.value)
         self._shots += 1

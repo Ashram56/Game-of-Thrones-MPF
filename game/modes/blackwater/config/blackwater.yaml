@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_blackwater, multiball_blackwater_ended, tilt
   priority: 400
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.multiballs.SetMultiball
 mode_settings:
   kind: multiball
   id: 0
@@ -15,9 +15,12 @@ mode_settings:
     bump: 75000
     cap: 50000000
   shots:
-  - s_left_ramp_exit
-  - s_right_ramp_exit
+  - s_battering_ram
   - s_left_loop
+  - s_left_ramp_exit
+  - s_right_2_bank_top
+  - s_right_loop
+  - s_right_ramp_exit
   shots_to_complete: 0
   start_bonus: 10000000
   flag: 35
