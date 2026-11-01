@@ -57,3 +57,73 @@ class SetMultiball(AwardMode):
         if self._ph["sets"] and self._sets >= self._ph["sets"]:
             self.machine.events.post("multiball_%s_ended" % self._cfg["key"])
             self.stop()
+
+
+SHOT_OF = {"s_left_ramp_exit": "left_ramp", "s_right_ramp_exit": "right_ramp", "s_left_loop": "left_loop",
+           "s_right_loop": "right_loop", "s_kickback": "kickback",
+           "s_3_bank_drop_tgt_top": "bank", "s_3_bank_drop_tgt_mid": "bank", "s_3_bank_drop_tgt_btm": "bank",
+           "s_right_2_bank_top": "right2", "s_right_2_bank_bottom": "right2"}
+WHC_SHOTS = ("left_ramp", "right_ramp", "left_loop", "right_loop", "kickback", "bank", "right2")      # H: Winter shot mask 0xEF (docs/06)
+LIEUTENANT_NEEDED = 5
+
+
+class WinterHasComeMode(AwardMode):
+    """Four-ball mini wizard (rulesheet, M). Horde: all seven major shots lit, each collected once; the last one starts
+    Lieutenant: three hurry-up shots on random majors, replaced as they are collected; five collected pay the Winter
+    Super Jackpot (the total the Winter Is Coming hurry-ups fed into got_winter_super) and return to Horde. Not modelled:
+    the Horde timer adding shots, Lieutenant timeouts and the frozen left flipper."""
+
+    rng = None
+
+    def mode_start(self, **kwargs):
+        import random
+        super().mode_start(**kwargs)
+        self.rng = self.rng or random.Random()
+        self._phase = "horde"
+        self._horde = set()
+        self._lieutenant = set()
+        self._collected = 0
+        self._shots = 0
+
+    def _accepts(self, sw):
+        self._shots = 0
+        shot = SHOT_OF.get(sw)
+        if shot is None:
+            return False
+        if self._phase == "horde":
+            if shot in self._horde:
+                return False
+            self._horde.add(shot)
+            if self._horde >= set(WHC_SHOTS):
+                self._start_lieutenant()
+            return True
+        if shot in self._lieutenant:
+            self._lieutenant.discard(shot)
+            self._collected += 1
+            if self._collected >= LIEUTENANT_NEEDED:
+                self._pay_super()
+            else:
+                self._add_lieutenant_shot()
+            return True
+        return False
+
+    def _start_lieutenant(self):
+        self._phase = "lieutenant"
+        self._collected = 0
+        self._lieutenant = set()
+        while len(self._lieutenant) < 3:
+            self._add_lieutenant_shot()
+        self.machine.events.post("got_winter_has_come_lieutenant")
+
+    def _add_lieutenant_shot(self):
+        pool = [s for s in WHC_SHOTS if s not in self._lieutenant]
+        self._lieutenant.add(self.rng.choice(pool))
+
+    def _pay_super(self):
+        p = self.player
+        points = int(p.got_winter_super or 0) * (p.got_multiplier or 1)
+        p.score += points
+        p.got_winter_super = 0
+        self.machine.events.post("got_winter_has_come_super", points=points)
+        self._phase, self._horde, self._lieutenant = "horde", set(), set()
+        self.machine.events.post("got_winter_has_come_horde")

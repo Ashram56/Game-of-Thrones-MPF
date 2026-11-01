@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_winter_has_come, multiball_winter_has_come_ended, tilt
   priority: 400
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.multiballs.WinterHasComeMode
 mode_settings:
   kind: multiball
   id: 6
@@ -15,8 +15,14 @@ mode_settings:
     bump: 375000
     cap: 25000000
   shots:
+  - s_3_bank_drop_tgt_btm
+  - s_3_bank_drop_tgt_mid
+  - s_3_bank_drop_tgt_top
+  - s_kickback
   - s_left_loop
   - s_left_ramp_exit
+  - s_right_2_bank_bottom
+  - s_right_2_bank_top
   - s_right_loop
   - s_right_ramp_exit
   shots_to_complete: 0

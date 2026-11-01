@@ -170,11 +170,15 @@ HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.
               "baratheon": "got.houses.BaratheonMode", "lannister": "got.houses.LannisterMode",
               "greyjoy": "got.houses.GreyjoyMode", "tyrell": "got.houses.TyrellMode", "targaryen": "got.houses.TargaryenMode"}
 MB_CODE = {k: "got.multiballs.SetMultiball" for k in ("blackwater", "wall", "hand_of_the_king", "iron_throne")}
+MB_CODE["winter_has_come"] = "got.multiballs.WinterHasComeMode"
 
 
 def phase_switches(key):
     sys.path.insert(0, os.path.join(GAME))
     from got.phases import PHASES, RAM
+    if key == "winter_has_come":
+        from got.multiballs_data import WHC_SWITCHES
+        return set(WHC_SWITCHES)
     ph = PHASES.get(key)
     if not ph:
         return set()

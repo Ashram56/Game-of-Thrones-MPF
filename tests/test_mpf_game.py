@@ -487,3 +487,25 @@ class TestGotGame(MpfGameTestCase):
         for sw in ("s_left_loop", "s_right_loop", "s_right_2_bank_top"):
             self._hit(sw)
         self.assertGreater(self.machine.modes["wall"]._set_points, 0)
+
+    def test_winter_has_come_horde_lieutenant_super(self):
+        self._start_game()
+        player = self.machine.game.player
+        player.got_winter_super = 3000000                       # fed by the Winter Is Coming hurry-ups
+        self.post_event("start_mode_winter_has_come")
+        self.advance_time_and_run(0.5)
+        mb = self.machine.modes["winter_has_come"]
+        self.assertTrue(mb.active)
+        for sw in ("s_left_ramp_exit", "s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback",
+                   "s_3_bank_drop_tgt_top", "s_right_2_bank_bottom"):
+            self._hit(sw)
+        self.assertEqual("lieutenant", mb._phase)               # all seven majors collected in Horde
+        self.assertEqual(3, len(mb._lieutenant))
+        inv = {"left_ramp": "s_left_ramp_exit", "right_ramp": "s_right_ramp_exit", "left_loop": "s_left_loop", "right_loop": "s_right_loop",
+               "kickback": "s_kickback", "bank": "s_3_bank_drop_tgt_mid", "right2": "s_right_2_bank_top"}
+        before = player.score
+        for _ in range(5):
+            self._hit(inv[sorted(mb._lieutenant)[0]])
+        self.assertEqual("horde", mb._phase)                    # 5 collected: Super paid, back to Horde
+        self.assertGreaterEqual(player.score - before, 3000000)
+        self.assertEqual(0, player.got_winter_super)
