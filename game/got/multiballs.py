@@ -2,6 +2,7 @@
 rev 1.37) over the ROM award values; the set/ram structure is M, the Super multiplier is a placeholder (CFG: the ROM's
 AwardSuperJackpot formula is not recovered)."""
 from got.award_mode import AwardMode
+from got.combos import jackpot_value
 from got.phases import PHASES, RAM
 
 
@@ -14,6 +15,10 @@ class SetMultiball(AwardMode):
         self._set_points = 0
         self._super_until = None
         self._sets = 0
+        self._sets_needed = self._ph["sets"]
+        if self._cfg["key"] == "hand_of_the_king":      # GetTotalLevelsNeeded: 2 with the Greyjoy bit, else 3 (docs/13)
+            prog = self.player.got_progression
+            self._sets_needed = 2 if prog and 4 in prog.complete else 3
 
     def _group_shots(self):
         groups = self._ph["groups"]
@@ -54,7 +59,7 @@ class SetMultiball(AwardMode):
         self._sets += 1
         self._done, self._set_points, self._super_until = set(), 0, None
         self._group += 1
-        if self._ph["sets"] and self._sets >= self._ph["sets"]:
+        if self._sets_needed and self._sets >= self._sets_needed:
             self.machine.events.post("multiball_%s_ended" % self._cfg["key"])
             self.stop()
 
@@ -127,3 +132,53 @@ class WinterHasComeMode(AwardMode):
         self.machine.events.post("got_winter_has_come_super", points=points)
         self._phase, self._horde, self._lieutenant = "horde", set(), set()
         self.machine.events.post("got_winter_has_come_horde")
+
+
+class BlackwaterMode(AwardMode):
+    """docs/13 (H): rounds R = 1, 2, 3 (then 3 again). Every round arms the five mask-0x6e shots R times each (5, 10, 15 hits);
+    a hit pays V x combo x R (V does not rise); the last hit of the round lights the Super Jackpot (level R) for 20 s + 1.4 s
+    grace; a ram shot collects V x 6 x R + 10M, otherwise the window expires; then the next round starts. V =
+    CalcJackpotValue(wildfire points) is set at the start (cblackwater::Start)."""
+
+    SHOTS = ("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop")
+    SUPER_S = 20 + 93 / 66.0
+
+    def mode_start(self, **kwargs):
+        super().mode_start(**kwargs)
+        p = self.player
+        p.got_bw_jackpot = jackpot_value(int(p.got_wildfire or 0))
+        self._round = 1
+        self._arm()
+
+    def _arm(self):
+        self._left = {sw: self._round for sw in self.SHOTS}
+        self._super = 0
+        self.machine.events.post("got_blackwater_round", round=self._round)
+
+    def _shot(self, sw=None, **kwargs):
+        p = self.player
+        if sw == RAM and self._super:
+            level = self._super
+            self.delay.remove("bw_super")
+            points = (int(p.got_bw_jackpot) * 6 * level + 10000000) * (p.got_multiplier or 1)
+            p.score += points
+            self.machine.events.post("got_blackwater_super", points=points, level=level)
+            self._next_round()
+            return
+        if self._super or self._left.get(sw, 0) <= 0:
+            return
+        self._left[sw] -= 1
+        points = int(p.got_bw_jackpot) * (p.got_combo_mult or 1) * self._round * (p.got_multiplier or 1)
+        p.score += points
+        self.machine.events.post("got_blackwater_jackpot", points=points, round=self._round)
+        if not any(self._left.values()):
+            self._super = self._round
+            self.delay.add(int(self.SUPER_S * 1000), self._super_expired, name="bw_super")
+            self.machine.events.post("got_blackwater_super_lit", level=self._super)
+
+    def _super_expired(self, **kwargs):
+        self._next_round()
+
+    def _next_round(self):
+        self._round = min(self._round + 1, 3)
+        self._arm()

@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_blackwater, multiball_blackwater_ended, tilt
   priority: 400
   game_mode: true
-  code: got.multiballs.SetMultiball
+  code: got.multiballs.BlackwaterMode
 mode_settings:
   kind: multiball
   id: 0
@@ -16,6 +16,7 @@ mode_settings:
     cap: 50000000
   shots:
   - s_battering_ram
+  - s_kickback
   - s_left_loop
   - s_left_ramp_exit
   - s_right_2_bank_top

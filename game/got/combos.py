@@ -94,8 +94,10 @@ class Combos(Mode):
         self.add_mode_event_handler("got_light_lord_of_light", self._light_lol)
         self.add_mode_event_handler("got_video_mode_result", self._video_result)
         # ram Super Jackpot (docs/12) and the lock (flag 36), both reset at ball start (InitializeFirstBall)
-        p.got_super_lit = 0
-        p.got_lock_lit = 0
+        if not p.got_bw_init:                  # InitializeFirstBall runs at the player's first ball (M: once, not every ball)
+            p.got_bw_init = 1
+            p.got_super_lit = 0
+            p.got_lock_lit = 0
         for sw in TWO_BANK:
             self.add_mode_event_handler(sw + "_active", self._two_bank, sw=sw)
         self._two_bank_hit = set()
@@ -239,17 +241,22 @@ class Combos(Mode):
     # --- Light Lock from the right two-bank (two_bank_light_lock): never in a multiball; before Blackwater was ever played it
     # lights when adjustment 122 <= 2 (default). The bool of later banks is M, so later completions do not relight here.
     def _two_bank(self, sw, **kwargs):
+        """TwoBankTargetHandler calls two_bank_light_lock(false) on every hit and (true) when the bank completes (docs/13)."""
         p = self.player
         self._two_bank_hit.add(sw)
-        if self._two_bank_hit < set(TWO_BANK):
-            return
-        self._two_bank_hit = set()
+        complete = self._two_bank_hit >= set(TWO_BANK)
+        if complete:
+            self._two_bank_hit = set()
         from got import state
         if state.multiball_running(self.machine) or p.got_lock_lit:
             return
         if not p.got_bw_played and TWO_BANK_DIFFICULTY <= 2:
-            p.got_lock_lit = 1
-            self.machine.events.post("got_lock_lit")
+            p.got_lock_lit = 1                  # never played Blackwater: any hit lights it at difficulty <= 2
+        elif complete:
+            p.got_lock_lit = 1                  # otherwise only a completed bank
+        else:
+            return
+        self.machine.events.post("got_lock_lit")
 
     def _bw_played(self, **kwargs):
         self.player.got_bw_played = int(self.player.got_bw_played or 0) + 1
@@ -261,7 +268,26 @@ class Combos(Mode):
         value = int(p.got_award_wall or award["start"])
         p.got_award_wall = min(award["cap"], value + award["bump"]) if award.get("cap") else value + award["bump"]
 
-    # --- Special: a free game credit (award_special; limit/percentage adjustments 53/55 are not modelled)
+    # --- Special (docs/13, H): adjustment 54 picks the payout (0 one credit, 3 = 25M points, 4 extra ball, 1/2 nothing);
+    # adjustment 53 = Specials per player per game (0 = none); over the limit it pays the 25M points instead.
+    SPECIAL_POINTS = 25000000
+
     def _special(self, **kwargs):
-        self.player.got_specials = int(self.player.got_specials or 0) + 1
-        self.machine.events.post("got_special_awarded")
+        p = self.player
+        limit = int(self._setting("ad_special_limit", 1) or 0)
+        award = int(self._setting("ad_special_award", 0) or 0)
+        if limit == 0 or int(p.got_specials or 0) >= limit:
+            award = 3
+        else:
+            p.got_specials = int(p.got_specials or 0) + 1
+        if award == 3:
+            p.score += self.SPECIAL_POINTS
+        elif award == 0:
+            self.machine.events.post("got_special_credit")
+        elif award == 4:
+            self.machine.events.post("got_special_extra_ball")
+        self.machine.events.post("got_special_awarded", award=award)
+
+    def _setting(self, name, default):
+        s = self.machine.settings
+        return s.get_setting_value(name) if name in getattr(s, "setting_definitions", {}) else default

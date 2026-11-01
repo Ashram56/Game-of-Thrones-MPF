@@ -70,3 +70,10 @@ Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays t
 
 ## Stubs closed
 Grow Wall Jackpot (Mystery and pop award) raises the Wall award by its own bump; Special counts `got_specials` (a free-game credit is not paid, limits 53/55 not modelled); pop awards Light Lock, Bump Wall Jackpot, Special are wired. The pop-award list has no Super Jackpot entry (config/rom/pop_awards.json), so that "M" source is closed: Mystery only. Open: Blackwater's in-multiball Super Jackpot (ours uses the rulesheet 6x set total, not V x 6 x level + 10M).
+
+## docs/13 wired (H unless noted)
+- Blackwater (`BlackwaterMode`): rounds R = 1, 2, 3 (then stays 3), the 5 mask-0x6e shots (left loop, kickback, left ramp, right ramp, right loop) R times each (5, 10, 15 hits); a hit pays V x combo x R, V = `jackpot_value(wildfire)` fixed at the start; the last hit lights the Super (level R) for 20 s + 1.4 s; a ram shot pays V x 6 x R + 10M; expiry or collect starts the next round. The start's 10M and the upper-playfield SJ route (state machine 0..3) are not modelled.
+- Special: adjustment 54 (0 credit event `got_special_credit`, 3 = 25M points, 4 extra-ball event, 1/2 nothing); adjustment 53 limit per player (over it: 25M); 55 (percentage) not modelled; no real credit/extra ball is added to the game yet.
+- Two-bank lock: before the first Blackwater any hit lights it (difficulty <= 2), afterwards only a completed bank.
+- Greyjoy: 5 shots (adds the kickback). Hand of the King: 2 sets when Greyjoy is complete, else 3. The ready byte persistence after a drain is M.
+- M: the lock flag and the ram Super Jackpot are cleared once per player (InitializeFirstBall at the first ball), so they now persist across balls; if the ROM runs it every ball this is a one-line change in `Combos.mode_start`.

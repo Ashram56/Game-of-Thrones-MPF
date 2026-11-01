@@ -62,6 +62,7 @@ class MartellMode(AwardMode):
         super()._shot(sw=sw, **kwargs)
 
 
+GREYJOY_SHOTS = ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback")      # H: mask 0x6e (docs/13)
 MAINS = ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop")
 BANK = ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm")
 
@@ -112,7 +113,7 @@ class LannisterMode(AwardMode):
 
 
 class GreyjoyMode(AwardMode):
-    """All main shots are lit; each is collected once, every completed shot refreshes the 15 s timer; all four complete the
+    """All main shots are lit; each is collected once, every completed shot refreshes the 15 s timer; all five complete (ELF mask 0x6e) the
     mode (rulesheet, M)."""
 
     def mode_start(self, **kwargs):
@@ -120,7 +121,7 @@ class GreyjoyMode(AwardMode):
         self._done = set()
 
     def _accepts(self, sw):
-        if sw in self._done or sw not in MAINS:
+        if sw in self._done or sw not in GREYJOY_SHOTS:
             return False
         self._done.add(sw)
         timer = self.machine.timers["greyjoy_timer"]
@@ -131,7 +132,7 @@ class GreyjoyMode(AwardMode):
     def _shot(self, sw=None, **kwargs):
         self._shots = 0
         super()._shot(sw=sw, **kwargs)
-        if len(self._done) >= len(MAINS) and self.active:
+        if len(self._done) >= len(GREYJOY_SHOTS) and self.active:
             self.machine.events.post("got_house_complete", house_id=self._cfg["id"], key=self._cfg["key"])
             self.stop()
 

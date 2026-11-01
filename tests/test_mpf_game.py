@@ -324,9 +324,14 @@ class TestGotGame(MpfGameTestCase):
         self._start_game()
         player = self.machine.game.player
         self._hit("s_right_2_bank_top")
+        self.assertTrue(player.got_lock_lit)                   # never played Blackwater, difficulty 2: any hit lights it
+        player.got_lock_lit = 0
+        player.got_bw_played = 1                               # after the first Blackwater only a completed bank does
+        self.machine.modes["combos"]._two_bank_hit = set()
+        self.hit_and_release_switch("s_right_2_bank_top")
         self.assertFalse(player.got_lock_lit)
-        self._hit("s_right_2_bank_bottom")
-        self.assertTrue(player.got_lock_lit)                   # never played Blackwater, difficulty 2
+        self.hit_and_release_switch("s_right_2_bank_bottom")
+        self.assertTrue(player.got_lock_lit)
         from got.combos import jackpot_value
         player.got_wildfire = 10
         player.got_super_lit = 2
@@ -427,6 +432,8 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_left_ramp_exit")
         self.assertTrue(self.machine.modes["greyjoy"].active)
         self._hit("s_right_ramp_exit")
+        self.assertTrue(self.machine.modes["greyjoy"].active)      # docs/13: five shots, the kickback is the fifth
+        self._hit("s_kickback")
         self.assertFalse(self.machine.modes["greyjoy"].active)
         self.assertIn(4, self.machine.game.player.got_progression.complete)
 
@@ -618,26 +625,69 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.5)
         self.assertTrue(self.machine.modes[key].active)
 
-    def test_blackwater_five_majors_light_super_at_ram(self):
-        self._start_mb("blackwater")
+    def test_blackwater_rounds_jackpot_and_super(self):
+        from got.combos import jackpot_value
+        self._start_game()
         player = self.machine.game.player
-        majors = ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_right_2_bank_top")
-        self._hit(majors[0], 2)                               # a repeated shot pays once
-        for sw in majors[1:]:
+        player.got_wildfire = 10
+        self.post_event("start_mode_blackwater")
+        self.advance_time_and_run(0.5)
+        v = jackpot_value(10)
+        self.assertEqual(v, player.got_bw_jackpot)
+        shots = ("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop")
+        before = player.score
+        self._hit(shots[0], 2)                                # round 1: each shot once; a repeat pays nothing
+        self.assertGreaterEqual(player.score - before, v)
+        self.assertLess(player.score - before, 2 * v)
+        for sw in shots[1:]:
             self._hit(sw)
         before = player.score
-        self._hit("s_battering_ram")                          # Super collected at the ram
-        self.assertGreater(player.score - before, 6 * 250000)
-        self.assertTrue(self.machine.modes["blackwater"].active)
+        self._hit("s_battering_ram")                          # Super level 1 = V x 6 + 10M
+        self.assertGreaterEqual(player.score - before, v * 6 + 10000000)
+        # round 2 needs every shot twice
+        for sw in shots:
+            self._hit(sw, 2)
+        for sw in shots:
+            self._hit(sw)
+        before = player.score
+        self._hit("s_battering_ram")
+        self.assertGreaterEqual(player.score - before, v * 12 + 10000000)
 
     def test_blackwater_super_times_out(self):
         self._start_mb("blackwater")
-        for sw in ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_right_2_bank_top"):
+        for sw in ("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop"):
             self._hit(sw)
-        self.advance_time_and_run(21)                         # Super lit 20 s only
+        self.advance_time_and_run(22)                         # Super lit 20 s (+ grace) only
         before = self.machine.game.player.score
         self._hit("s_battering_ram")
         self.assertLess(self.machine.game.player.score - before, 1000000)
+
+    def test_special_pays_credit_then_points_over_limit(self):
+        self._start_game()
+        player = self.machine.game.player
+        score = player.score
+        self.post_event("got_special")
+        self.advance_time_and_run(0.1)
+        self.assertEqual(1, player.got_specials)
+        self.assertEqual(score, player.score)                 # adjustment 54 = 0: one credit
+        self.post_event("got_special")                        # limit 1 reached: 25M points instead
+        self.advance_time_and_run(0.1)
+        self.assertGreaterEqual(player.score - score, 25000000)
+
+    def test_hand_needs_two_sets_with_greyjoy(self):
+        self._start_game()
+        player = self.machine.game.player
+        self._progression_of(player).complete.add(4)
+        self.post_event("start_mode_hand_of_the_king")
+        self.advance_time_and_run(0.5)
+        for _ in range(2):
+            for sw in ("s_left_return_lane", "s_right_return_lane", "s_left_ramp_exit", "s_right_ramp_exit"):
+                self._hit(sw)
+            self._hit("s_battering_ram")
+        self.assertFalse(self.machine.modes["hand_of_the_king"].active)
+
+    def _progression_of(self, player):
+        return self.machine.modes["base"]._progression()
 
     def test_hand_ends_after_three_sets(self):
         self._start_mb("hand_of_the_king")

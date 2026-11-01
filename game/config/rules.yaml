@@ -78,7 +78,7 @@ houses:
      award: {start: 100000, bump: 75000, cap: 100000000, conf: M},
      note: "gold economy (multipliers cost 600 gold each) not modelled yet"}
   - {id: 4, key: greyjoy, label: House Greyjoy, timer_id: 6, timer_s: 15, timer_conf: M,
-     shots: [s_right_ramp_exit, s_left_ramp_exit, s_left_loop, s_right_loop],   # VPX GreyjoyMask 218 = Stark, Lannister, Greyjoy, Martell, Targaryen shots; the 5th (castle, VPX Kicker37) has no MPF switch
+     shots: [s_right_ramp_exit, s_left_ramp_exit, s_left_loop, s_right_loop, s_kickback],   # H docs/13: cgreyjoy mask 0x6e = the 5 combo shots
      award: {start: 500000, bump: 175000, cap: 100000000, conf: M},
      note: "steals the ability of the last completed house (not modelled)"}
   - {id: 5, key: tyrell, label: House Tyrell, timer_id: 9, timer_s: 30, timer_conf: L,
@@ -98,7 +98,7 @@ houses:
 # Multiballs (03 s3; multiballs.csv). start_bonus and ball-save defaults H. jackpot award values: awards.csv H, bump/cap 03 s7 M.
 multiballs:
   - {id: 0, key: blackwater, label: Blackwater Multiball, flag: 35, start_bonus: 10000000, ball_save_adjustment: ad_blackwater_multiball_ball_save_timer, ball_save_s: 10,
-     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop],
+     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop, s_kickback],   # H docs/13: mask 0x6e
      jackpot: {start: 250000, bump: 75000, cap: 50000000, conf: M}, super: {start: 0, conf: CFG}}
   - {id: 1, key: castle, label: Castle Multiball, flag: 37, start_bonus: 25000000, ball_save_adjustment: ad_castle_multiball_ball_save_timer, ball_save_s: 15,
      jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
