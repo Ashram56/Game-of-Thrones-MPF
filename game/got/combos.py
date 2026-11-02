@@ -299,9 +299,17 @@ class Combos(Mode):
             p.got_specials = int(p.got_specials or 0) + 1
         if award == 3:
             p.score += self.SPECIAL_POINTS
-        elif award == 0:
+        elif award == 0:                                # one credit (+ knocker)
+            v = self.machine.variables
+            v.set_machine_var("credits", int(v.get_machine_var("credits") or 0) + 1)
             self.machine.events.post("got_special_credit")
-        elif award == 4:
+        elif award == 4:                                # extra ball, 25M when the extra-ball limit blocks it
+            limit = int(self._setting("ad_extra_ball_limit", 5) or 0)
+            if int(p.got_special_extra_balls or 0) >= limit:
+                p.score += self.SPECIAL_POINTS
+            else:
+                p.got_special_extra_balls = int(p.got_special_extra_balls or 0) + 1
+                p.extra_balls = int(p.extra_balls or 0) + 1
             self.machine.events.post("got_special_extra_ball")
         self.machine.events.post("got_special_awarded", award=award)
 

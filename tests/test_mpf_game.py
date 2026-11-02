@@ -718,6 +718,14 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
         self.assertEqual(7, self.machine.modes["videomode"]._ai)             # AI health at level 4
 
+    def test_special_extra_ball_setting(self):
+        self.machine.settings.set_setting_value("ad_special_award", 4)
+        self._start_game()
+        player = self.machine.game.player
+        self.post_event("got_special")
+        self.advance_time_and_run(0.1)
+        self.assertEqual(1, player.extra_balls)
+
     def test_iron_bank_cash_in(self):
         self._start_game()
         player = self.machine.game.player
@@ -795,6 +803,7 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
         self.assertEqual(1, player.got_specials)
         self.assertEqual(score, player.score)                 # adjustment 54 = 0: one credit
+        self.assertEqual(1, int(self.machine.variables.get_machine_var("credits") or 0))
         self.post_event("got_special")                        # limit 1 reached: 25M points instead
         self.advance_time_and_run(0.1)
         self.assertGreaterEqual(player.score - score, 25000000)
