@@ -1,4 +1,5 @@
 {
+  "format": 2,
   "id": "game-of-thrones-mpf",
   "name": "Game of Thrones (Stern 2015), MPF recreation",
   "game_dir": "game",
@@ -9,7 +10,6 @@
     "game/addons/"
   ],
   "copy": [
-    "scripts/run.py",
     "game/config/rom",
     "game/sounds",
     "game/images"
@@ -32,18 +32,7 @@
     "mpf-gmc"
   ],
   "requires": {
-    "python": ">=3.10",
-    "env": [
-      "GODOT",
-      "MPF_GAME_VENV"
-    ]
-  },
-  "run": {
-    "start": "python3 scripts/run.py",
-    "cwd": ".",
-    "needs_display": true,
-    "game_args": true,
-    "check": "python3 scripts/run.py --check"
+    "python": ">=3.10"
   },
   "keep_on_update": [
     "game/data"
@@ -51,5 +40,15 @@
   "monitor": {
     "layout": "game/monitor/monitor.yaml",
     "image": "game/monitor/playfield.jpg"
+  },
+  "mpf": {
+    "configs": [
+      "config"
+    ],
+    "hardware": {
+      "virtual": [
+        "hw_virtual"
+      ]
+    }
   }
 }

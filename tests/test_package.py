@@ -6,7 +6,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEYS = {"id", "name", "description", "icon", "game_dir", "git_tracked", "git_exclude", "copy", "optional", "never",
-        "never_names", "import_seed", "force_vram", "platform_addons", "requires", "run", "options", "pup",
+        "never_names", "format", "mpf", "dmd", "addons", "settings", "import_seed", "force_vram", "platform_addons", "requires", "run", "options", "pup",
         "keep_on_update", "monitor", "profiles", "gozen", "extra", "source_commits", "precheck"}
 
 
@@ -18,7 +18,8 @@ def load(name):
 def test_spec_keys_and_ids():
     spec, pkg = load("bundle_spec.json"), load("mpf-package.json")
     assert set(spec) <= KEYS
-    assert spec["run"]["start"]
+    assert spec["format"] == 2 and "run" not in spec and "env" not in spec.get("requires", {})
+    assert spec["mpf"]["configs"] and spec["mpf"]["hardware"]["virtual"]
     assert spec["id"] == pkg["id"]
 
 
