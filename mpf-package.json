@@ -1,0 +1,7 @@
+{
+  "id": "game-of-thrones-mpf",
+  "tools": ["git"],
+  "min_python": "3.10",
+  "disk_gb": 6,
+  "setup": ["python3 scripts/setup.py --no-monitor"]
+}

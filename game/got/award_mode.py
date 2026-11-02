@@ -1,5 +1,5 @@
 """MPF glue: one generic mode class for the 8 houses and 7 multiballs, driven by `mode_settings` that
-scripts/gen_config.py writes from rules.yaml. UNVERIFIED against a running MPF (not installable offline):
+scripts/gen_config.py writes from rules.yaml.
 API names follow MPF 0.80 (Mode.add_mode_event_handler, Mode.player, <switch>_active events)."""
 from mpf.core.mode import Mode
 

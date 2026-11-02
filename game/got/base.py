@@ -1,4 +1,4 @@
-"""MPF glue: base game mode. Wizard progression and starting the next ready mode. UNVERIFIED against MPF."""
+"""MPF glue: base game mode. Wizard progression and starting the next ready mode."""
 import time
 
 from mpf.core.mode import Mode

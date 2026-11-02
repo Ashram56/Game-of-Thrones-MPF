@@ -11,7 +11,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 addon = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "game", "addons", "mpf-gmc")
 p = os.path.join(addon, "scripts", "bcp_server.gd")
 s = open(p, encoding="utf-8").read()
-if "_rx_tail" in s:
+if "_rx_tail" in s or "mpf-godot fix" in s or "tron patch" in s:
     print("already patched")
     sys.exit(0)
 old = '\t\tvar messages := _client.get_string(bytes).split("\\n")\n'
