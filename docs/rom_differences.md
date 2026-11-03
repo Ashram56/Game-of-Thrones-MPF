@@ -1,17 +1,31 @@
-# Departures from the ROM
+# Departures from the ROM, and what is not built
 
-No reference traces exist, so these are departures from the *spec*; every item also lists what is simply not built.
+Updated 2026-11-03. No reference traces or PinMAME exist for Spike 1, so everything is checked against the extraction
+(Game-of-Thrones `docs/`, `data/*.csv`, ROM wins over the VPX table) and by MPF tests, not against the real game.
+Confidence per rule: `game/config/rules.yaml` (H table/constant, M constants plus names, L inferred, CFG not recovered).
 
-| # | Area | ROM (spec) | Here | Why |
+## Departures (built differently from the ROM)
+
+| # | Area | ROM | Here | Why |
 |---|---|---|---|---|
-| 1 | House start | Choose Your Battle (flag 46) selects lit houses; timer 23 (3 s, +8 s per press, max 20 s) | The throne switch starts the next incomplete house | Selection flow not built |
-| 2 | House shots | ROM-defined shot logic per house (M) | `shots` switch lists in rules.yaml (L), 3 shots complete a house (CFG) | Shot mapping not extracted |
-| 3 | Award growth | `BumpAward` increments computed at run time; some values only in 03 s7 | Bump on every shot, caps from 03 s7; Targaryen, Winter Is Coming, Hand, Madness growth = 0 (CFG) | Needs emulation (docs/05-emulation.md) |
-| 4 | Hurry-ups | Decay computed by `CalcHurryUpDecValue` | Linear decay helper exists, not wired into modes | Amounts not recovered |
-| 5 | Multiball start | Blackwater by locks, Castle by upper-playfield levels, Wall by left 3-bank, Madness by ? | Modes start only by `start_mode_<key>` events (progression events `got_ready_*` are posted) | Triggers are M/L |
-| 6 | Multiballs | Super jackpots, sub-modes (wildfire, freeze, horde) | One jackpot award per mode, ball count 3 (CFG), ball save from the ROM defaults | Scope |
-| 7 | Not built | Lannister gold, playfield multipliers, combos, mystery, video mode, Lord of Light, swords, bonus, match, high scores, service menu, audits, credits | - | Scope; settings.yaml has the 159 adjustments for the menu |
-| 8 | Operator settings | Adjustments drive the rules | Static defaults in YAML; adjustments exist as MPF settings only | Lean first build |
-| 9 | Coils | Per-coil Spike 1 drive times | 25 ms pulse for all (CFG), shaker 100 ms | Timing not decoded |
-| 10 | Hardware | Spike 1 node bus | smart_virtual only; no P-ROC route for Spike 1 | Different platform |
-| 11 | DMD | Procedural display effects (`def_*`) | Slides show the first frame of selected `play_video` ranges; frame playback not wired (fps CFG 20) | Display effect table not decoded |
+| 1 | House start with no lit house | Choose Your Battle always decides | The throne starts the next incomplete house; with lit houses Choose Your Battle opens (single, stacked pair, PASS) | Entry set of the ROM menu is M |
+| 2 | Service menu | The ROM's own menu | MPF's service mode on the four service buttons, the 159 ROM adjustments as MPF settings; audits via MPF's auditor | ROM menu screens not decoded |
+| 3 | DMD effects | Procedural `def_*` effects, ROM font and text layout | Text screens drawn by Godot slides (score with ball/player, attract pages, credits, high scores, initials, match, game over, Mystery, Choose Your Battle, video duel); ROM videos play for the 9 extracted clips | Effect table and font not decoded |
+| 4 | Attract, credits, high scores, match | ROM screens and rules | Mine (CFG): pages every 4 s, 1 coin = 1 credit (adj 65 limit, adj 66 free play), initials by flippers + Start, tables 75/50/40/30/20 M from docs/03, match draw from adj 61 | Screens and match odds not decoded |
+| 5 | Lamps, flashers | ROM lamp and flasher effects (`lef_*`) | The ROM's 101 named lights; attract sweep, GI, Start, Shoot Again, house sigils, flasher pulses on switch events (CFG choreography) | Effects not decoded |
+| 6 | Coils | Per-coil drive times | 25 ms for all, shaker 100 ms, flipper hold power CFG | Times not decoded |
+| 7 | Video mode duel | ROM duel | 20 s, player health 3, AI 3-7 by level, damage 1 (heavy 2 at 30 %, CFG); text only | Health, AI timing, graphics not recovered |
+| 8 | Iron Bank, Greyjoy/Lannister/Tyrell/Baratheon/Martell abilities | ROM routines | Built from `house_select_awards.csv` and docs/14; Iron Bank `c` is M; no dragon waves | Partly M |
+| 9 | Hardware | Spike 1 node bus | smart_virtual and a virtual overlay only | Different platform |
+
+## Built since the first version (no longer missing)
+Houses and multiballs with ROM scoring tables, Combo X, swords, Wildfire, spinner, Lord of Light, Mystery (40 entries, 3-slot menu),
+Blackwater rounds and Super Jackpots, lock and ram Super Jackpot, Special (credit or extra ball), Tickle, button abilities,
+casual mode, Wall, Castle, Hand of the King, Iron Throne, Midnight Madness, bonus, tilt, ball save, extra balls.
+
+## Not built
+- The 137 audits of `audits_meaning.csv`; the ROM service menu.
+- ROM fonts and the `def_*` display effects; graphics for the video duel; Castle Collection; the Iron Throne victory lap.
+- Greyjoy start-of-ball award; Wildfire details beyond docs/10; dragon waves and Stark/Targaryen refinements beyond docs/14.
+- ROM coil times and lamp/flasher choreography (CFG values above).
+- Real-machine checks: nothing ran on a Spike 1 board.

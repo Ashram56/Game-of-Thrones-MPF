@@ -1,4 +1,6 @@
-# Status (first session)
+# Status
+
+Current state (2026-11-03): see docs/rom_differences.md for what is built, departed from and missing; 82 tests pass; lights, attract, credits, high scores, match are in. The notes below are the running log of each feature.
 
 Verification: MPF 0.80.1 boots the game headless (smart_virtual) and tests/test_mpf_game.py plays a full 3-ball game (start, house mode shot, drains, game end). Still no Spike 1 traces.
 
