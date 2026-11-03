@@ -28,6 +28,7 @@ BG_PERIOD = 6 / 62.0
 
 
 class HandMode(AwardMode):
+    own_args = True
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
         self._bg_on = False

@@ -15,6 +15,7 @@ UPPER_MULT = 1                                                                  
 
 
 class CastleMode(AwardMode):
+    own_args = True
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
         self._v12, self._v13 = AWARD, SUPER                                  # ResetAwards at every Start
@@ -26,7 +27,7 @@ class CastleMode(AwardMode):
     def _publish(self):
         v = self.machine.variables
         v.set_machine_var("got_arg_score", "{:,}".format(int(self.player.score)))
-        v.set_machine_var("got_arg_award", "{:,}".format(self._v13))
+        v.set_machine_var("got_arg_hurry", "{:,}".format(self._v13))
 
     def _dragon(self, mult):
         p = self.player

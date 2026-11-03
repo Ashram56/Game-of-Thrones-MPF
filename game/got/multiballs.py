@@ -248,6 +248,7 @@ class BlackwaterMode(AwardMode):
     grace; a ram shot collects V x 6 x R + 10M, otherwise the window expires; then the next round starts. V =
     CalcJackpotValue(wildfire points) is set at the start (cblackwater::Start)."""
 
+    own_args = True
     SHOTS = ("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop")
     SUPER_S = 20 + 93 / 66.0
 

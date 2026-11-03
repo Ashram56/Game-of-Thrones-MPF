@@ -11,6 +11,7 @@ SUPER_EXTRA = 10000000                         # + 20,000,000 when the house-sel
 
 
 class WallMode(AwardMode):
+    own_args = True
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
         p = self.player

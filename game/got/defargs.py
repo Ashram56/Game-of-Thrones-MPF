@@ -19,14 +19,22 @@ class DefArgs(Mode):
         self.add_mode_event_handler("player_score", self._score)
         self.add_mode_event_handler("got_tickle_progress", self._tickle)
         self.add_mode_event_handler("got_mode_total", self._mode_total)
+        self.add_mode_event_handler("got_blackwater_super_lit", self.level_lit)
         self._tickle_left = 0
 
+    def level_lit(self, level=1, **kwargs):                       # "%dX SUPER JACKPOT / IS LIT" shows the level, not the last payment
+        self._award = int(level)
+        self._total_until = self.machine.clock.get_time() + 2.0
+
     def _score(self, change=0, **kwargs):
+        if self.machine.clock.get_time() < getattr(self, "_total_until", 0):
+            return                                    # a mode total is on its way to the screen: later switch points must not replace it
         if change and int(change) > 0:
             self._award = int(change)
 
     def _mode_total(self, total=0, **kwargs):
         self._award = int(total)                  # the effect that follows shows the mode total in {award}
+        self._total_until = self.machine.clock.get_time() + 3.0
 
     def _tickle(self, left=0, **kwargs):
         self._tickle_left = int(left)
@@ -48,3 +56,9 @@ class DefArgs(Mode):
         self.machine.variables.set_machine_var("got_arg_shots", str(shots[0]) if shots else "0")
         left = [int(t.ticks) for t in self.machine.timers.values() if t.running and t.name.endswith("_timer")]
         self.machine.variables.set_machine_var("got_arg_timer", str(max(left) if left else 0))
+        for m in list(self.machine.modes):                                  # modes with their own live screen values publish them last
+            if m.active and getattr(m, "own_args", False):
+                try:
+                    m._publish()
+                except AttributeError:                       # the mode is still starting
+                    pass
