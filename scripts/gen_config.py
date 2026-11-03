@@ -142,7 +142,7 @@ def sounds(data, rules):
         c = cat[i]
         track = TRACK.get(c["category"], "sfx")
         stem = os.path.splitext(c["file"])[0]
-        files[stem] = {"file": c["file"], "track": track}
+        files[stem] = {"file": stem + ".ogg", "src": c["file"], "track": track}
         act = {"action": "play", "bus": track}
         if track == "music":
             act["loops"] = -1
@@ -151,11 +151,49 @@ def sounds(data, rules):
     return {"sound_player": player}
 
 
+def all_sounds(data, rules):
+    """Every sound effect of data/sound_effects.csv (463) as event got_se_<name>; effects with several variants pick one at random
+    (random_event_player). Files are converted to OGG by gen_media.py. Which rule plays which effect is wired in rules.yaml `sounds`."""
+    cat = {int(r["sound_id"]): r for r in rows(data, "audio_catalog.csv")}
+    player, rnd = {}, {}
+    for r in rows(data, "sound_effects.csv"):
+        if r["name"] == "se_invalid" or not r["sound_ids"].strip():
+            continue
+        ids = [int(i) for i in r["sound_ids"].split() if int(i) in cat]
+        if not ids:
+            continue
+        ev = "got_se_" + r["name"][3:]
+        names = []
+        for k, i in enumerate(ids):
+            c = cat[i]
+            track = TRACK.get(c["category"], "sfx")
+            stem = os.path.splitext(c["file"])[0]
+            sounds.files[stem] = {"file": stem + ".ogg", "src": c["file"], "track": track}
+            e = ev if len(ids) == 1 else "%s_v%d" % (ev, k + 1)
+            player[e] = {stem: {"action": "play", "bus": track}}
+            names.append(e)
+        if len(ids) > 1:
+            rnd[ev] = names               # one variant at random: got.scoreboard (random_event_player is game-mode only)
+    all_sounds.variants = rnd
+    return {"sound_player": player}
+
+
+VIDEO_EVENTS = {"got_targaryen_award": 8, "got_stark_award": 23, "got_martell_award": 107,
+                'got_house_complete{key=="baratheon"}': 32, 'got_house_complete{key=="lannister"}': 42,
+                'got_house_complete{key=="greyjoy"}': 66, 'got_house_complete{key=="tyrell"}': 80, "got_special_credit": 155}
+VIDEO_FRAMES = {}
+
+
 def slides(data, rules):
     """GMC slides are scenes (game/slides/vidNNN.tscn, one per DMD video); MPF only gets the slide_player."""
     player = {}
     for event, vid in rules["dmd"]["videos"].items():
         player[event] = {"vid%03d" % vid: {"expire": "2s"}}
+    for r in rows(data, "dmd_videos.csv"):                  # every extracted clip is playable: event got_video_<id>
+        v = int(r["video_id"])
+        player["got_video_%d" % v] = {"vid%03d" % v: {"expire": "%.1fs" % (max(1, int(r["frames"])) / float(rules["dmd"]["fps"]) + 0.5)}}
+    for ev, vid in VIDEO_EVENTS.items():                    # clips whose ROM effect name says when they play (played_by column)
+        player[ev] = {"vid%03d" % vid: {"expire": "%.1fs" % (VIDEO_FRAMES.get(vid, 40) / float(rules["dmd"]["fps"]) + 0.5)}}
     return {"slide_player": player}
 
 
@@ -174,9 +212,9 @@ fps = %d
 """
 
 
-def slide_scenes(rules):
-    return {"slides/vid%03d.tscn" % v: SLIDE_TSCN % ("vid%03d" % v, rules["dmd"]["fps"])
-            for v in sorted(set(rules["dmd"]["videos"].values()))}
+def slide_scenes(rules, data):
+    vids = {int(r["video_id"]) for r in rows(data, "dmd_videos.csv")} | set(rules["dmd"]["videos"].values())
+    return {"slides/vid%03d.tscn" % v: SLIDE_TSCN % ("vid%03d" % v, rules["dmd"]["fps"]) for v in sorted(vids)}
 
 
 HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.StarkMode", "martell": "got.houses.MartellMode",
@@ -347,11 +385,13 @@ def build(data):
     files["modes/scoring/config/scoring.yaml"] = dump(sc)       # variable_player is only valid inside a game mode
     files["config/rom/lightshow.yaml"] = dump(lightshow(rules))
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
+    files["config/rom/sounds_all.yaml"] = dump(all_sounds(data, rules))
+    files["config/rom/sound_variants.json"] = json.dumps(all_sounds.variants, indent=1, sort_keys=True) + "\n"
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"
     files["config/rom/mystery_awards.csv"] = open(os.path.join(data, "mystery_awards.csv")).read()
     files["config/rom/swords.csv"] = open(os.path.join(data, "swords.csv")).read()
     files["config/rom/slides.yaml"] = dump(slides(data, rules))
-    files.update(slide_scenes(rules))
+    files.update(slide_scenes(rules, data))
     for rel, cfg in mode_files(rules).items():
         files["modes/" + rel] = dump(cfg)
     return files

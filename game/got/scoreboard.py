@@ -5,6 +5,7 @@ Rules from data/adjustments.csv (credit limit 65, free play 66, match percentage
 change the letter, Start confirms) and the match draw (a random tens digit, award = one credit) are mine; default initials GOT.
 """
 import json
+import os
 import random
 
 from mpf.core.mode import Mode
@@ -25,6 +26,7 @@ class Scoreboard(Mode):
         self._page = 0
         self._entry = None
         self._last = []
+        self._variants()
         for sw in COINS:
             self.add_mode_event_handler(sw + "_active", self._coin)
         self.add_mode_event_handler("request_to_start_game", self._allow_start)
@@ -38,6 +40,22 @@ class Scoreboard(Mode):
         self.add_mode_event_handler("s_start_button_active", self._confirm_letter)
         if self.machine.modes["attract"].active:
             self._attract_start()
+
+    def _variants(self):
+        """An effect with several sounds (config/rom/sound_variants.json) plays one at random, never the same twice in a row."""
+        path = os.path.join(self.machine.machine_path, "config", "rom", "sound_variants.json")
+        if not os.path.exists(path):
+            return
+        with open(path, encoding="utf-8") as f:
+            variants = json.load(f)
+        self._last_variant = {}
+        for ev, names in variants.items():
+            self.add_mode_event_handler(ev, self._pick, ev=ev, names=names)
+
+    def _pick(self, ev, names, **kwargs):
+        choices = [n for n in names if n != self._last_variant.get(ev)] or names
+        self._last_variant[ev] = random.choice(choices)
+        self.machine.events.post(self._last_variant[ev])
 
     # --- credits
     def _setting(self, name, default):

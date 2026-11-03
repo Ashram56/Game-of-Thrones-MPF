@@ -10,6 +10,7 @@ config:
   - rom/lights.yaml
   - rom/lightshow.yaml     # attract light show, GI and flasher pulses (generated; choreography CFG)
   - rom/settings.yaml
+  - rom/sounds_all.yaml    # every sound effect as got_se_<name> (generated)
   - rom/sounds.yaml        # sound_player only (GMC registers game/sounds/<track>/<stem>)
   - rom/slides.yaml        # slide_player only (slides are scenes in game/slides/)
   - devices.yaml

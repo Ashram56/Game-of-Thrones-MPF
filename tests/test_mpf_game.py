@@ -1119,3 +1119,14 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual("BBB", t[0]["name"])
         self.assertGreaterEqual(t[0]["score"], 80000000)
         self.assertIn("OVER", seen)
+
+    def test_sound_variants_pick_one_at_random(self):
+        import json
+        v = json.load(open(os.path.join(os.path.dirname(__file__), "..", "game", "config", "rom", "sound_variants.json")))
+        ev, names = next(iter(v.items()))
+        played = []
+        for n in names:
+            self.machine.events.add_handler(n, lambda **kwargs: played.append(1))
+        self.post_event(ev)
+        self.advance_time_and_run(0.1)
+        self.assertEqual(1, len(played))

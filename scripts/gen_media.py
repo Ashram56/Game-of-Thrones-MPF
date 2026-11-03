@@ -3,7 +3,7 @@
 
   python scripts/gen_media.py [--assets /mnt/project-files/got/assets] [--data DIR]
 
-Sounds -> game/sounds/<track>/<file> (core set from rules.yaml `sounds`); DMD frames of rules.yaml `dmd.videos`
+Sounds -> game/sounds/<track>/<stem>.ogg (all sound effects, converted with ffmpeg); DMD frames of every video in data/dmd_videos.csv
 -> game/images/dmd_vidNNN_fKKK.png (128x32 as extracted; copied unchanged). Writes game/config/rom/dmd_frames.json
 (video -> frame count, fps) for the slide player. Frames and sounds are copyrighted ROM media: gitignored.
 """
@@ -12,7 +12,9 @@ import csv
 import json
 import os
 import shutil
+import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 import yaml
 
@@ -26,20 +28,31 @@ def main():
     ap.add_argument("--data", default=os.environ.get("GOT_DATA", os.path.join(ROOT, "..", "Game-of-Thrones", "data")))
     a = ap.parse_args()
     sounds = json.load(open(os.path.join(GAME, "config", "rom", "sound_files.json"), encoding="utf-8"))
-    missing = 0
-    for name, s in sounds.items():
-        src = os.path.join(a.assets, "audio", s["file"])
+    ffmpeg = shutil.which("ffmpeg")
+
+    def convert(item):
+        name, s = item
+        src = os.path.join(a.assets, "audio", s.get("src", s["file"]))
         dst_dir = os.path.join(GAME, "sounds", s["track"])
+        dst = os.path.join(dst_dir, s["file"])
         os.makedirs(dst_dir, exist_ok=True)
-        if os.path.exists(src):
-            shutil.copyfile(src, os.path.join(dst_dir, s["file"]))
-        else:
-            missing += 1
+        if not os.path.exists(src):
+            return 1
+        if os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src):
+            return 0
+        if s["file"].endswith(".ogg") and ffmpeg:               # WAV (860 MB) -> OGG Vorbis, about a tenth of the size
+            r = subprocess.run([ffmpeg, "-y", "-loglevel", "error", "-i", src, "-c:a", "libvorbis", "-q:a", "3", dst])
+            return 1 if r.returncode else 0
+        shutil.copyfile(src, dst)
+        return 0
+
+    with ThreadPoolExecutor(max_workers=os.cpu_count() or 2) as ex:
+        missing = sum(ex.map(convert, sorted(sounds.items())))
     rules = yaml.safe_load(open(os.path.join(GAME, "config", "rules.yaml"), encoding="utf-8"))
     vids = {int(r["video_id"]): r for r in csv.DictReader(open(os.path.join(a.data, "dmd_videos.csv"), encoding="utf-8"))}
     os.makedirs(os.path.join(GAME, "images"), exist_ok=True)
     manifest = {}
-    for vid in sorted(set(rules["dmd"]["videos"].values())):
+    for vid in sorted(set(rules["dmd"]["videos"].values()) | set(vids)):
         v = vids[int(vid)]
         n = 0
         for k, img in enumerate(range(int(v["first_image"]), int(v["last_image"]) + 1)):
