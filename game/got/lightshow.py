@@ -35,7 +35,7 @@ class LightMode(Mode):
 
     def mode_stop(self, **kwargs):
         self.machine.clock.unschedule(self._poll)
-        for name in ("start_button", "shoot_again", "extra_ball", "iron_throne") + tuple(h + "_sigil" for h in HOUSES):
+        for name in ("start_button", "shoot_again", "extra_ball", "iron_throne", "hand_of_the_king") + tuple(h + "_sigil" for h in HOUSES):
             self._set(name, "000000")
         for lamps in SHOT_LAMPS.values():
             for lamp in lamps:
@@ -72,7 +72,19 @@ class LightMode(Mode):
         self._set("extra_ball", "ffffff" if p.got_extra_ball_lit else "000000")
         self._set("iron_throne", "ffffff" if getattr(self.machine.modes["combos"], "cyb", None) else "000000")
 
+        self._hand_lamps(prog)
         self._shot_lamps(p)
+
+    def _hand_lamps(self, prog):
+        """lef_hand_of_the_king_ready (109) chases while the Hand is ready; lef_post_hand_background (112) keeps the Hand lamp steady once
+        it has been played (chand_lamps.csv, H strings)."""
+        hand = self.machine.modes["hand_of_the_king"]
+        ready = bool(prog and "hand_of_the_king" in prog.ready and "hand_of_the_king" not in prog.started and not hand.active)
+        if ready != getattr(self, "_hand_ready", False):
+            self._hand_ready = ready
+            self.machine.events.post("got_hand_ready_lamps" if ready else "got_hand_ready_lamps_off")
+        played = bool(prog and "hand_of_the_king" in prog.started and not hand.active)
+        self._set("hand_of_the_king", "ffffff" if played else "000000")
 
     def _shot_lamps(self, p):
         """Arrows of the shots the running modes still want (white), the lit return lane, the lock and the playfield multiplier."""

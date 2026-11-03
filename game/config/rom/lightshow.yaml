@@ -6120,6 +6120,57 @@ shows:
       l_lower_playfield_gi: '000000'
       l_upper_right_playfield_gi: '000000'
   - time: 2.9032
+  hand_ready:
+  - time: 0.0
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: '000000'
+      l_left_ramp_lock: '000000'
+      l_left_ramp_sigil: '000000'
+      l_left_ramp_arrow_top: '000000'
+  - time: 0.0645
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: ffffff
+      l_left_ramp_lock: '000000'
+      l_left_ramp_sigil: '000000'
+      l_left_ramp_arrow_top: '000000'
+  - time: 0.129
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: ffffff
+      l_left_ramp_lock: ffffff
+      l_left_ramp_sigil: '000000'
+      l_left_ramp_arrow_top: '000000'
+  - time: 0.1935
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: ffffff
+      l_left_ramp_lock: ffffff
+      l_left_ramp_sigil: ffffff
+      l_left_ramp_arrow_top: '000000'
+  - time: 0.2258
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: ffffff
+      l_left_ramp_lock: ffffff
+      l_left_ramp_sigil: ffffff
+      l_left_ramp_arrow_top: ffffff
+  - time: 0.2581
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: ffffff
+      l_left_ramp_lock: ffffff
+      l_left_ramp_sigil: ffffff
+      l_left_ramp_arrow_top: ffffff
+  - time: 0.3226
+    lights:
+      l_hand_of_the_king: '000000'
+      l_left_ramp_arrow_bot: '000000'
+      l_left_ramp_lock: '000000'
+      l_left_ramp_sigil: '000000'
+      l_left_ramp_arrow_top: '000000'
+  - time: 0.4516
 show_player:
   mode_attract_started:
     attract_sweep:
@@ -6207,6 +6258,14 @@ show_player:
     iron_super:
       loops: 0
       key: iron_super
+  got_hand_ready_lamps:
+    hand_ready:
+      loops: -1
+      key: hand_ready
+  got_hand_ready_lamps_off:
+    hand_ready:
+      action: stop
+      key: hand_ready
   mode_hand_of_the_king_started:
     hand_start:
       loops: 0

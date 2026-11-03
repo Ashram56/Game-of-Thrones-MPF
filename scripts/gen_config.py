@@ -600,6 +600,20 @@ def hand_lamps(out, data):
         t += (on + off) * TICK
     steps.append({"time": round(t, 4)})
     out["shows"]["hand_start"] = steps
+    chase = [("l_" + r["lamp_name"][3:]) for r in rows(data, "chand_lamps.csv") if r["effect"].startswith("109")]
+    if chase:             # effect 109 (ready): hand lamp, ramp bottom arrow, lock, sigil, top arrow lit in sequence (steps 4,4,4,2,2 ticks), held 4, off 8 (M reading)
+        frames, t = [], 0.0
+        for n, d in enumerate((4, 4, 4, 2, 2)):
+            frames.append({"time": round(t, 4), "lights": {x: ("ffffff" if i <= n else "000000") for i, x in enumerate(chase)}})
+            t += d * TICK
+        frames.append({"time": round(t, 4), "lights": {x: "ffffff" for x in chase}})
+        t += 4 * TICK
+        frames.append({"time": round(t, 4), "lights": {x: "000000" for x in chase}})
+        t += 8 * TICK
+        frames.append({"time": round(t, 4)})
+        out["shows"]["hand_ready"] = frames
+        out["show_player"]["got_hand_ready_lamps"] = {"hand_ready": {"loops": -1, "key": "hand_ready"}}
+        out["show_player"]["got_hand_ready_lamps_off"] = {"hand_ready": {"action": "stop", "key": "hand_ready"}}
     out["show_player"]["mode_hand_of_the_king_started"] = {"hand_start": {"loops": 0, "key": "hand_start"}}
 
 

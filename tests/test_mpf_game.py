@@ -1051,6 +1051,15 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_right_2_bank_top")
         self.assertEqual({"hand_of_the_king", "battering_ram_arrow", "battering_ram_1_top"}, mode._bg_lights())
 
+    def test_hand_ready_chase_and_post_hand_lamp(self):
+        """chand_lamps.csv 109 / 112: a ready Hand posts the chase event, a played Hand keeps its lamp steady."""
+        self._start_game()
+        self.mock_event("got_hand_ready_lamps")
+        prog = self._progression_of(self.machine.game.player)
+        prog.ready.add("hand_of_the_king")
+        self.advance_time_and_run(0.6)
+        self.assertEventCalled("got_hand_ready_lamps")
+
     def test_hand_hurry_up_expires_back_to_set_one(self):
         mode = self._start_hand({4})
         for _ in range(2):
