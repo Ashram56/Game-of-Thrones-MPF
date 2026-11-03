@@ -70,15 +70,28 @@ def switches(data):
 
 
 def coils(data):
+    """Pulse times from data/coil_timing.csv (extraction of the ROM's call sites and coil table): the game's own pulse when a call
+    site gives one (H), else the coil table default (64 ms); slings 16 ms and pops 32 ms are the node reflex values (M); flippers
+    40 ms initial pulse with hold level 32/255 (node reflex)."""
     out = {}
+    timing = {r["coil_id"]: r for r in rows(data, "coil_timing.csv")} if os.path.exists(os.path.join(data, "coil_timing.csv")) else {}
     for r in rows(data, "coils.csv"):
         if good(r["name"]):
             n = r["name"]
-            out["c_" + n] = {"number": "C%s" % r["coil_id"], "label": r["label_en"].title(),
-                             "default_pulse_ms": 25}      # CFG: Spike 1 coil timing not extracted (flags column is raw)
+            t = timing.get(r["coil_id"], {})
+            ms = 25                                              # CFG when the timing table is absent
+            if t:
+                g, d = (t.get("game_pulse_ms") or "").strip(), (t.get("default_pulse_ms") or "").strip()
+                m = re.match(r"\d+", g)
+                ms = int(m.group()) if m else int(d) if d.isdigit() and int(d) else 64
+            out["c_" + n] = {"number": "C%s" % r["coil_id"], "label": r["label_en"].title(), "default_pulse_ms": ms}
+    for n, ms in (("left_slingshot", 16), ("right_slingshot", 16), ("left_pop_bumper", 32), ("right_pop_bumper", 32),
+                  ("bottom_pop_bumper", 32)):
+        out["c_" + n]["default_pulse_ms"] = ms
     for f in ("left_flipper_power", "right_flipper_power", "u_p_left_flipper", "u_p_right_flipper"):
-        out["c_" + f]["default_hold_power"] = 0.25     # CFG: MPF needs a hold power to keep a flipper up (value not from ROM)
-    out["c_shaker_motor"]["default_pulse_ms"] = 100
+        out["c_" + f]["default_pulse_ms"] = 40
+        out["c_" + f]["default_hold_power"] = round(32 / 255, 3)      # flipper node reflex: hold level 32 of 255
+    out["c_shaker_motor"]["default_pulse_ms"] = 100                  # table 1000 ms; MPF pulses are short, the shaker is held by a show
     return {"coils": out}
 
 

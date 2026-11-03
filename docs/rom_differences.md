@@ -13,7 +13,7 @@ Confidence per rule: `game/config/rules.yaml` (H table/constant, M constants plu
 | 3 | DMD effects | Procedural `def_*` effects, ROM font and text layout | Text screens drawn by Godot slides (score with ball/player, attract pages, credits, high scores, initials, match, game over, Mystery, Choose Your Battle, video duel); ROM videos play for the 9 extracted clips | Effect table and font not decoded |
 | 4 | Attract, credits, high scores, match | ROM screens and rules | Mine (CFG): pages every 4 s, 1 coin = 1 credit (adj 65 limit, adj 66 free play), initials by flippers + Start, tables 75/50/40/30/20 M from docs/03, match draw from adj 61 | Screens and match odds not decoded |
 | 5 | Lamps, flashers | ROM lamp and flasher effects (`lef_*`) | The ROM's 101 named lights; attract sweep, GI, Start, Shoot Again, house sigils, flasher pulses on switch events (CFG choreography) | Effects not decoded |
-| 6 | Coils | Per-coil drive times | 25 ms for all, shaker 100 ms, flipper hold power CFG | Times not decoded |
+| 6 | Coils | Per-coil drive times | From data/coil_timing.csv (call-site pulse H, node reflex M); the shaker is 100 ms (table 1000) | Held coils (diverter, sword, lock hold levels) not modelled |
 | 7 | Video mode duel | ROM duel | 20 s, player health 3, AI 3-7 by level, damage 1 (heavy 2 at 30 %, CFG); text only | Health, AI timing, graphics not recovered |
 | 8 | Iron Bank, Greyjoy/Lannister/Tyrell/Baratheon/Martell abilities | ROM routines | Built from `house_select_awards.csv` and docs/14; Iron Bank `c` is M; no dragon waves | Partly M |
 | 9 | Hardware | Spike 1 node bus | smart_virtual and a virtual overlay only | Different platform |
