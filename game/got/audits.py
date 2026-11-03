@@ -22,6 +22,8 @@ class RomAudits(Mode):
         self.add_mode_event_handler("got_house_confirmed", self._house_select)
         self.add_mode_event_handler("game_ended", self._players)
         self.add_mode_event_handler("game_ended", self._game_over_histograms, priority=10)
+        self.add_mode_event_handler("got_hand_started_houses", self._hand_start)
+        self.add_mode_event_handler("got_hand_of_the_king_super", self._count, name="au_hand_set_complete")
         self.add_mode_event_handler("game_started", self._game_started)
         self.add_mode_event_handler("ball_started", self._ball_started)
         self.add_mode_event_handler("ball_ended", self._ball_ended)
@@ -71,6 +73,12 @@ class RomAudits(Mode):
             self._add("au_game_time", secs)
             self._add("au_game_time_vp", secs)
             self._game_t0 = None
+
+    def _hand_start(self, houses=(), **kwargs):
+        from got import powers
+        for i in houses:
+            if 0 <= i < len(powers.HOUSES):
+                self._audit("au_hand_start_" + powers.HOUSES[i])
 
     def _count(self, name, **kwargs):
         self._audit(name)

@@ -20,7 +20,9 @@ class SetMultiball(AwardMode):
             prog = self.player.got_progression
             self._sets_needed = 2 if prog and 4 in prog.complete else 3
             done = set(prog.complete) if prog else set()
-            self._house_bits = done                      # docs/18 1.6 (H): completed houses change the Hand of the King
+            self._house_bits = done
+            self.machine.events.post("got_hand_started_houses", houses=sorted(done))   # audits 155-161 (ChalkTheStartAudits, inferred per completed house)
+            # docs/18 1.6 (H): completed houses change the Hand of the King
             if 0 in done:                                # Targaryen: +500,000 on the shot value
                 self._award.value += 500000
             self._super_bonus = (100000000 if 3 in done else 0) + (15000000 if 5 in done else 0)   # Lannister +100M, Tyrell +15M
