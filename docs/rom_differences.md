@@ -24,8 +24,11 @@ Blackwater rounds and Super Jackpots, lock and ram Super Jackpot, Special (credi
 casual mode, Wall, Castle, Hand of the King, Iron Throne, Midnight Madness, bonus, tilt, ball save, extra balls.
 
 ## Not built
-- The 137 audits of `audits_meaning.csv`; the ROM service menu.
-- ROM fonts and the `def_*` display effects; graphics for the video duel; Castle Collection; the Iron Throne victory lap.
+- About 100 of the 207 audit counters (score and game-time histograms, ball search, fixture, remaining mystery light counters); the ROM service menu. Counted: flippers, shots, multiballs, battles, house select, mystery awards, coins, Pict-O-Pops awards, video mode results, matches.
+- Display effects with runtime values or lines without a known position (they fall back to a Godot font); the 'ready' music states and `_spacer` tunes; graphics for the video duel; Castle Collection; the Iron Throne victory lap.
 - Greyjoy start-of-ball award; Wildfire details beyond docs/10; dragon waves and Stark/Targaryen refinements beyond docs/14.
 - ROM coil times and lamp/flasher choreography (CFG values above).
 - Real-machine checks: nothing ran on a Spike 1 board.
+
+
+Built since: background music by state from `music_stack.csv` (`got.music`); ROM bitmap fonts at the ROM's x/y on 162 text effects (`scripts/dmd_text.py`, `dmd_text_pages.gd`; multi-screen effects rotate every 1.2 s).
