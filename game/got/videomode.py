@@ -22,18 +22,28 @@ class VideoMode(Mode):
         self.delay.add(DURATION_S * 1000, self._finish, outcome="tie", name="vm_time")
         self.delay.add(int(AI_INTERVAL_S(self._level) * 1000), self._ai_strike, name="vm_ai")
         self._state()
+        self._sound("start")
+
+    def _sound(self, name):
+        """ROM duel sounds (se_fx_video_mode_*, triggers_sound_video.csv: cplayer::SetSoundFromState jump table)."""
+        self.machine.events.post("got_se_fx_video_mode_" + name)
 
     def _state(self):
         self.machine.events.post("got_video_mode_state", me=self._me, ai=self._ai, n=self._n)
 
     def _attack(self, **kwargs):
+        self._sound("player_attack")
+        self._sound("hit")
         self._ai -= 1
         self._state()
         if self._ai <= 0:
             self._finish("win")
 
     def _ai_strike(self, **kwargs):
-        self._me -= 2 if self.rng.random() < HEAVY_CHANCE else 1
+        heavy = self.rng.random() < HEAVY_CHANCE
+        self._sound("ai_strong_attack" if heavy else "ai_attack")
+        self._sound("big_hit" if heavy else "hit")
+        self._me -= 2 if heavy else 1
         self._state()
         if self._me <= 0:
             self._finish("loss")

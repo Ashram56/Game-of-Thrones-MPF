@@ -1228,6 +1228,17 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual("900", v("got_arg_gold"))
         self.assertEqual("1,200", v("got_arg_price"))
 
+    def test_video_mode_duel_plays_its_sounds(self):
+        heard = []
+        for n in ("start", "player_attack"):
+            self.machine.events.add_handler("got_se_fx_video_mode_" + n, lambda n=n, **kwargs: heard.append(n))
+        self._start_game()
+        self.post_event_with_params("got_video_mode_start", n=1)
+        self.advance_time_and_run(0.2)
+        self.hit_and_release_switch("s_l_flipper_button")
+        self.advance_time_and_run(0.1)
+        self.assertEqual(["start", "player_attack"], heard)
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))
