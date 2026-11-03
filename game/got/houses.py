@@ -174,50 +174,113 @@ class TyrellMode(AwardMode):
         return False
 
 
-DRAGON_VALUES = (8000000, 10000000, 12000000, 15000000)    # H: SetHurryUpAwardValue per dragon level (Game-of-Thrones data/award_growth.csv)
+VISERION_VALUES = (8000000, 10000000, 12000000)               # H (docs/18 2.2): SetHurryUpAwardValue per step, 3 hurry-ups
+RHAEGAL_VALUES = (8000000, 10000000, 12000000, 15000000, 25000000)     # 5 hurry-ups
+DROGON_VALUES = (10000000, 12000000, 15000000)                 # 3 hurry-ups per wave, then the kickback final shot
 DRAGON_SHOT = "s_kickback"                                   # H: ELF shot bit 4 (docs/06); the VPX table uses the castle/wall kicker
+DROGON_HP, DROGON_HP_GREYJOY = 150, 180                      # H/M (docs/18 2.3)
+DROGON_HURRYUP_HP, DROGON_FINAL_HP = 10, 20
+RAMPS = ("s_left_ramp_exit", "s_right_ramp_exit")
+LOOPS = ("s_left_loop", "s_right_loop")
 
 
 class TargaryenMode(AwardMode):
-    """Four dragon battles; progress is kept per player between starts. Stage 0: one ramp and one loop; stage 1: both ramps
-    and both loops; stages 2-3: three main shots; then the dragon shot collects the (decaying) hurry-up. The first three
-    stages end the mode and the next start faces the next dragon; stage 3 completes the house (rulesheet, wave randomness,
-    DRAGON FIRE and Greyjoy extras not modelled, M)."""
+    """Three dragon fights in sequence per player (docs/18 section 2, H unless noted): Viserion (3 hurry-ups: ramps, loops, kickback),
+    Rhaegal (5 hurry-ups ending on the kickback), Drogon (150 HP, 180 with Greyjoy: waves of 3 hurry-ups that are banked, 10 HP each,
+    then the kickback pays the bank and deals 20 HP; the timer running out cuts the bank by 25% and restarts). Beating Drogon completes
+    the house and the cycle restarts. M: which shots are lit after step 2 (any main shot not yet hit), Drogon's random wave masks
+    (a random main shot per hurry-up) and the 10 s time extension are simplified; the hurry-up decays over the mode timer."""
 
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
-        self._stage = min(3, int(self.player.got_dragon_stage or 0))
-        self._award.value = DRAGON_VALUES[self._stage]
-        self._wave = set()
-        self._armed = False
-        self._count = 0
+        p = self.player
+        self._dragon = min(2, int(p.got_dragon_stage or 0))
+        self._step = 0
+        self._done = set()
+        self._banked = 0
+        self._hp = DROGON_HP_GREYJOY if p.got_house == "greyjoy" else DROGON_HP
+        self.rng = __import__("random").Random()
+        self._timer_s = 20 if self._dragon == 2 else 16
+        timer = self.machine.timers["targaryen_timer"]
+        timer.stop()
+        timer.ticks = self._timer_s
+        timer.start()
+        self._lit = self._lit_shots()
+        self._set_value()
+
+    def _values(self):
+        return (VISERION_VALUES, RHAEGAL_VALUES, DROGON_VALUES)[self._dragon]
+
+    def _lit_shots(self):
+        n = self._step
+        if self._dragon == 2:
+            if n >= len(DROGON_VALUES):
+                return {DRAGON_SHOT}
+            return {self.rng.choice([m for m in MAINS if m != DRAGON_SHOT])}
+        if n == len(self._values()) - 1:
+            return {DRAGON_SHOT}
+        if n == 0:
+            return set(RAMPS)
+        if n == 1:
+            return set(LOOPS)
+        return {m for m in MAINS if m not in self._done and m != DRAGON_SHOT}
+
+    def _set_value(self):
+        vals = self._values()
+        self._award.value = vals[min(self._step, len(vals) - 1)]
 
     def _accepts(self, sw):
         self._shots = 0
-        if not self._armed:
-            if sw in MAINS and not (self._stage >= 2 and False):
-                self._wave.add(sw) if self._stage < 2 else None
-                self._count += 1
-                ramps = {s for s in self._wave if "ramp" in s}
-                loops = {s for s in self._wave if "loop" in s}
-                if self._stage == 0 and ramps and loops:
-                    self._armed = True
-                elif self._stage == 1 and len(ramps) == 2 and len(loops) == 2:
-                    self._armed = True
-                elif self._stage >= 2 and self._count >= 3:
-                    self._armed = True
-                if self._armed:
-                    self.machine.events.post("got_targaryen_dragon_lit")
-            return False
-        if sw == DRAGON_SHOT:
-            if self._stage >= 3:
-                self._shots = self._cfg["shots_to_complete"] - 1       # last dragon: the house completes
-            return True
-        return False
+        return sw in self._lit
 
-    def _pay(self):
-        stage = self._stage
-        super()._pay()
-        if stage < 3:
-            self.player.got_dragon_stage = stage + 1
-            self.stop()
+    def _shot(self, sw=None, **kwargs):
+        if not self._accepts(sw):
+            return
+        timer = self.machine.timers["targaryen_timer"]
+        value = int(self._award.hurry_up(timer.ticks, self._timer_s)) * self._gm()
+        self._done.add(sw)
+        if self._dragon < 2:
+            self.player.score += value
+            self.machine.events.post("got_targaryen_award", points=value)
+            self._step += 1
+            if self._step >= len(self._values()):
+                self._dragon_defeated()
+                return
+        elif self._step < len(DROGON_VALUES):                         # hurry-up: banked, 10 HP, more time
+            self._banked += value
+            self._hp -= DROGON_HURRYUP_HP
+            self._step += 1
+            self.machine.events.post("got_targaryen_award", points=value)
+            timer.ticks = min(self._timer_s, timer.ticks + 10)
+        else:                                                         # final shot: the bank is paid, 20 HP
+            self.player.score += self._banked
+            self.machine.events.post("got_targaryen_award", points=self._banked)
+            self._banked = 0
+            self._hp -= DROGON_FINAL_HP
+            if self._hp <= 0:
+                self._dragon_defeated()
+                return
+            self._step, self._done = 0, set()
+        self._lit = self._lit_shots()
+        self._set_value()
+        self.machine.events.post("got_targaryen_dragon_lit")
+
+    def _dragon_defeated(self):
+        if self._dragon < 2:
+            self.player.got_dragon_stage = self._dragon + 1
+        else:
+            self.player.got_dragon_stage = 0
+            self.machine.events.post("got_house_complete", house_id=self._cfg["id"], key=self._cfg["key"])
+        self.stop()
+
+    def _timeout(self, **kwargs):
+        if self._dragon == 2 and self.active:                         # DRAGON FIRE: the bank loses 25%, the wave restarts
+            self._banked -= int(self._banked / 4 / 10) * 10
+            self._step, self._done = 0, set()
+            self._lit = self._lit_shots()
+            self._set_value()
+            timer = self.machine.timers["targaryen_timer"]
+            timer.ticks = self._timer_s
+            timer.start()
+            return
+        self.stop()

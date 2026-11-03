@@ -33,5 +33,3 @@ timers:
     direction: down
     tick_interval: 1s
     start_running: true
-event_player:
-  timer_targaryen_timer_complete: stop_mode_targaryen

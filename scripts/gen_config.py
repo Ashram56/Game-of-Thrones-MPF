@@ -415,6 +415,8 @@ def mode_files(rules):
                "timers": {key + "_timer": {"start_value": h["timer_s"], "end_value": 0, "direction": "down",
                                            "tick_interval": "1s", "start_running": key != "winter_is_coming"}},
                "event_player": {"timer_%s_timer_complete" % key: "stop_mode_" + key}}
+        if key == "targaryen":              # Drogon's timer expiry is handled by the mode (DRAGON FIRE), not a stop
+            del cfg["event_player"]
         out["%s/config/%s.yaml" % (key, key)] = cfg
     for m in rules["multiballs"]:
         key = m["key"]
