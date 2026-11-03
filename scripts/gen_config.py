@@ -600,6 +600,20 @@ def hand_lamps(out, data):
         t += (on + off) * TICK
     steps.append({"time": round(t, 4)})
     out["shows"]["hand_start"] = steps
+    a_lamps = sorted({"l_" + r["lamp_name"][3:] for r in rows(data, "chand_lamps.csv") if r["effect"].startswith("124") and r["lamp_name"].startswith("lt_")
+                      and r["state"].startswith("white")})
+    b_lamps = sorted({"l_" + r["lamp_name"][3:] for r in rows(data, "chand_lamps.csv") if r["effect"].startswith("124") and r["lamp_name"].startswith("lt_")
+                      and r["state"].startswith("off in phase A")})
+    if a_lamps and b_lamps:                 # effect 124 (every Hand payment): phases A / B of 4 ticks, four cycles, then a 4 tick blackout (M)
+        fr = []
+        for c in range(4):
+            fr.append({"time": round(c * 8 * TICK, 4), "lights": dict({x: "ffffff" for x in a_lamps}, **{x: "000000" for x in b_lamps})})
+            fr.append({"time": round((c * 8 + 4) * TICK, 4), "lights": dict({x: "000000" for x in a_lamps}, **{x: "ffffff" for x in b_lamps})})
+        fr.append({"time": round(32 * TICK, 4), "lights": {x: "000000" for x in a_lamps + b_lamps}})
+        fr.append({"time": round(36 * TICK, 4)})
+        out["shows"]["hand_award"] = fr
+        for ev in ("got_hand_of_the_king_award", "got_hand_of_the_king_super", "got_hand_hurry_up"):
+            out["show_player"][ev] = {"hand_award": {"loops": 0, "key": "hand_award"}}
     chase = [("l_" + r["lamp_name"][3:]) for r in rows(data, "chand_lamps.csv") if r["effect"].startswith("109")]
     if chase:             # effect 109 (ready): hand lamp, ramp bottom arrow, lock, sigil, top arrow lit in sequence (steps 4,4,4,2,2 ticks), held 4, off 8 (M reading)
         frames, t = [], 0.0

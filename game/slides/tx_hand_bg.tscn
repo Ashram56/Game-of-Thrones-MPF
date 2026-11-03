@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages_json = "[[[\"HURRY UP: {award}\",0,0,23]],[[\"0 SETS\",0,127,23]],[[\"HAND OF THE KING\",6,127,6]],[[\"{score}\",6,32,6],[\"BONUS ROUND\",6,45,15],[\"{timer}\",14,124,20]],[[\"{score}\",10,64,15]]]"
+pages_json = "[[[\"COMPLETE ALL SHOTS\",10,64,16],[\"HURRY UP: {award}\",0,0,23]],[[\"0 SETS\",0,127,23]],[[\"HAND OF THE KING\",6,127,6]],[[\"{score}\",6,32,6],[\"BONUS ROUND\",6,45,15],[\"{timer}\",14,124,20]],[[\"{score}\",10,64,15]]]"
