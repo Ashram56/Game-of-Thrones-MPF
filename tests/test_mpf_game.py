@@ -1140,6 +1140,19 @@ class TestGotGame(MpfGameTestCase):
         self.assertIn("def", played)
         self.assertIn("got_def_stark_start", self.machine.config["slide_player"])        # its DMD clip
 
+    def test_background_music_follows_state(self):
+        tunes = []
+        self.machine.events.add_handler("got_se_tune_main_play", lambda **kwargs: tunes.append("main"))
+        self.machine.events.add_handler("got_se_tune_stark", lambda **kwargs: tunes.append("stark"))
+        self._start_game()
+        self.advance_time_and_run(0.5)
+        self.assertEqual(["main"], tunes)
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(0.5)
+        self.assertEqual(["main", "stark"], tunes)
+        self.assertEqual(-1, self.machine.config["sound_player"]["got_se_tune_stark"][
+            next(iter(self.machine.config["sound_player"]["got_se_tune_stark"]))]["loops"])
+
     def test_rom_lamp_effect_follows_its_display_effect(self):
         self._start_game()
         self.post_event("got_def_extra_ball_lit")               # def_extra_ball_lit requests lef_extra_ball_lit (extraction)

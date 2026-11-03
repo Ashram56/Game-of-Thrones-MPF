@@ -183,7 +183,10 @@ def all_sounds(data, rules):
             stem = os.path.splitext(c["file"])[0]
             sounds.files[stem] = {"file": stem + ".ogg", "src": c["file"], "track": track}
             e = ev if len(ids) == 1 else "%s_v%d" % (ev, k + 1)
-            player[e] = {stem: {"action": "play", "bus": track}}
+            act = {"action": "play", "bus": track}
+            if "__tune__" in stem:
+                act["loops"] = -1                # ROM tunes loop until another tune replaces them (solo music bus)
+            player[e] = {stem: act}
             names.append(e)
         if len(ids) > 1:
             rnd[ev] = names               # one variant at random: got.scoreboard (random_event_player is game-mode only)
