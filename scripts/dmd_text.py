@@ -25,6 +25,8 @@ def _arg_kinds(data):
     with open(path, encoding="utf-8", newline="") as f:
         for r in csv.DictReader(f):
             if "llu" not in r["format"]:
+                if r["format"] == "%d" and "timer" in (r["mpf_hint"] + " " + r["meaning"]).lower() and "remaining" in (r["mpf_hint"] + " " + r["meaning"]).lower():
+                    out.setdefault((r["def_name"], r["text"]), "timer")
                 continue
             kind = "score" if "player.score" in r["mpf_hint"] or "score" in r["meaning"].lower() else "award"
             out.setdefault((r["def_name"], r["text"]), kind)
@@ -44,9 +46,11 @@ def rom_lines(data):
                 continue
             raw = r["text_en"]
             kind = kinds.get((name, raw))
-            if kind and re.search(r"%[,0-9]*l+u", raw):
+            if kind == "timer":
+                raw = re.sub(r"%[,0-9]*d", "{timer}", raw, count=1)
+            elif kind and re.search(r"%[,0-9]*l+u", raw):
                 raw = re.sub(r"%[,0-9]*l+u", "{%s}" % kind, raw, count=1)
-            text = _clean(raw.replace("{score}", "\x01").replace("{award}", "\x02")).replace("\x01", "{score}").replace("\x02", "{award}")
+            text = _clean(raw.replace("{score}", "\x01").replace("{award}", "\x02").replace("{timer}", "\x03")).replace("\x01", "{score}").replace("\x02", "{award}").replace("\x03", "{timer}")
             if not text:
                 continue
             item = (text, int(r["font"]), int(r["x"]), int(r["y"]))

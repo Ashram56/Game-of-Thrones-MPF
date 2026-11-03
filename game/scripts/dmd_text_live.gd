@@ -1,5 +1,5 @@
 extends TextureRect
-## ROM text screens whose lines carry run-time values ({score}, {award}). The pages are JSON [[text, font, x, y], ...] and are drawn
+## ROM text screens whose lines carry run-time values ({score}, {award}, {timer}). The pages are JSON [[text, font, x, y], ...] and are drawn
 ## with the ROM's bitmap fonts (res://images/fonts/fontNN.json, copied by scripts/gen_media.py) when the slide appears. The values
 ## are the machine variables got_arg_score / got_arg_award, set by got.defargs just before the effect.
 
@@ -28,7 +28,7 @@ func _value(key: String) -> String:
 func _draw_page(page: Array) -> ImageTexture:
 	var img := Image.create(128, 32, false, Image.FORMAT_RGBA8)
 	for line in page:
-		var text: String = str(line[0]).replace("{score}", _value("score")).replace("{award}", _value("award"))
+		var text: String = str(line[0]).replace("{score}", _value("score")).replace("{award}", _value("award")).replace("{timer}", _value("timer"))
 		var font := _font(int(line[1]))
 		if font.is_empty():
 			continue

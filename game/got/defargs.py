@@ -1,6 +1,6 @@
 """Run-time values for ROM text effects (data/dmd_text_args.csv): before a got_def_* effect is shown, the machine variables
 got_arg_score (current player's score) and got_arg_award (the last score increase, inferred: the award just given) are set
-for the live text slides (game/scripts/dmd_text_live.gd). The other printf arguments (timers, counters) still show 0."""
+and got_arg_timer (seconds left on the running mode timer) for the live text slides (game/scripts/dmd_text_live.gd). The other printf arguments (counters, multipliers) still show 0."""
 from mpf.core.mode import Mode
 
 
@@ -27,3 +27,5 @@ class DefArgs(Mode):
         score = game.player.score if game and game.player else 0
         self.machine.variables.set_machine_var("got_arg_score", _fmt(score))
         self.machine.variables.set_machine_var("got_arg_award", _fmt(self._award))
+        left = [int(t.ticks) for t in self.machine.timers.values() if t.running and t.name.endswith("_timer")]
+        self.machine.variables.set_machine_var("got_arg_timer", str(max(left) if left else 0))

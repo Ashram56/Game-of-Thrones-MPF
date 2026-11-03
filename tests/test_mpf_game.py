@@ -1191,6 +1191,14 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual("2,500,000", self.machine.variables.get_machine_var("got_arg_award"))
         self.assertEqual("2,500,000", self.machine.variables.get_machine_var("got_arg_score"))
 
+    def test_live_timer_value_follows_running_mode_timer(self):
+        self._start_game()
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(3)
+        self.post_event("got_def_tilt_warning")
+        self.advance_time_and_run(0.1)
+        self.assertGreater(int(self.machine.variables.get_machine_var("got_arg_timer")), 0)
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))
