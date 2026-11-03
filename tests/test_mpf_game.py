@@ -47,6 +47,21 @@ class TestGotGame(MpfGameTestCase):
         self.assertEventCalled("ball_search_started")
         self.assertEqual(0, self.machine.flippers["f_left"].config["ball_search_order"])
 
+    def test_top_lanes_points_swap_and_string_complete(self):
+        """docs/22 1b: 5,000 for a new lane, 500 if lit, a flipper swaps the lanes, both lit = +25,000 and one more bonus X."""
+        self._start_game()
+        player = self.machine.game.player
+        before = player.score
+        self._hit("s_left_top_lane")
+        self.assertEqual(5000, player.score - before)
+        self._hit("s_left_top_lane")
+        self.assertEqual(5500, player.score - before)
+        self.hit_and_release_switch("s_r_flipper_button")           # the lit lane moves to the right one
+        self.advance_time_and_run(0.1)
+        x = int(player.got_bonus_x or 1)
+        self._hit("s_left_top_lane")                                # new again: completes the pair
+        self.assertEqual(x + 1, int(player.got_bonus_x))
+
     def test_full_game(self):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)

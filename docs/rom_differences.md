@@ -40,3 +40,6 @@ Score, attract, mystery and choose-your-battle screens now use the ROM bitmap fo
 
 ## Ball search (2026-11-03, docs/20)
 MPF's ball search replaces the ROM's: 10 s without activity, then slingshots, elevator popper, throne, pops one after another (300 ms apart, the ROM pulses 64 ms); flippers and the lock device are excluded; a failed search is a virtual recovery (new ball from the trough, adjustment 98 default). Audits 39 and 40 count `ball_search_started` / `ball_search_failed`. Not modelled: the ROM's delay_search callers (video mode, choreos, Madness), the drop-target and gate moves of step 8, kickbacks.
+
+## Skill shot, top lanes and initials entry (docs/22, 2026-11-03)
+The ROM's "SKILL SHOT" display needs flag 27, which nothing sets in 1.37.0, so it is not built (dead code, medium confidence). Top lanes follow the ROM: 5,000 for a newly lit lane, 500 if already lit, a flipper swaps the lanes, both lit = 25,000 and +1 bonus X. Initials entry: alphabet A-Z plus SPACE, BACKSPACE and END, 30 s timer reloaded to 15 s at each input, default initials when nothing is typed (SSR, XAQ, GGF, JMR, T), cursor sounds 278-280 and tune_hstd. Not done: the 1.45 s / 3.2 s launch windows that route a fast right-loop shot to the elevator, the 13 champion tables, the ROM's entry screen layout (fonts and alphabet strip), 10-letter initials (adjustment 95).

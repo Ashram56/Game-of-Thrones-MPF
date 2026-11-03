@@ -36,6 +36,8 @@ class Extras(Mode):
             self.add_mode_event_handler(sw + "_active", self._standup, sw=sw)
         for sw in TOP_LANES:
             self.add_mode_event_handler(sw + "_active", self._top_lane, sw=sw)
+        for fl in ("s_l_flipper_button_active", "s_r_flipper_button_active"):
+            self.add_mode_event_handler(fl, self._top_lane_swap)
         self._lanes = set()
         self.add_mode_event_handler(RAM + "_active", self._ram)
         self.add_mode_event_handler(MYSTERY_SWITCH + "_active", self._mystery_shot)
@@ -194,11 +196,20 @@ class Extras(Mode):
         self.mystery.move(step)
 
     # --- Bonus X
+    def _top_lane_swap(self, **kwargs):
+        """A flipper button swaps the two lane flags (top_lanes_flipper)."""
+        self._lanes = {TOP_LANES[1 - TOP_LANES.index(x)] for x in self._lanes}
+
     def _top_lane(self, sw, **kwargs):
         p = self.player
+        if sw in self._lanes:
+            p.score += 500 * (p.got_multiplier or 1)                 # lane already lit (docs/22 1b, top_lane_common_handler)
+            return
         self._lanes.add(sw)
+        p.score += 5000 * (p.got_multiplier or 1)                    # newly lit lane
         if self._lanes >= set(TOP_LANES):
             self._lanes = set()
+            p.score += 25000 * (p.got_multiplier or 1)               # string complete
             p.got_bonus_x = min(BONUS_X_MAX, max(1, int(p.got_bonus_x or 1)) + 1)
             self.machine.events.post("got_bonus_x", value=p.got_bonus_x)
 

@@ -10,9 +10,14 @@ import random
 
 from mpf.core.mode import Mode
 
-DEFAULTS = [("GRAND CHAMPION", 75000000), ("HIGH SCORE #1", 50000000), ("HIGH SCORE #2", 40000000),
-            ("HIGH SCORE #3", 30000000), ("HIGH SCORE #4", 20000000)]
-LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .-"
+# docs/22 and data/hstd_defaults.csv: default initials and scores of the five ranks
+DEFAULTS = [("GRAND CHAMPION", 75000000, "SSR"), ("HIGH SCORE #1", 50000000, "XAQ"), ("HIGH SCORE #2", 40000000, "GGF"),
+            ("HIGH SCORE #3", 30000000, "JMR"), ("HIGH SCORE #4", 20000000, "T")]
+# alphabet A-Z, then the ROM's control entries: SPACE (always), BACKSPACE (only once a letter is typed), END (always)
+LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+CONTROLS = ("SPC", "BKSP", "END")
+ENTRY_FIRST_S = 30           # entry timer: 30 s, reloaded to 15 s at every input (docs/22 2c)
+ENTRY_STEP_S = 15
 COINS = ("s_left_coin", "s_center_coin", "s_right_coin", "s_fourth_coin", "s_fifth_coin")
 PAGE_S = 4
 
@@ -100,7 +105,7 @@ class Scoreboard(Mode):
         except ValueError:
             t = None
         if not t:
-            t = [{"label": l, "name": "GOT", "score": s} for l, s in DEFAULTS]
+            t = [{"label": l, "name": n, "score": s} for l, s, n in DEFAULTS]
         return t
 
     def _save(self, t):
@@ -168,33 +173,52 @@ class Scoreboard(Mode):
         if not self._todo:
             return self._match()
         num, score = self._todo.pop(0)
-        self._entry = {"num": num, "score": score, "name": "", "pos": 0}
-        self.delay.reset(20000, self._entry_timeout, name="entry")
+        self._entry = {"num": num, "score": score, "name": "", "pos": 0, "touched": False}
+        self.delay.reset(ENTRY_FIRST_S * 1000, self._entry_timeout, name="entry")
+        self.machine.events.post("got_se_tune_hstd")                  # effect 67 tune_hstd
+        self.machine.events.post("got_se_vo_hstd_anouncement_v1")     # voice 430
         self._entry_show()
+
+    def _alphabet(self):
+        e = self._entry
+        return list(LETTERS) + [c for c in CONTROLS if c != "BKSP" or e["name"]]
+
+    def _touch(self):
+        self._entry["touched"] = True
+        self.delay.reset(ENTRY_STEP_S * 1000, self._entry_timeout, name="entry")
 
     def _letter(self, step, **kwargs):
         e = self._entry
         if not e:
             return
-        e["pos"] = (e["pos"] + step) % len(LETTERS)
+        self._touch()
+        e["pos"] = (e["pos"] + step) % len(self._alphabet())
+        self.machine.events.post("got_se_fx_hstd_cursor_right" if step > 0 else "got_se_fx_hstd_cursor_left")
         self._entry_show()
 
     def _confirm_letter(self, **kwargs):
         e = self._entry
         if not e:
             return
-        e["name"] += LETTERS[e["pos"]]
+        self._touch()
+        item = self._alphabet()[e["pos"]]
+        self.machine.events.post("got_se_fx_hstd_enter")
+        if item == "END":
+            return self._entry_done()
+        if item == "BKSP":
+            e["name"] = e["name"][:-1]
+        else:
+            e["name"] += " " if item == "SPC" else item
         e["pos"] = 0
         if len(e["name"]) >= 3:
             return self._entry_done()
-        self.delay.reset(20000, self._entry_timeout, name="entry")
         self._entry_show()
 
     def _entry_show(self):
         e = self._entry
         rank = [r["score"] for r in self.table()]
         title = "GRAND CHAMPION" if e["score"] > rank[0] else "HIGH SCORE"
-        shown = e["name"] + LETTERS[e["pos"]]
+        shown = e["name"] + self._alphabet()[e["pos"]]
         l1, l2, l3 = "PLAYER %d %s" % (e["num"], title), shown.ljust(3, "_"), fmt(e["score"])
         self.machine.events.post("got_initials", line1=l1, line2=l2, line3=l3)
         self.screen(l1, l2, l3)
@@ -202,7 +226,10 @@ class Scoreboard(Mode):
     def _entry_timeout(self):
         e = self._entry
         if e:
-            e["name"] = (e["name"] + "GOT")[:3]
+            if not e["name"].strip():                 # nothing typed: the entry's default initials (docs/22)
+                rank = [r["score"] for r in self.table()]
+                idx = next((i for i, v in enumerate(rank) if e["score"] > v), len(rank) - 1)
+                e["name"] = DEFAULTS[min(idx, len(DEFAULTS) - 1)][2]
             self._entry_done()
 
     def _entry_done(self):
