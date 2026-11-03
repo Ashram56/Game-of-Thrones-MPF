@@ -71,6 +71,7 @@ class IronThroneMode(AwardMode):
 
     def _castle_effect(self, idx):
         self.machine.events.post("got_def_award_iron_%d" % idx)
+        self.machine.events.post("got_iron_award")                     # lamp effect 91 (state 0 pick, each state-1 shot)
 
     def _shot(self, sw=None, **kwargs):
         if state.fast_loop(self.machine, sw):
@@ -101,6 +102,7 @@ class IronThroneMode(AwardMode):
         elif s == 2:
             self._pay_award(self._sj, self._mult(), True)
             self.machine.events.post("got_iron_throne_super", points=self._last_points)
+            self.machine.events.post("got_iron_super_lamps")               # lamp effect 92
             self._add_ball()
             if not self._remaining:
                 self._state = 3
@@ -111,6 +113,7 @@ class IronThroneMode(AwardMode):
         elif s == 3:
             self._pay_award(self._sj, self._mult(2), False)
             self.machine.events.post("got_iron_throne_completed")
+            self.machine.events.post("got_iron_super_lamps")               # lamp effect 92 (state 3 ram)
             balls = int(getattr(self.machine.game, "balls_in_play", 1) or 1) if self.machine.game else 1
             self._state = 4 if balls > 1 else 0
             if self._state == 0:

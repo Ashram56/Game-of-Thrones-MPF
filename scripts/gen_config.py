@@ -576,7 +576,71 @@ def lightshow(rules, data=None):
         out["show_player"]["mode_attract_stopped"]["attract_chase"] = {"action": "stop", "key": "attract_chase"}
     for sw, fx in FLASH_FX.items():
         out["show_player"][sw + "_active"] = {"pulse": {"show_tokens": {"lights": "l_" + fx}, "key": "fx_" + fx, "loops": 0}}
+    iron_lamps(out, data)
     return out
+
+
+TICK = 1 / 62.0                                       # the ROM's lamp effects run at 62 Hz
+
+
+def iron_lamps(out, data):
+    """Iron Throne lamp effects 89 (start), 91 (castle pick / state-1 shot), 92 (ram): data/ciron_lamps.csv (H strings and ticks, M timing)."""
+    if not data or not os.path.exists(os.path.join(data, "ciron_lamps.csv")):
+        return
+    comet, flash91, flash92, blip = {}, [], [], []
+    for r in rows(data, "ciron_lamps.csv"):
+        eff, lamp = r["effect"].split()[0], "l_" + r["lamp_name"][3:]
+        m = re.search(r"string position (\d+)", r["state"])
+        if eff in ("89", "92") and m:
+            comet.setdefault(eff, {})[int(m.group(1))] = lamp
+        elif eff == "91" and "blip" in r["state"]:
+            blip.append(lamp)
+        elif eff in ("91", "92") and "flashing" in r["state"]:
+            (flash91 if eff == "91" else flash92).append(lamp)
+    if not comet.get("89") or not comet.get("92"):
+        return
+
+    def comet_show(order, step_s, black_fill):
+        n, tail, steps, t = len(order), 10, [], 0.0
+        path = [(h, 1) for h in range(n + tail)] + [(h, -1) for h in range(n - 1, -tail - 1, -1)]     # up, then back down
+        for head, sign in path:
+            lights = {}
+            for i, lamp in enumerate(order):
+                d = (head - i) * sign
+                level = (tail + 1 - d) / (tail + 1) if 0 <= d <= tail else 0
+                if level > 0:
+                    g = "%02x" % int(255 * level)
+                    lights[lamp] = g * 3
+                elif black_fill:
+                    lights[lamp] = "000000"
+            steps.append({"time": round(t, 4), "lights": lights})
+            t += step_s
+        steps.append({"time": round(t, 4), "lights": {lamp: "000000" for lamp in order} if black_fill else {}})
+        return steps
+
+    def flash_show(lamps, n_flash, half_s, lead=None):
+        steps, t = [], 0.0
+        if lead:
+            steps.append({"time": 0, "lights": {x: "ffffff" for x in lead}})
+            t = TICK
+        for i in range(n_flash):
+            steps.append({"time": round(t, 4), "lights": {x: "ffffff" for x in lamps}})
+            steps.append({"time": round(t + half_s, 4), "lights": {x: "000000" for x in lamps}})
+            t += 2 * half_s
+        steps.append({"time": round(t, 4)})
+        return steps
+
+    o89 = [comet["89"][i] for i in sorted(comet["89"])]
+    o92 = [comet["92"][i] for i in sorted(comet["92"])]
+    out["shows"]["iron_start"] = comet_show(o89, 3 * TICK, True)
+    out["shows"]["iron_award"] = flash_show(flash91, 10, 4 * TICK, blip)
+    sj = comet_show(o92, TICK, False)
+    end = sj[-1]["time"]
+    out["shows"]["iron_super"] = sj[:-1] + [dict(st, time=round(st["time"] + end, 4)) for st in flash_show(flash92, 15, 4 * TICK)]
+    sp = out["show_player"]
+    sp["mode_iron_throne_started"] = {"iron_start": {"loops": 0, "key": "iron_start"}}
+    sp["got_iron_award"] = {"iron_award": {"loops": 0, "key": "iron_award"}}
+    sp["got_iron_super_lamps"] = {"iron_super": {"loops": 0, "key": "iron_super"}}
 
 
 # My rule events -> the ROM's display effects (def_*). Each def plays its sounds and its DMD clip (data/triggers_sound_video.csv,
