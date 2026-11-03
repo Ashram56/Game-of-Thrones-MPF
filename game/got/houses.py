@@ -24,6 +24,9 @@ class StarkMode(AwardMode):
             self._award.bump()
             setattr(self.player, self._award_key, self._award.value)
             self.machine.events.post("got_stark_kill", count=self._ramps)
+            idx = int(getattr(self.machine, "got_stark_kill_idx", 0))       # the ROM's global build_order_kill_list (0x47e6c8), cycled 0..10
+            self.machine.got_stark_kill_idx = (idx + 1) % 11
+            self.machine.events.post("got_def_build_stark_%d" % idx)
             return False
         if sw in ORBITS and self._ramps >= self.RAMPS_NEEDED:
             return True                 # the payoff: normal award path, then the house completes

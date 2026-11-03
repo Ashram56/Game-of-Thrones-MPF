@@ -52,6 +52,19 @@ class TestGotGame(MpfGameTestCase):
         self.assertFalse(mode.elevator_window)
         self.assertFalse(mode.fast_loop_window)
 
+    def test_build_stark_kill_list_cycles(self):
+        """def_build_stark: each Stark ramp shot shows the next character of the global kill list (0..10, then wraps)."""
+        self._start_game()
+        self.mock_event("got_def_build_stark_0")
+        self.mock_event("got_def_build_stark_1")
+        self.machine.got_stark_kill_idx = 0
+        self._start_house("stark")
+        self.hit_and_release_switch("s_left_ramp_exit")
+        self.hit_and_release_switch("s_right_ramp_exit")
+        self.advance_time_and_run(1)
+        self.assertEventCalled("got_def_build_stark_0")
+        self.assertEventCalled("got_def_build_stark_1")
+
     def test_castle_of_shot_map(self):
         """ciron::GetCastleFromShotID: switch -> castle idx (data/ciron_castle_shots.csv)."""
         from got.multiballs import CASTLE_OF

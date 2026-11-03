@@ -327,6 +327,27 @@ def text_slides(data):
             slide = "tx_%s_%s" % (r["effect"][4:], r["index"])
             scenes["slides/%s.tscn" % slide] = TEXT_LIVE % json.dumps(pages, separators=(",", ":")).replace("\\", "\\\\").replace('"', '\\"')
             player["got_%s_%s" % (r["effect"], r["index"])] = {slide: {"priority": 70, "expire": "2.5s"}}
+    # def_build_stark: the character comes from the global kill list (data/build_stark_kill_list.csv), the layout from the side byte
+    kp = os.path.join(data, "build_stark_kill_list.csv")
+    if os.path.exists(kp) and os.path.exists(lp):
+        side = {}
+        for r in rows(data, "dmd_table_layouts.csv"):
+            m = re.match(r"side(\d) line(\d)", r["effect"] == "def_build_stark" and r["index"] or "")
+            if m:
+                side.setdefault(int(m.group(1)), {})[int(m.group(2))] = r
+        for k in rows(data, "build_stark_kill_list.csv"):
+            lay = side.get(int(k["side"]), {})
+            if len(lay) < 4:
+                continue
+            texts = {1: k["character_name_text"], 2: "STARK VALUE", 3: "GROWS", 4: "{award}"}
+            page = []
+            for n in (1, 2, 3, 4):
+                r = lay[n]
+                al = "r" if r["align"].startswith("right") else "l" if r["align"].startswith("left") else "c"
+                page.append((texts[n], int(r["font"]), int(r["x"]), int(r["y"]), al))
+            slide = "tx_build_stark_%s" % k["idx"]
+            scenes["slides/%s.tscn" % slide] = TEXT_LIVE % json.dumps([page], separators=(",", ":")).replace("\\", "\\\\").replace('"', '\\"')
+            player["got_def_build_stark_%s" % k["idx"]] = {slide: {"priority": 70, "expire": "2.5s"}}
     return scenes, player
 
 

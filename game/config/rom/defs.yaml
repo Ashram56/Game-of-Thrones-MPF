@@ -1442,6 +1442,50 @@ slide_player:
     tx_iron_tour_award_21:
       priority: 70
       expire: 2.5s
+  got_def_build_stark_0:
+    tx_build_stark_0:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_1:
+    tx_build_stark_1:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_2:
+    tx_build_stark_2:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_3:
+    tx_build_stark_3:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_4:
+    tx_build_stark_4:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_5:
+    tx_build_stark_5:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_6:
+    tx_build_stark_6:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_7:
+    tx_build_stark_7:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_8:
+    tx_build_stark_8:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_9:
+    tx_build_stark_9:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark_10:
+    tx_build_stark_10:
+      priority: 70
+      expire: 2.5s
 shows:
   lef_advance_wall_multiball:
   - time: 0
