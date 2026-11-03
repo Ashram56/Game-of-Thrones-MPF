@@ -27,5 +27,7 @@ class DefArgs(Mode):
         score = game.player.score if game and game.player else 0
         self.machine.variables.set_machine_var("got_arg_score", _fmt(score))
         self.machine.variables.set_machine_var("got_arg_award", _fmt(self._award))
+        self.machine.variables.set_machine_var("got_arg_player", str(game.player.number if game and game.player else 1))
+        self.machine.variables.set_machine_var("got_arg_ball", str(game.player.ball if game and game.player else 1))
         left = [int(t.ticks) for t in self.machine.timers.values() if t.running and t.name.endswith("_timer")]
         self.machine.variables.set_machine_var("got_arg_timer", str(max(left) if left else 0))

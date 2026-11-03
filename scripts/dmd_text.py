@@ -27,6 +27,12 @@ def _arg_kinds(data):
             if "llu" not in r["format"]:
                 if r["format"] == "%d" and "timer" in (r["mpf_hint"] + " " + r["meaning"]).lower() and "remaining" in (r["mpf_hint"] + " " + r["meaning"]).lower():
                     out.setdefault((r["def_name"], r["text"]), "timer")
+                elif r["format"] == "%d":
+                    m = r["meaning"].lower()
+                    kind = ("award" if any(k in m for k in ("jackpot value", "hurry-up value", "points awarded")) else
+                            "player" if m == "player number" else "ball" if m == "ball number" else None)
+                    if kind:
+                        out.setdefault((r["def_name"], r["text"]), kind)
                 continue
             kind = "score" if "player.score" in r["mpf_hint"] or "score" in r["meaning"].lower() else "award"
             out.setdefault((r["def_name"], r["text"]), kind)
@@ -46,11 +52,11 @@ def rom_lines(data):
                 continue
             raw = r["text_en"]
             kind = kinds.get((name, raw))
-            if kind == "timer":
-                raw = re.sub(r"%[,0-9]*d", "{timer}", raw, count=1)
+            if kind in ("timer", "player", "ball") or (kind == "award" and not re.search(r"%[,0-9]*l+u", raw)):
+                raw = re.sub(r"%[,0-9]*d", "{%s}" % kind, raw, count=1)
             elif kind and re.search(r"%[,0-9]*l+u", raw):
                 raw = re.sub(r"%[,0-9]*l+u", "{%s}" % kind, raw, count=1)
-            text = _clean(raw.replace("{score}", "\x01").replace("{award}", "\x02").replace("{timer}", "\x03")).replace("\x01", "{score}").replace("\x02", "{award}").replace("\x03", "{timer}")
+            text = _clean(raw.replace("{score}", "\x01").replace("{award}", "\x02").replace("{timer}", "\x03").replace("{player}", "\x04").replace("{ball}", "\x05")).replace("\x01", "{score}").replace("\x02", "{award}").replace("\x03", "{timer}").replace("\x04", "{player}").replace("\x05", "{ball}")
             if not text:
                 continue
             item = (text, int(r["font"]), int(r["x"]), int(r["y"]))
