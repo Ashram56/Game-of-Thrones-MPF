@@ -274,7 +274,9 @@ def clean_text(line):
     line = line.strip()
     if line in ("<runtime>", "<msg?>") or not line:
         return ""
-    line = re.sub(r"%[,0-9]*l?[du]", "0", line)
+    if re.fullmatch(r"%[,0-9]*l*u", line):             # a bare 64-bit points argument with no known font/position: not shown as text
+        return ""
+    line = re.sub(r"%[,0-9]*l*[du]", "0", line)
     line = re.sub(r"%P\d//(.*?)/%", r"\1", line)
     line = line.replace("%s", "").replace('"', "'")
     return line.strip()

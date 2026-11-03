@@ -1,0 +1,270 @@
+#config_version=6
+# Visual pass over the modes: each dip switch starts one mode (event_player), shots follow, then the mode is stopped
+config:
+  - config.yaml
+event_player:
+  s_dip_1_active: start_mode_blackwater
+  s_dip_1_inactive: stop_mode_blackwater
+  s_dip_2_active: start_mode_wall
+  s_dip_2_inactive: stop_mode_wall
+  s_dip_3_active: start_mode_hand_of_the_king
+  s_dip_3_inactive: stop_mode_hand_of_the_king
+  s_dip_4_active: start_mode_iron_throne
+  s_dip_4_inactive: stop_mode_iron_throne
+  s_dip_5_active: start_mode_castle
+  s_dip_5_inactive: stop_mode_castle
+  s_dip_6_active: start_mode_winter_has_come
+  s_dip_6_inactive: stop_mode_winter_has_come
+  s_dip_7_active: start_mode_midnight_madness
+  s_dip_7_inactive: stop_mode_midnight_madness
+  s_dip_8_active: start_mode_lannister
+  s_dip_8_inactive: stop_mode_lannister
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 0.1s
+      switch: s_trough_1
+      action: activate
+    - time: 0.1s
+      switch: s_trough_2
+      action: activate
+    - time: 0.1s
+      switch: s_trough_3
+      action: activate
+    - time: 0.1s
+      switch: s_trough_4
+      action: activate
+    - time: 0.1s
+      switch: s_trough_5
+      action: activate
+    - time: 0.1s
+      switch: s_trough_6
+      action: activate
+    - time: 12s
+      switch: s_left_coin
+      action: hit
+    - time: 0.3s
+      switch: s_start_button
+      action: hit
+    - time: 5s
+      switch: s_shooter_lane
+      action: activate
+    - time: 1s
+      switch: s_shooter_lane
+      action: deactivate
+    - time: 3s
+      switch: s_dip_1
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_1
+      action: deactivate
+    - time: 3s
+      switch: s_dip_2
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_2
+      action: deactivate
+    - time: 3s
+      switch: s_dip_3
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_3
+      action: deactivate
+    - time: 3s
+      switch: s_dip_4
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_4
+      action: deactivate
+    - time: 3s
+      switch: s_dip_5
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_5
+      action: deactivate
+    - time: 3s
+      switch: s_dip_6
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_6
+      action: deactivate
+    - time: 3s
+      switch: s_dip_7
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_7
+      action: deactivate
+    - time: 3s
+      switch: s_dip_8
+      action: activate
+    - time: 2s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2s
+      switch: s_left_loop
+      action: hit
+    - time: 2s
+      switch: s_right_loop
+      action: hit
+    - time: 2s
+      switch: s_kickback
+      action: hit
+    - time: 2s
+      switch: s_throne
+      action: hit
+    - time: 2s
+      switch: s_battering_ram
+      action: hit
+    - time: 2s
+      switch: s_dip_8
+      action: deactivate

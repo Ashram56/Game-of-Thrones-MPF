@@ -25,18 +25,12 @@ alignment = 1
 
 [node name="L0" type="Label" parent="Lines"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 46
+theme_override_font_sizes/font_size = 60
 text = "STARK VALUE"
 horizontal_alignment = 1
 
 [node name="L1" type="Label" parent="Lines"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 46
+theme_override_font_sizes/font_size = 60
 text = "GROWS"
-horizontal_alignment = 1
-
-[node name="L2" type="Label" parent="Lines"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 46
-text = "%,02llu"
 horizontal_alignment = 1
