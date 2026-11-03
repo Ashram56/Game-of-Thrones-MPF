@@ -165,6 +165,7 @@ class Extras(Mode):
                     t = self.machine.timers.get(cfg["key"] + "_timer")
                     if t is not None:
                         t.add(10)
+                    self.machine.events.post("got_add_mode_time", key=cfg["key"])
         elif name == "Add A Ball":
             p.got_add_a_ball_flag = 1
         elif name == "Light Extra Ball":

@@ -276,6 +276,7 @@ class TargaryenMode(AwardMode):
     def _timeout(self, **kwargs):
         if self._dragon == 2 and self.active:                         # DRAGON FIRE: the bank loses 25%, the wave restarts
             self._banked -= int(self._banked / 4 / 10) * 10
+            self.machine.events.post("got_def_targaryen_timer_end")        # ctargaryen::OnDragonLevelThreeEnd (def_callers)
             self._step, self._done = 0, set()
             self._lit = self._lit_shots()
             self._set_value()

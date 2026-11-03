@@ -559,7 +559,9 @@ EVENT_DEF = {"got_light_extra_ball": "def_extra_ball_lit", "got_award_extra_ball
              "got_lannister_award": "def_award_lannister", "got_targaryen_award": "def_award_targaryen_1",
              "got_tyrell_award": "def_tyrell_award_1",
              "tilt_warning": "def_tilt_warning", "tilt": "def_tilt_background", "slam_tilt": "def_slam_tilt"}
-EVENT_DEF.update({'got_pop_award{award=="Big Points"}': "def_big_points_pops", 'got_pop_award{award=="Add Mode Time"}': "def_add_time",
+EVENT_DEF.update({'got_pop_award{award=="Big Points"}': "def_big_points_pops", 'got_add_mode_time{key=="targaryen"}': "def_targaryen_add_time",
+                  'got_add_mode_time{key=="martell"}': "def_martell_add_time",
+                  'got_add_mode_time{key!="targaryen" and key!="martell"}': "def_add_time",
                   "got_tickle_progress": "def_tickle_house", "ball_search_started": "def_ball_search",
                   'got_mystery_award{award=="hold_bonus"}': "def_award_bonus_held",
                   'got_mystery_award{award=="bonus_x_1"}': "def_award_bonus_multipliers",

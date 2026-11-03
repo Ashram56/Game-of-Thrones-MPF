@@ -434,7 +434,11 @@ event_player:
   - got_def_slam_tilt
   got_pop_award{award=="Big Points"}:
   - got_def_big_points_pops
-  got_pop_award{award=="Add Mode Time"}:
+  got_add_mode_time{key=="targaryen"}:
+  - got_def_targaryen_add_time
+  got_add_mode_time{key=="martell"}:
+  - got_def_martell_add_time
+  got_add_mode_time{key!="targaryen" and key!="martell"}:
   - got_def_add_time
   got_tickle_progress:
   - got_def_tickle_house
