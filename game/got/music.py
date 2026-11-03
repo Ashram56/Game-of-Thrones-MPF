@@ -1,7 +1,8 @@
 """Background music by game state (data/music_stack.csv, ROM udmo objects: highest stack priority whose condition holds wins).
-Each tune loops on the solo music bus; a new tune replaces the previous one. Departure: the ROM's 'ready' states (hand, wall,
-iron throne) and the *_spacer variants are not wired yet."""
+Each tune loops on the solo music bus; a new tune replaces the previous one. Ready states (hand, wall, iron throne) included; the *_spacer variants are not wired yet."""
 from mpf.core.mode import Mode
+
+from got import state
 
 # MPF mode -> (ROM stack priority, tune). Source rows: music_stack.csv (default_music column); houses are the mode tunes of se_tune_<house>.
 STACK = {
@@ -34,6 +35,8 @@ class Music(Mode):
         for m in STACK:
             self.add_mode_event_handler("mode_%s_started" % m, self._on, which=m)
             self.add_mode_event_handler("mode_%s_stopped" % m, self._off, which=m)
+        for ev in ("got_wall_lit", "got_house_complete", "got_house_confirmed"):
+            self.add_mode_event_handler(ev, self._refresh)
         self.add_mode_event_handler("ball_started", self._ball_started)
         self.add_mode_event_handler("game_ended", self._reset)
 
@@ -50,6 +53,23 @@ class Music(Mode):
         self._active = {m for m in self._active if m in self.machine.modes and self.machine.modes[m].active}
         self._update()
 
+    def _refresh(self, **kwargs):
+        self.delay.add(50, self._update, name="refresh")
+
+    def _ready(self):
+        """The 'ready' backgrounds (ROM music_stack, priority 136): the multiball is lit and waits to be started."""
+        p = self.machine.game.player if self.machine.game else None
+        if not p:
+            return []
+        out = []
+        if p.got_wall_lit:
+            out.append((136, "tune_wall_multiball_ready"))
+        if state.hand_startable(self.machine, p):
+            out.append((136, "tune_hand_ready"))
+        if state.iron_startable(self.machine, p):
+            out.append((136, "tune_iron_throne_ready"))
+        return out
+
     def _reset(self, **kwargs):
         self._active.clear()
         self._now = None
@@ -58,8 +78,9 @@ class Music(Mode):
         if not self.machine.game:
             return
         tune = MAIN.get(self._ball, MAIN[3])
-        if self._active:
-            tune = max((STACK[m] for m in self._active), key=lambda x: x[0])[1]
+        cands = [STACK[m] for m in self._active] + self._ready()
+        if cands:
+            tune = max(cands, key=lambda x: x[0])[1]
         if tune != self._now:
             self._now = tune
             self.machine.events.post("got_se_" + tune)

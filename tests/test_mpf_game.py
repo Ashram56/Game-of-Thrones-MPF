@@ -1182,6 +1182,15 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(-1, self.machine.config["sound_player"]["got_se_tune_stark"][
             next(iter(self.machine.config["sound_player"]["got_se_tune_stark"]))]["loops"])
 
+    def test_ready_music_when_wall_is_lit(self):
+        tunes = []
+        self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))
+        self._start_game()
+        self.machine.game.player.got_wall_lit = 1
+        self.post_event("got_wall_lit")
+        self.advance_time_and_run(0.5)
+        self.assertEqual([1], tunes)
+
     def test_rom_lamp_effect_follows_its_display_effect(self):
         self._start_game()
         self.post_event("got_def_extra_ball_lit")               # def_extra_ball_lit requests lef_extra_ball_lit (extraction)
