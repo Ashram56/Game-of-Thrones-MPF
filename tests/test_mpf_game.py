@@ -611,6 +611,50 @@ class TestGotGame(MpfGameTestCase):
         self.assertFalse(self.machine.modes["martell"].active)
         self.assertIn(6, self.machine.game.player.got_progression.complete)
 
+    def test_martell_mini_timer_resets_value_and_hurry_up_pays(self):
+        """docs/30 section 8 (H): orbit hits bump; the 10 s mini timer running out resets count and value; the 3rd orbit starts a 15 s hurry-up."""
+        self._start_house("martell")
+        mode = self.machine.modes["martell"]
+        self._hit("s_left_loop", 2)
+        self.assertEqual(18000000 + 2 * 1250000, mode._award.value)
+        self.advance_time_and_run(11)
+        self.assertEqual((0, 18000000), (mode._orbits, mode._award.value))
+        self._hit("s_left_loop", 3)
+        self.assertTrue(mode._hurry)
+        before = self.machine.game.player.score
+        self._hit("s_left_ramp_exit")
+        self.assertFalse(mode.active)
+        self.assertGreater(self.machine.game.player.score - before, 10000000)
+
+    def test_stark_ramps_build_orbit_pays_value(self):
+        self._start_house("stark")
+        mode = self.machine.modes["stark"]
+        self._hit("s_left_loop")                               # orbit before 3 ramps: nothing
+        self.assertTrue(mode.active)
+        self._hit("s_left_ramp_exit", 3)
+        self.assertEqual(500000 + 3 * 375000, mode._award.value)
+        before = self.machine.game.player.score
+        self._hit("s_right_loop")
+        self.assertFalse(mode.active)
+        self.assertGreaterEqual(self.machine.game.player.score - before, 500000 + 3 * 375000)
+
+    def test_greyjoy_last_shot_pays_twice_and_adds_time(self):
+        self._start_house("greyjoy")
+        mode = self.machine.modes["greyjoy"]
+        for sw in ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop"):
+            self._hit(sw)
+        v = mode._award.value
+        before = self.machine.game.player.score
+        self._hit("s_kickback")
+        self.assertFalse(mode.active)
+        self.assertGreaterEqual(self.machine.game.player.score - before, v + v + 175000 - 5000)
+
+    def test_blackwater_background_variables(self):
+        self._start_game()
+        self.post_event("start_mode_blackwater")
+        self.advance_time_and_run(0.5)
+        self.assertEqual("1", self.machine.variables.get_machine_var("got_bw_state"))
+
     def test_martell_orbit_window(self):
         self._start_house("martell")
         self._hit("s_left_loop")
