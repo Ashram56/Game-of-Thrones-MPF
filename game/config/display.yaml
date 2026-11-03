@@ -100,3 +100,19 @@ machine_vars:
     initial_value: "0"
     value_type: str
     persist: false
+  got_arg_tickle:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_arg_price:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_arg_gold:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_arg_wildfire:
+    initial_value: "0"
+    value_type: str
+    persist: false

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/dmd_text_pages.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/dmd_text_live.gd" id="2"]
 
 [node name="Text" type="Control"]
 layout_mode = 3
@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages = PackedStringArray("res://images/tx/tx_lannister_button_ability_p0.png", "res://images/tx/tx_lannister_button_ability_p1.png")
+pages_json = "[[[\"BUY MULTIPLIER FOR {price} GOLD\",6,63,8],[\"MULTIPLIER: 0X\",15,63,21],[\"NEW GOLD TOTAL:\",6,0,31]],[[\"0 MORE\",6,127,31]]]"

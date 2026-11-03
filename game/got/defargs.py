@@ -17,10 +17,15 @@ class DefArgs(Mode):
                 self._events.add(ev)
                 self.add_mode_event_handler(ev, self._set, priority=1000)
         self.add_mode_event_handler("player_score", self._score)
+        self.add_mode_event_handler("got_tickle_progress", self._tickle)
+        self._tickle_left = 0
 
     def _score(self, change=0, **kwargs):
         if change and int(change) > 0:
             self._award = int(change)
+
+    def _tickle(self, left=0, **kwargs):
+        self._tickle_left = int(left)
 
     def _set(self, **kwargs):
         game = self.machine.game
@@ -29,6 +34,12 @@ class DefArgs(Mode):
         self.machine.variables.set_machine_var("got_arg_award", _fmt(self._award))
         self.machine.variables.set_machine_var("got_arg_player", str(game.player.number if game and game.player else 1))
         self.machine.variables.set_machine_var("got_arg_ball", str(game.player.ball if game and game.player else 1))
+        p = game.player if game else None
+        self.machine.variables.set_machine_var("got_arg_tickle", str(self._tickle_left))
+        self.machine.variables.set_machine_var("got_arg_gold", _fmt(getattr(p, "got_gold", 0) if p else 0))
+        self.machine.variables.set_machine_var("got_arg_wildfire", _fmt(getattr(p, "got_wildfire", 0) if p else 0))
+        price = {1: 1200, 2: 1800, 3: 2400, 4: 3000}.get(int(getattr(p, "got_multiplier", 1) or 1), 0) if p else 0
+        self.machine.variables.set_machine_var("got_arg_price", _fmt(price))
         shots = [m.shots_left for m in self.machine.modes if m.active and hasattr(m, "shots_left")]
         self.machine.variables.set_machine_var("got_arg_shots", str(shots[0]) if shots else "0")
         left = [int(t.ticks) for t in self.machine.timers.values() if t.running and t.name.endswith("_timer")]

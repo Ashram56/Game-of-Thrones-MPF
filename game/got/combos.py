@@ -330,6 +330,7 @@ class Combos(Mode):
         p.score += (TICKLE_BASE + TICKLE_STEP * n) * (p.got_multiplier or 1)
         n += 1
         setattr(p, "got_tickle_" + house, n)
+        self.machine.events.post("got_tickle_progress", house=house, left=max(0, TICKLE_NEEDED - n))
         if n >= TICKLE_NEEDED:
             setattr(p, "got_tickle_" + house, 0)
             lit.add(house)

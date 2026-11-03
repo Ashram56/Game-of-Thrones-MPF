@@ -1217,6 +1217,17 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
         self.assertEqual("7", self.machine.variables.get_machine_var("got_arg_shots"))
 
+    def test_live_gold_price_and_tickle_values(self):
+        self._start_game()
+        self.machine.game.player.got_gold = 900
+        self.post_event_with_params("got_tickle_progress", house="stark", left=2)
+        self.post_event("got_def_lannister_button_ability")
+        self.advance_time_and_run(0.1)
+        v = self.machine.variables.get_machine_var
+        self.assertEqual("2", v("got_arg_tickle"))
+        self.assertEqual("900", v("got_arg_gold"))
+        self.assertEqual("1,200", v("got_arg_price"))
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))

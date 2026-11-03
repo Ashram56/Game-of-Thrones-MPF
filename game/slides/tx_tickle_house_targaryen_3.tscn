@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages_json = "[[[\"{award}\",10,42,20],[\"0 MORE TO LIGHT\",0,42,27]]]"
+pages_json = "[[[\"{award}\",10,42,20],[\"{tickle} MORE TO LIGHT\",0,42,27]]]"

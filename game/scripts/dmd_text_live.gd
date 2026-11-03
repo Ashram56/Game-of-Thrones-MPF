@@ -28,7 +28,7 @@ func _value(key: String) -> String:
 func _draw_page(page: Array) -> ImageTexture:
 	var img := Image.create(128, 32, false, Image.FORMAT_RGBA8)
 	for line in page:
-		var text: String = str(line[0]).replace("{score}", _value("score")).replace("{award}", _value("award")).replace("{timer}", _value("timer")).replace("{player}", _value("player")).replace("{ball}", _value("ball")).replace("{shots}", _value("shots"))
+		var text: String = str(line[0]).replace("{score}", _value("score")).replace("{award}", _value("award")).replace("{timer}", _value("timer")).replace("{player}", _value("player")).replace("{ball}", _value("ball")).replace("{shots}", _value("shots")).replace("{tickle}", _value("tickle")).replace("{price}", _value("price")).replace("{gold}", _value("gold")).replace("{wildfire}", _value("wildfire"))
 		var font := _font(int(line[1]))
 		if font.is_empty():
 			continue
