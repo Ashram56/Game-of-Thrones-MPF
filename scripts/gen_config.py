@@ -356,6 +356,8 @@ def text_slides(data):
         bw.append([("BLACKWATER", 0, 0, 4, "l"), ("PHASE %d" % r, 0, 0, 10, "l"), ("{score}", 0, 105, 4, "r"),
                    ("SHOOT BATTERING RAM", 6, 59, 20, "c"), ("{timer}", 23, 116, 22, "l")])
     live_bg("tx_blackwater_bg_live", bw, "got_bw_state", 0.2, "blackwater")
+    live_bg("tx_castle_bg_live", [[("CASTLE MULTIBALL", 0, 0, 5, "l"), ("{score}", 0, 127, 5, "r"), ("SHOOT CASTLE DRAGON SHOTS", 0, 64, 11, "c"),
+                                   ("SUPER JACKPOT VALUE", 0, 64, 17, "c"), ("{award}", 0, 64, 23, "c")]], "got_castle_page", 0.2, "castle")
     # def_build_stark: the character comes from the global kill list (data/build_stark_kill_list.csv), the layout from the side byte
     kp = os.path.join(data, "build_stark_kill_list.csv")
     if os.path.exists(kp) and os.path.exists(lp):
@@ -445,6 +447,7 @@ HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.
               "greyjoy": "got.houses.GreyjoyMode", "tyrell": "got.houses.TyrellMode", "targaryen": "got.houses.TargaryenMode"}
 MB_CODE = {}
 MB_CODE["wall"] = "got.wall.WallMode"
+MB_CODE["castle"] = "got.castle.CastleMode"
 MB_CODE["hand_of_the_king"] = "got.hand.HandMode"
 MB_CODE["iron_throne"] = "got.iron.IronThroneMode"
 MB_CODE["blackwater"] = "got.multiballs.BlackwaterMode"

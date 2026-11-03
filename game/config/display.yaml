@@ -149,6 +149,10 @@ machine_vars:
     initial_value: "1"
     value_type: str
     persist: false
+  got_castle_page:
+    initial_value: "1"
+    value_type: str
+    persist: false
   got_bw_state:
     initial_value: "1"
     value_type: str

@@ -101,7 +101,8 @@ multiballs:
      jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop, s_kickback],   # H docs/13: mask 0x6e
      jackpot: {start: 250000, bump: 75000, cap: 50000000, conf: M}, super: {start: 0, conf: CFG}}
   - {id: 1, key: castle, label: Castle Multiball, flag: 37, start_bonus: 25000000, ball_save_adjustment: ad_castle_multiball_ball_save_timer, ball_save_s: 15,
-     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
+     jackpot_switches: [s_left_loop, s_kickback, s_left_ramp_exit, s_right_ramp_exit, s_right_loop, s_u_p_left_target, s_u_p_center_target,
+                        s_u_p_right_target, s_u_p_left_rollover, s_u_p_right_rollover],      # H docs/28: got.castle
      jackpot: {start: 5000000, bump: 250000, cap: 10000000, conf: M},
      super: {start: 20000000, bump: 10000000, cap: 50000000, conf: M}}
   - {id: 2, key: hand_of_the_king, label: Hand of the King Multiball, flag: 38, start_bonus: 50000000, ball_save_adjustment: ad_hand_multiball_ball_save_timer, ball_save_s: 20,

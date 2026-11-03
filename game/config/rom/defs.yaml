@@ -1468,6 +1468,12 @@ slide_player:
   got_blackwater_bg_hide:
     tx_blackwater_bg_live:
       action: remove
+  got_castle_bg_show:
+    tx_castle_bg_live:
+      priority: 65
+  got_castle_bg_hide:
+    tx_castle_bg_live:
+      action: remove
   got_def_build_stark_0:
     tx_build_stark_0:
       priority: 70

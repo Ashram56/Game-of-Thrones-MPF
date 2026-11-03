@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/dmd_text_live.gd" id="2"]
+
+[node name="Text" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Bg" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+
+[node name="Pages" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("2")
+pages_json = "[[[\"CASTLE MULTIBALL\",0,0,5,\"l\"],[\"{score}\",0,127,5,\"r\"],[\"SHOOT CASTLE DRAGON SHOTS\",0,64,11,\"c\"],[\"SUPER JACKPOT VALUE\",0,64,17,\"c\"],[\"{award}\",0,64,23,\"c\"]]]"
+page_var = "got_castle_page"
+refresh = 0.2

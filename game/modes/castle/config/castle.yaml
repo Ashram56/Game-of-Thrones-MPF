@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_castle, multiball_castle_ended, tilt
   priority: 400
   game_mode: true
-  code: got.award_mode.AwardMode
+  code: got.castle.CastleMode
 mode_settings:
   kind: multiball
   id: 1
@@ -15,10 +15,16 @@ mode_settings:
     bump: 250000
     cap: 10000000
   shots:
+  - s_kickback
   - s_left_loop
   - s_left_ramp_exit
   - s_right_loop
   - s_right_ramp_exit
+  - s_u_p_center_target
+  - s_u_p_left_rollover
+  - s_u_p_left_target
+  - s_u_p_right_rollover
+  - s_u_p_right_target
   shots_to_complete: 0
   start_bonus: 25000000
   flag: 37

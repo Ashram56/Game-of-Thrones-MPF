@@ -401,6 +401,33 @@ class TestGotGame(MpfGameTestCase):
             self._hit(sw)
         self.assertTrue(self.machine.modes["castle"].active)
 
+    def test_castle_multiball_cycle(self):
+        """docs/28 (H): main shots and standups pay award 12 (+250k each, super +750k); rollovers pay the super (+10M after), standups re-arm."""
+        self._start_game()
+        for _ in range(4):
+            for sw in ("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target"):
+                self._hit(sw)
+        mode = self.machine.modes["castle"]
+        self.assertTrue(mode.active)
+        player = self.machine.game.player
+        self.assertEqual(20000000, mode._v13)
+        before = player.score
+        self._hit("s_left_loop")
+        self.assertAlmostEqual(5000000, player.score - before, delta=5000)
+        self.assertEqual((5250000, 20750000), (mode._v12, mode._v13))
+        self._hit("s_left_loop")                                  # already taken: the five main shots count once per cycle
+        self.assertEqual(5250000, mode._v12)
+        for sw in ("s_u_p_left_target", "s_u_p_center_target", "s_u_p_right_target"):
+            self._hit(sw)
+        self.assertEqual({"s_u_p_left_rollover", "s_u_p_right_rollover"}, mode._rollovers)
+        v13 = mode._v13
+        before = player.score
+        self._hit("s_u_p_left_rollover")
+        self.assertAlmostEqual(v13, player.score - before, delta=5000)
+        self.assertEqual(v13 + 10000000, mode._v13)
+        self.assertEqual(set(), mode._rollovers)
+        self.assertTrue(mode._ball_added)
+
     def test_wall_lit_after_six_advances_then_starts_at_elevator(self):
         self._start_game()
         self._hit("s_kickback", 5)
