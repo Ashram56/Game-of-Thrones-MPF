@@ -1,0 +1,937 @@
+[
+ {
+  "name": "au_total_paid_credits",
+  "label": "TOTAL PAID CREDITS",
+  "pct": false
+ },
+ {
+  "name": "au_total_left_coins",
+  "label": "COINS THROUGH LEFT SLOT",
+  "pct": false
+ },
+ {
+  "name": "au_total_right_coins",
+  "label": "COINS THROUGH RIGHT SLOT",
+  "pct": false
+ },
+ {
+  "name": "au_total_center_coins",
+  "label": "COINS THROUGH CENTER SLOT",
+  "pct": false
+ },
+ {
+  "name": "au_total_fourth_coins",
+  "label": "COINS THROUGH FOURTH SLOT",
+  "pct": false
+ },
+ {
+  "name": "au_total_fifth_coins",
+  "label": "COINS THROUGH FIFTH SLOT",
+  "pct": false
+ },
+ {
+  "name": "au_total_sixth_coins",
+  "label": "COINS THROUGH SIXTH SLOT",
+  "pct": false
+ },
+ {
+  "name": "au_total_meter_clicks",
+  "label": "METER CLICKS",
+  "pct": false
+ },
+ {
+  "name": "au_total_balls_played",
+  "label": "TOTAL BALLS PLAYED",
+  "pct": false
+ },
+ {
+  "name": "au_total_extra_balls",
+  "label": "TOTAL EXTRA BALLS",
+  "pct": false
+ },
+ {
+  "name": "au_replay_1_awards",
+  "label": "REPLAY 1 AWARDS",
+  "pct": false
+ },
+ {
+  "name": "au_replay_2_awards",
+  "label": "REPLAY 2 AWARDS",
+  "pct": false
+ },
+ {
+  "name": "au_replay_3_awards",
+  "label": "REPLAY 3 AWARDS",
+  "pct": false
+ },
+ {
+  "name": "au_replay_4_awards",
+  "label": "REPLAY 4 AWARDS",
+  "pct": false
+ },
+ {
+  "name": "au_total_specials",
+  "label": "TOTAL SPECIALS",
+  "pct": false
+ },
+ {
+  "name": "au_total_matches",
+  "label": "TOTAL MATCHES",
+  "pct": false
+ },
+ {
+  "name": "au_total_high_score_awards",
+  "label": "HIGH SCORE AWARDS",
+  "pct": false
+ },
+ {
+  "name": "au_total_plays_ended",
+  "label": "TOTAL PLAYS ENDED",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_1",
+  "label": "0.0M-24.99M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_2",
+  "label": "25.0M-49.99M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_3",
+  "label": "50.0M-99.99M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_4",
+  "label": "100.0M-149.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_5",
+  "label": "150.0M-199.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_6",
+  "label": "200.0M-249.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_7",
+  "label": "250.0M-299.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_8",
+  "label": "300.0M-349.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_9",
+  "label": "350.0M-399.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_10",
+  "label": "400.0M-449.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_11",
+  "label": "450.0M-499.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_12",
+  "label": "500.0M-599.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_13",
+  "label": "600.0M-699.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_14",
+  "label": "700.0M-799.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_15",
+  "label": "800.0M-899.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_16",
+  "label": "900.0M-999.9M SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_score_histo_17",
+  "label": "1.0+B SCORES",
+  "pct": false
+ },
+ {
+  "name": "au_total_service_credits",
+  "label": "SERVICE CREDITS",
+  "pct": false
+ },
+ {
+  "name": "au_total_ball_search_starts",
+  "label": "BALL SEARCH STARTED",
+  "pct": false
+ },
+ {
+  "name": "au_total_lost_ball_feeds",
+  "label": "LOST BALL FEEDS",
+  "pct": false
+ },
+ {
+  "name": "au_total_lost_ball_game_starts",
+  "label": "LOST BALL GAME STARTS",
+  "pct": false
+ },
+ {
+  "name": "au_total_left_drains",
+  "label": "LEFT DRAINS",
+  "pct": false
+ },
+ {
+  "name": "au_total_right_drains",
+  "label": "RIGHT DRAINS",
+  "pct": false
+ },
+ {
+  "name": "au_total_tilts",
+  "label": "TILTS",
+  "pct": false
+ },
+ {
+  "name": "au_total_balls_saved",
+  "label": "TOTAL BALLS SAVED",
+  "pct": false
+ },
+ {
+  "name": "au_total_left_flipper",
+  "label": "LEFT FLIPPER USED",
+  "pct": false
+ },
+ {
+  "name": "au_total_right_flipper",
+  "label": "RIGHT FLIPPER USED",
+  "pct": false
+ },
+ {
+  "name": "au_total_one_player_games",
+  "label": "1 PLAYER GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_total_two_player_games",
+  "label": "2 PLAYER GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_total_three_player_games",
+  "label": "3 PLAYER GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_total_four_player_games",
+  "label": "4 PLAYER GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_1",
+  "label": "0 - 1 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_2",
+  "label": "1 - 1.5 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_3",
+  "label": "1.5 - 2 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_4",
+  "label": "2 - 2.5 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_5",
+  "label": "2.5 - 3 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_6",
+  "label": "3 - 3.5 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_7",
+  "label": "3.5 - 4 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_8",
+  "label": "4 - 5 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_9",
+  "label": "5 - 6 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_10",
+  "label": "6 - 8 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_11",
+  "label": "8 - 10 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_12",
+  "label": "10 - 15 MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_histo_13",
+  "label": "15+ MINUTE GAMES",
+  "pct": false
+ },
+ {
+  "name": "au_total_regular_plays",
+  "label": "HIDDEN AUD for AU_TOTAL_REGULAR_PLAYS",
+  "pct": false
+ },
+ {
+  "name": "au_total_tournament_plays",
+  "label": "HIDDEN AUD for AU_TOTAL_TOURNAMENT_PLAYS",
+  "pct": false
+ },
+ {
+  "name": "au_game_time",
+  "label": "HIDDEN AUD for AU_GAME_TIME",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_vp",
+  "label": "HIDDEN AUD for AU_GAME_TIME_VP",
+  "pct": false
+ },
+ {
+  "name": "au_game_time_vp_not_endgame",
+  "label": "HIDDEN AUD for AU_GAME_TIME_VP_NOT_ENDGAME",
+  "pct": false
+ },
+ {
+  "name": "au_ball_time",
+  "label": "HIDDEN AUD for AU_BALL_TIME",
+  "pct": false
+ },
+ {
+  "name": "au_ball_time_vp",
+  "label": "HIDDEN AUD for AU_BALL_TIME_VP",
+  "pct": false
+ },
+ {
+  "name": "au_ball_time_vp_recent_score",
+  "label": "HIDDEN AUD for AU_BALL_TIME_VP_RECENT_SCORE",
+  "pct": false
+ },
+ {
+  "name": "au_fixture_active_ticks",
+  "label": "FIXTURE ACTIVE TICKS",
+  "pct": false
+ },
+ {
+  "name": "au_fixture_rest_ticks",
+  "label": "FIXTURE REST TICKS",
+  "pct": false
+ },
+ {
+  "name": "au_fixture_cycles",
+  "label": "FIXTURE CYCLES",
+  "pct": false
+ },
+ {
+  "name": "au_fixture_failures",
+  "label": "FIXTURE FAILURES",
+  "pct": false
+ },
+ {
+  "name": "au_fixture_left_eos",
+  "label": "LEFT EOS",
+  "pct": false
+ },
+ {
+  "name": "au_fixture_right_eos",
+  "label": "RIGHT EOS",
+  "pct": false
+ },
+ {
+  "name": "au_left_3_bank_drop_target_bottom",
+  "label": "LEFT 3-BANK DROP TARGET BOTTOM",
+  "pct": true
+ },
+ {
+  "name": "au_left_3_bank_drop_target_middle",
+  "label": "LEFT 3-BANK DROP TARGET MIDDLE",
+  "pct": true
+ },
+ {
+  "name": "au_left_3_bank_drop_target_top",
+  "label": "LEFT 3-BANK DROP TARGET TOP",
+  "pct": true
+ },
+ {
+  "name": "au_left_loop",
+  "label": "LEFT LOOP",
+  "pct": true
+ },
+ {
+  "name": "au_right_loop",
+  "label": "RIGHT LOOP",
+  "pct": true
+ },
+ {
+  "name": "au_left_ramp",
+  "label": "LEFT RAMP",
+  "pct": true
+ },
+ {
+  "name": "au_right_ramp",
+  "label": "RIGHT RAMP",
+  "pct": true
+ },
+ {
+  "name": "au_dragon_kickback",
+  "label": "DRAGON KICKBACK",
+  "pct": true
+ },
+ {
+  "name": "au_battering_ram",
+  "label": "BATTERING RAM",
+  "pct": true
+ },
+ {
+  "name": "au_elevator_eject",
+  "label": "ELEVATOR EJECT",
+  "pct": true
+ },
+ {
+  "name": "au_throne_eject",
+  "label": "THRONE EJECT",
+  "pct": true
+ },
+ {
+  "name": "au_left_target_bank_targets_completed",
+  "label": "LEFT TARGET BANK COMPLETED",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_total_awards",
+  "label": "TOTAL MYSTERY AWARDS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_big_points",
+  "label": "MYSTERY-BIG POINTS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_bigger_points",
+  "label": "MYSTERY-BIGGER POINTS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_biggest_points",
+  "label": "MYSTERY-BIGGEST POINTS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_targaryen",
+  "label": "MYSTERY-LIGHT TARGARYEN",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_stark",
+  "label": "MYSTERY-LIGHT STARK",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_baratheon",
+  "label": "MYSTERY-LIGHT BARATHEON",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_lannister",
+  "label": "MYSTERY-LIGHT LANNISTER",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_greyjoy",
+  "label": "MYSTERY-LIGHT GREYJOY",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_tyrell",
+  "label": "MYSTERY-LIGHT TYRELL",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_martell",
+  "label": "MYSTERY-LIGHT MARTELL",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_wildfire",
+  "label": "MYSTERY-LIGHT WILDFIRE",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_lock",
+  "label": "MYSTERY-LIGHT LOCK",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_1x_bonus_multiplier",
+  "label": "MYSTERY-1X BONUS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_2x_bonus_multiplier",
+  "label": "MYSTERY-2X BONUS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_3x_bonus_multiplier",
+  "label": "MYSTERY-3X BONUS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_5x_wildfire",
+  "label": "MYSTERY-5X WILDFIRE",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_10x_wildfire",
+  "label": "MYSTERY-10X WILDFIRE",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_wall_jackpot_grows",
+  "label": "MYSTERY-WALL JACKPOT GROWS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_swords",
+  "label": "MYSTERY-LIGHT SWORDS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_1x_video_mode",
+  "label": "MYSTERY-1X VIDEO MODE",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_2x_video_mode",
+  "label": "MYSTERY-2X VIDEO MODE",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_3x_video_mode",
+  "label": "MYSTERY-3X VIDEO MODE",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_playfield_multiplier",
+  "label": "MYSTERY-LIGHT PF MPLIER",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_1x_super_jackpot",
+  "label": "MYSTERY-1X SUPER JP",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_2x_super_jackpot",
+  "label": "MYSTERY-2X SUPER JP",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_3x_super_jackpot",
+  "label": "MYSTERY-3X SUPER JP",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_advance_wall_mb",
+  "label": "MYSTERY-ADVANCE WALL MB",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_light_lord_of_light",
+  "label": "MYSTERY-LIGHT LORD OF L.",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_sword",
+  "label": "MYSTERY-SWORD",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_extra_ball",
+  "label": "MYSTERY-EXTRA BALL",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_special",
+  "label": "MYSTERY-SPECIAL",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_gold_hand",
+  "label": "MYSTERY-GOLD HAND",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_winter_is_coming",
+  "label": "MYSTERY-WINTER",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_bonus_held",
+  "label": "MYSTERY-BONUS HELD",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_arrows",
+  "label": "MYSTERY-ARROWS",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_charge",
+  "label": "MYSTERY-CHARGE",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_breach",
+  "label": "MYSTERY-BREACH",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_baratheon_button",
+  "label": "MYSTERY-BARATHEON B.",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_lannister_button",
+  "label": "MYSTERY-LANNISTER B.",
+  "pct": true
+ },
+ {
+  "name": "au_mystery_martell_button",
+  "label": "MYSTERY-MARTELL B.",
+  "pct": true
+ },
+ {
+  "name": "au_lord_of_light_awarded",
+  "label": "LORD OF LIGHT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_lord_of_light_saves",
+  "label": "LORD OF LIGHT SAVES",
+  "pct": true
+ },
+ {
+  "name": "au_video_mode_won",
+  "label": "VIDEO MODE WON",
+  "pct": true
+ },
+ {
+  "name": "au_video_mode_draw",
+  "label": "VIDEO MODE DRAW",
+  "pct": true
+ },
+ {
+  "name": "au_video_mode_lost",
+  "label": "VIDEO MODE LOST",
+  "pct": true
+ },
+ {
+  "name": "au_blackwater_multiball_started",
+  "label": "BLACKWATER MULTIBALL STARTED",
+  "pct": true
+ },
+ {
+  "name": "au_1x_super_jackpot",
+  "label": "1X SUPER JACKPOT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_2x_super_jackpot",
+  "label": "2X SUPER JACKPOT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_3x_super_jackpot",
+  "label": "3X SUPER JACKPOT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_wall_multiball_started",
+  "label": "WALL MULTIBALL STARTED",
+  "pct": true
+ },
+ {
+  "name": "au_wall_super_jackpot",
+  "label": "WALL SUPER JACKPOT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_hand_multiball_started",
+  "label": "HAND MULTIBALL STARTED",
+  "pct": true
+ },
+ {
+  "name": "au_hand_start_targaryen",
+  "label": "HAND START TARGARYEN",
+  "pct": true
+ },
+ {
+  "name": "au_hand_start_stark",
+  "label": "HAND START STARK",
+  "pct": true
+ },
+ {
+  "name": "au_hand_start_lannister",
+  "label": "HAND START LANNISTER",
+  "pct": true
+ },
+ {
+  "name": "au_hand_start_baratheon",
+  "label": "HAND START BARATHEON",
+  "pct": true
+ },
+ {
+  "name": "au_hand_start_greyjoy",
+  "label": "HAND START GREYJOY",
+  "pct": true
+ },
+ {
+  "name": "au_hand_start_tyrell",
+  "label": "HAND START TYRELL",
+  "pct": true
+ },
+ {
+  "name": "au_hand_start_martell",
+  "label": "HAND START MARTELL",
+  "pct": true
+ },
+ {
+  "name": "au_hand_set_complete",
+  "label": "HAND SET COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_hand_super_jackpot_hurry_up",
+  "label": "HAND SJP HURRY UP AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_iron_multiball_started",
+  "label": "IRON MULTIBALL STARTED",
+  "pct": true
+ },
+ {
+  "name": "au_iron_super_jackpot",
+  "label": "IRON SUPER JACKPOT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_iron_multiball_completed",
+  "label": "IRON MULTIBALL COMPLETED",
+  "pct": true
+ },
+ {
+  "name": "au_winter_multiball_started",
+  "label": "WINTER MULTIBALL STARTED",
+  "pct": true
+ },
+ {
+  "name": "au_winter_super_jackpot",
+  "label": "WINTER SUPER JACKPOT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_castle_multiball_started",
+  "label": "CASTLE MULTIBALL STARTED",
+  "pct": true
+ },
+ {
+  "name": "au_castle_super_jackpot",
+  "label": "CASTLE SUPER JACKPOT AWARDED",
+  "pct": true
+ },
+ {
+  "name": "au_house_select_targaryen",
+  "label": "HOUSE SELECT TARGARYEN",
+  "pct": true
+ },
+ {
+  "name": "au_house_select_stark",
+  "label": "HOUSE SELECT STARK",
+  "pct": true
+ },
+ {
+  "name": "au_house_select_baratheon",
+  "label": "HOUSE SELECT BARATHEON",
+  "pct": true
+ },
+ {
+  "name": "au_house_select_lannister",
+  "label": "HOUSE SELECT LANNISTER",
+  "pct": true
+ },
+ {
+  "name": "au_house_select_grejoy",
+  "label": "HOUSE SELECT GREYJOY",
+  "pct": true
+ },
+ {
+  "name": "au_house_select_tyrell",
+  "label": "HOUSE SELECT TYRELL",
+  "pct": true
+ },
+ {
+  "name": "au_house_select_martell",
+  "label": "HOUSE SELECT MARTELL",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_targaryen1",
+  "label": "BATTLE HOUSE TARGARYEN 1",
+  "pct": true
+ },
+ {
+  "name": "au_battle_targaryen1_complete",
+  "label": "BATTLE TARGARYEN 1 COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_targaryen2",
+  "label": "BATTLE HOUSE TARGARYEN 2",
+  "pct": true
+ },
+ {
+  "name": "au_battle_targaryen2_complete",
+  "label": "BATTLE TARGARYEN 2 COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_targaryen3",
+  "label": "BATTLE HOUSE TARGARYEN 3",
+  "pct": true
+ },
+ {
+  "name": "au_battle_targaryen3_complete",
+  "label": "BATTLE TARGARYEN 3 COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_stark",
+  "label": "BATTLE HOUSE STARK",
+  "pct": true
+ },
+ {
+  "name": "au_battle_stark_complete",
+  "label": "BATTLE STARK COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_baratheon",
+  "label": "BATTLE HOUSE BARATHEON",
+  "pct": true
+ },
+ {
+  "name": "au_battle_baratheon_complete",
+  "label": "BATTLE BARATHEON COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_lannister",
+  "label": "BATTLE HOUSE LANNISTER",
+  "pct": true
+ },
+ {
+  "name": "au_battle_lannister_complete",
+  "label": "BATTLE LANNISTER COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_grejoy",
+  "label": "BATTLE HOUSE GREYJOY",
+  "pct": true
+ },
+ {
+  "name": "au_battle_greyjoy_complete",
+  "label": "BATTLE GREYJOY COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_tyrell",
+  "label": "BATTLE HOUSE TYRELL",
+  "pct": true
+ },
+ {
+  "name": "au_battle_tyrell_complete",
+  "label": "BATTLE TYRELL COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_battle_house_martell",
+  "label": "BATTLE HOUSE MARTELL",
+  "pct": true
+ },
+ {
+  "name": "au_battle_martell_complete",
+  "label": "BATTLE MARTELL COMPLETE",
+  "pct": true
+ },
+ {
+  "name": "au_start_winter_is_coming",
+  "label": "START WINTER IS COMING",
+  "pct": true
+ },
+ {
+  "name": "au_complete_winte_is_coming",
+  "label": "COMPLETE WINTER IS COMING",
+  "pct": true
+ },
+ {
+  "name": "au_auto_play_active_ticks",
+  "label": "AUTO PLAY ACTIVE TICKS",
+  "pct": false
+ },
+ {
+  "name": "au_auto_play_rest_ticks",
+  "label": "AUTO PLAY REST TICKS",
+  "pct": false
+ },
+ {
+  "name": "au_auto_play_cycles",
+  "label": "AUTO PLAY CYCLES",
+  "pct": false
+ }
+]

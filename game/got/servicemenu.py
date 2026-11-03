@@ -18,6 +18,11 @@ class ServiceMenu(Mode):
         path = os.path.join(self.machine.machine_path, "config", "rom", "audit_labels.json")
         with open(path, encoding="utf-8") as f:
             self._audit_labels = json.load(f)
+        menu = os.path.join(self.machine.machine_path, "config", "rom", "audit_menu.json")
+        self._audit_menu = []
+        if os.path.exists(menu):
+            with open(menu, encoding="utf-8") as f:
+                self._audit_menu = json.load(f)       # ROM order and labels (docs/19)
         for sw, fn in (("s_service_select_active", self._select), ("s_service_back_active", self._back),
                        ("s_service_plus_active", self._step), ("s_service_minus_active", self._step)):
             self.add_mode_event_handler(sw, fn, which=sw)
@@ -27,7 +32,7 @@ class ServiceMenu(Mode):
         if self._level == "top":
             return list(TOP)
         if self._level == "audits":
-            return sorted(self._audit_labels)
+            return [m["name"] for m in self._audit_menu] or sorted(self._audit_labels)
         if self._level in ("adj", "edit"):
             return sorted((s.name for s in self.machine.settings.get_settings()), key=lambda n: self.machine.settings._settings[n].sort)
         if self._level == "coil":
@@ -102,7 +107,13 @@ class ServiceMenu(Mode):
             name = e[self._i]
             au = self.machine.auditor.current_audits if getattr(self.machine, "auditor", None) else {}
             val = (au.get("events") or {}).get(name, 0)
-            return "AUDITS %d/%d" % (self._i + 1, len(e)), self._audit_labels[name][:28].upper(), "{:,}".format(int(val))
+            info = next((m for m in self._audit_menu if m["name"] == name), None)
+            label = info["label"] if info else self._audit_labels[name]
+            text = "{:,}".format(int(val))
+            if info and info["pct"]:
+                plays = int((au.get("events") or {}).get("au_total_plays_ended", 0))
+                text += "  %d%%" % (100 * int(val) // plays if plays else 0)
+            return "AUDITS %d/%d" % (self._i + 1, len(e)), label[:28].upper(), text
         if lv in ("adj", "edit"):
             s = self.machine.settings._settings[e[self._i]]
             if lv == "adj":
