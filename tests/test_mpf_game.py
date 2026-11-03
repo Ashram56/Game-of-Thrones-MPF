@@ -1166,7 +1166,8 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(3)
         self.machine.game.player.score = 80000000                      # beats the grand champion (75 M)
         seen = []
-        self.machine.events.add_handler("got_initials", lambda **kwargs: seen.append(kwargs["line2"]))
+        for ev in ("got_initials_a", "got_initials_b"):
+            self.machine.events.add_handler(ev, lambda **kwargs: seen.append(kwargs["initials"]))
         self.machine.events.add_handler("got_game_over", lambda **kwargs: seen.append("OVER"))
         self.machine.game.balls_per_game = 1 if False else self.machine.game.balls_per_game
         for _ in range(6):

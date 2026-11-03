@@ -1,0 +1,27 @@
+#config_version=6
+# Visual check of the initials entry: mpf game game -c smoke_initials -t (attract, then the entry for an 80 M score, flipper moves, Start picks)
+config:
+  - config.yaml
+event_player:
+  s_dip_1_active: got_debug_initials
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 8s
+      switch: s_dip_1
+      action: activate
+    - time: 3s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 1s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 1s
+      switch: s_start_button
+      action: hit
+    - time: 3s
+      switch: s_l_flipper_button
+      action: hit
+    - time: 3s
+      switch: s_l_flipper_button
+      action: hit

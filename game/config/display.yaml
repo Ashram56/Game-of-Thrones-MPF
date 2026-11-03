@@ -67,6 +67,23 @@ slide_player:
       action: remove
     attract_b:
       action: remove
+  got_initials_a:
+    initials_a:
+      priority: 85
+      tokens: {num: "{num}", title: "{title}", initials: "{initials}", alpha: "{alpha}", pos: "{pos}", maxlen: "{maxlen}"}
+    initials_b:
+      action: remove
+  got_initials_b:
+    initials_b:
+      priority: 85
+      tokens: {num: "{num}", title: "{title}", initials: "{initials}", alpha: "{alpha}", pos: "{pos}", maxlen: "{maxlen}"}
+    initials_a:
+      action: remove
+  got_initials_done:
+    initials_a:
+      action: remove
+    initials_b:
+      action: remove
 machine_vars:
   credits:
     initial_value: 0

@@ -42,6 +42,7 @@ class Scoreboard(Mode):
         self.add_mode_event_handler("game_ending", self._game_ending)
         self.add_mode_event_handler("got_service_open", self._attract_stop)
         self.add_mode_event_handler("got_service_close", self._service_closed)
+        self.add_mode_event_handler("got_debug_initials", self._debug_entry)          # smoke_initials.yaml only
         self.add_mode_event_handler("s_l_flipper_button_active", self._letter, step=-1)
         self.add_mode_event_handler("s_r_flipper_button_active", self._letter, step=1)
         self.add_mode_event_handler("s_start_button_active", self._confirm_letter)
@@ -169,6 +170,10 @@ class Scoreboard(Mode):
         self._todo = [(i + 1, s) for i, s in enumerate(scores) if self._qualifies(s)]
         self._next_entry()
 
+    def _debug_entry(self, **kwargs):
+        self._todo = [(1, 80000000)]
+        self._next_entry()
+
     def _next_entry(self):
         if not self._todo:
             return self._match()
@@ -217,11 +222,10 @@ class Scoreboard(Mode):
     def _entry_show(self):
         e = self._entry
         rank = [r["score"] for r in self.table()]
-        title = "GRAND CHAMPION" if e["score"] > rank[0] else "HIGH SCORE"
-        shown = e["name"] + self._alphabet()[e["pos"]]
-        l1, l2, l3 = "PLAYER %d %s" % (e["num"], title), shown.ljust(3, "_"), fmt(e["score"])
-        self.machine.events.post("got_initials", line1=l1, line2=l2, line3=l3)
-        self.screen(l1, l2, l3)
+        idx = next((i for i, v in enumerate(rank) if e["score"] > v), len(rank) - 1)
+        self._flip = not getattr(self, "_flip", False)
+        self.machine.events.post("got_initials_" + ("a" if self._flip else "b"), num=e["num"], title=self.table()[idx]["label"],
+                                 initials=e["name"], alpha=",".join(self._alphabet()), pos=e["pos"], maxlen=3)
 
     def _entry_timeout(self):
         e = self._entry
