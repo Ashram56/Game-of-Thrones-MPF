@@ -1,5 +1,5 @@
 """ROM audit counters (Game-of-Thrones data/audits.csv names) -> MPF switches and events. Pure data.
-Not mapped (no matching feature or no data): coins/credits/meters, score and game-time histograms, ball search and lost balls,
+Not mapped (no matching feature or no data): credits/meters, score and game-time histograms, ball search and lost balls,
 fixture and auto-play, video mode, wildfire/lock/sword/PFx mystery awards, all pop-bumper awards, Lord of Light, Castle shot counters."""
 
 SWITCH_AUDITS = {
@@ -42,3 +42,16 @@ TARGARYEN_START = ("au_battle_house_targaryen1", "au_battle_house_targaryen2", "
 TARGARYEN_COMPLETE = ("au_battle_targaryen1_complete", "au_battle_targaryen2_complete", "au_battle_targaryen3_complete")
 PLAYER_GAMES = {1: "au_total_one_player_games", 2: "au_total_two_player_games", 3: "au_total_three_player_games",
                 4: "au_total_four_player_games"}
+
+COIN_AUDITS = {"s_left_coin": "au_total_left_coins", "s_center_coin": "au_total_center_coins", "s_right_coin": "au_total_right_coins",
+               "s_fourth_coin": "au_total_fourth_coins", "s_fifth_coin": "au_total_fifth_coins"}
+# Pict-O-Pops awards (data/pop_awards.csv names) -> audit counters
+POP_AUDITS = {"Big Points": "au_pops_big_points", "Light Wild Fire": "au_pops_light_wild_fire", "Light Lock": "au_pops_light_lock",
+              "Light Mystery": "au_pops_light_mystery", "+5 Wild Fire": "au_pops_award_5_wild_fire",
+              "Bump Wall Jackpot": "au_pops_bump_wall_jackpot_value", "Advance Toward Wall MB": "au_pops_advance_toward_wall_multiball",
+              "Light Lord of Light": "au_pops_light_lord_of_light", "+1 Bonus X": "au_pops_award_bonus_multiplier",
+              "+3 Bonus X": "au_pops_award_3_bonus_multipliers", "Light Swords": "au_pops_light_swords", "Gold": "au_pops_award_gold",
+              "Lannister Gold": "au_pops_award_gold_lanister", "Add Mode Time": "au_pops_add_mode_time", "Add A Ball": "au_pops_add_a_ball",
+              "Light Extra Ball": "au_pops_light_extra_ball", "Special": "au_pops_award_special",
+              "Bump Winter Is Coming value": "au_pops_bump_winter_is_coming"}
+VIDEO_MODE_AUDITS = {"win": "au_video_mode_won", "tie": "au_video_mode_draw", "loss": "au_video_mode_lost"}

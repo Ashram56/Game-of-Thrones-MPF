@@ -963,6 +963,18 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(11)                          # the menu confirms itself (timer 22)
         self.assertLess(player.got_gold, 1500)                 # the preselected (most expensive) award was bought
 
+    def test_coin_pop_and_video_mode_audits(self):
+        self._start_game()
+        self.hit_and_release_switch("s_right_coin")
+        self.post_event_with_params("got_pop_award", award="Add A Ball")
+        self.post_event_with_params("got_video_mode_result", outcome="win", n=1, level=2)
+        self.advance_time_and_run(0.1)
+        audits = self.machine.auditor.current_audits["events"]
+        self.assertEqual(1, audits["au_total_right_coins"])
+        self.assertEqual(1, audits["au_pops_add_a_ball"])
+        self.assertEqual(1, audits["au_pops_total_awards"])
+        self.assertEqual(1, audits["au_video_mode_won"])
+
     def test_rom_audits_are_counted(self):
         self._start_game()
         self._hit("s_left_loop", 2)

@@ -12,6 +12,12 @@ class RomAudits(Mode):
             self.add_mode_event_handler(sw + "_active", self._count, name=au)
         for ev, au in am.EVENT_AUDITS.items():
             self.add_mode_event_handler(ev, self._count, name=au)
+        for sw, au in am.COIN_AUDITS.items():
+            self.add_mode_event_handler(sw + "_active", self._count, name=au)
+        self.add_mode_event_handler("got_pop_award", self._pop)
+        self.add_mode_event_handler("got_match", self._match)
+        self.add_mode_event_handler("got_video_mode_result", self._video_mode)
+        self.add_mode_event_handler("got_special_credit", self._count, name="au_total_specials")
         self.add_mode_event_handler("got_mystery_award", self._mystery)
         self.add_mode_event_handler("got_house_confirmed", self._house_select)
         self.add_mode_event_handler("game_ended", self._players)
@@ -27,6 +33,19 @@ class RomAudits(Mode):
 
     def _count(self, name, **kwargs):
         self._audit(name)
+
+    def _pop(self, award=None, **kwargs):
+        self._audit("au_pops_total_awards")
+        if award in am.POP_AUDITS:
+            self._audit(am.POP_AUDITS[award])
+
+    def _match(self, won=False, **kwargs):
+        if won:
+            self._audit("au_total_matches")
+
+    def _video_mode(self, outcome=None, **kwargs):
+        if outcome in am.VIDEO_MODE_AUDITS:
+            self._audit(am.VIDEO_MODE_AUDITS[outcome])
 
     def _mystery(self, award=None, **kwargs):
         if award in self._mystery_audits:
