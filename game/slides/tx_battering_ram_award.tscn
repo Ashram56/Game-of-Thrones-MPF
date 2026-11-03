@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/dmd_text_pages.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/dmd_text_live.gd" id="2"]
 
 [node name="Text" type="Control"]
 layout_mode = 3
@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages = PackedStringArray("res://images/tx/tx_battering_ram_award_p0.png", "res://images/tx/tx_battering_ram_award_p1.png", "res://images/tx/tx_battering_ram_award_p2.png", "res://images/tx/tx_battering_ram_award_p3.png", "res://images/tx/tx_battering_ram_award_p4.png")
+pages_json = "[[[\"SUPER JACKPOT\",9,64,20]],[[\"+{award}\",6,64,14],[\"SPINNER VALUE\",6,64,23]],[[\"0X PLAYFIELD\",6,64,14],[\"MULTIPLIERS LIT\",6,64,23]],[[\"+0 WILDFIRE\",10,64,11],[\"HIT BATTERING RAM\",6,64,18],[\"TO COLLECT WILDFIRE\",6,64,27]],[[\"LIGHT\",6,64,14],[\"PLAYFIELD MULTIPLIER\",6,64,23]]]"

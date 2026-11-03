@@ -258,6 +258,8 @@ stretch_mode = 5
 script = ExtResource("2")
 pages = PackedStringArray(%s)
 """
+TEXT_LIVE = TEXT_PAGES.replace("res://scripts/dmd_text_pages.gd", "res://scripts/dmd_text_live.gd").replace(
+    "pages = PackedStringArray(%s)", 'pages_json = "%s"')
 TEXT_LINE = """
 [node name="L%d" type="Label" parent="Lines"]
 layout_mode = 2
@@ -293,6 +295,11 @@ def text_slides(data):
         if name in romtext:                                  # ROM bitmap fonts and positions: PNG pages drawn by gen_media.py
             pages = romtext[name]
             slide = "tx_" + name[4:]
+            if dmd_text.is_live(pages):                      # run-time values ({score}, {award}): drawn by dmd_text_live.gd
+                body = TEXT_LIVE % json.dumps(pages, separators=(",", ":")).replace("\\", "\\\\").replace('"', '\\"')
+                scenes["slides/%s.tscn" % slide] = body
+                player["got_" + name] = {slide: {"priority": 70, "expire": "2.5s" if len(pages) < 3 else "%.1fs" % (1.2 * len(pages) + 0.3)}}
+                continue
             body = TEXT_PAGES % (", ".join('"res://images/tx/%s_p%d.png"' % (slide, i) for i in range(len(pages))))
             scenes["slides/%s.tscn" % slide] = body
             player["got_" + name] = {slide: {"priority": 70, "expire": "2.5s" if len(pages) < 3 else "%.1fs" % (1.2 * len(pages) + 0.3)}}

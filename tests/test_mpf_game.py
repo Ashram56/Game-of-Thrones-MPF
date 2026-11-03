@@ -1182,6 +1182,15 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(-1, self.machine.config["sound_player"]["got_se_tune_stark"][
             next(iter(self.machine.config["sound_player"]["got_se_tune_stark"]))]["loops"])
 
+    def test_live_text_values_are_set_before_the_effect(self):
+        self._start_game()
+        self.machine.game.player.score += 2500000
+        self.advance_time_and_run(0.1)
+        self.post_event("got_def_tilt_warning")
+        self.advance_time_and_run(0.1)
+        self.assertEqual("2,500,000", self.machine.variables.get_machine_var("got_arg_award"))
+        self.assertEqual("2,500,000", self.machine.variables.get_machine_var("got_arg_score"))
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))

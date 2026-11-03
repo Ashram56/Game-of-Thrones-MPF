@@ -68,7 +68,15 @@ def main():
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import dmd_text                                             # ROM text screens, drawn with the ROM bitmap fonts
     texts = dmd_text.rom_lines(a.data)
+    fdir = os.path.join(GAME, "images", "fonts")
+    os.makedirs(fdir, exist_ok=True)
+    for n in range(32):                                         # glyph tables for the live (run-time value) text screens
+        src = os.path.join(a.data, "fonts", "font%02d.json" % n)
+        if os.path.exists(src):
+            shutil.copyfile(src, os.path.join(fdir, "font%02d.json" % n))
     for name, pages in texts.items():
+        if dmd_text.is_live(pages):
+            continue
         for i, page in enumerate(pages):
             dmd_text.render(a.data, page, os.path.join(GAME, "images", "tx", "tx_%s_p%d.png" % (name[4:], i)))
     print("text screens drawn: %d effects" % len(texts))

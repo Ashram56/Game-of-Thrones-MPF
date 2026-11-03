@@ -21,6 +21,7 @@ modes:
   - attract
   - scoreboard
   - music
+  - defargs
   - servicemenu
   - tilt
   - extras

@@ -15,9 +15,26 @@ def _clean(t):
     return t.replace("%s", "").strip()
 
 
+def _arg_kinds(data):
+    """{(def, text): 'score' | 'award'}: the 64-bit points arguments of dmd_text_args.csv (score when the table says current_player.score,
+    otherwise the award just given, taken at run time as the last score increase, inferred)."""
+    path = os.path.join(data, "dmd_text_args.csv")
+    out = {}
+    if not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8", newline="") as f:
+        for r in csv.DictReader(f):
+            if "llu" not in r["format"]:
+                continue
+            kind = "score" if "player.score" in r["mpf_hint"] or "score" in r["meaning"].lower() else "award"
+            out.setdefault((r["def_name"], r["text"]), kind)
+    return out
+
+
 def rom_lines(data):
     """{effect name: [page, ...]} with page = [(text, font, x, y)], for every def with at least one fully known line."""
     out = {}
+    kinds = _arg_kinds(data)
     with open(os.path.join(data, "font_usage.csv"), encoding="utf-8", newline="") as f:
         for r in csv.DictReader(f):
             if r["font_kind"] != "font_index" or not r["text_en"] or not r["font"] or not r["x"] or not r["y"]:
@@ -25,7 +42,11 @@ def rom_lines(data):
             name = r["function"] if r["function"].startswith("def_") else None
             if not name:
                 continue
-            text = _clean(r["text_en"])
+            raw = r["text_en"]
+            kind = kinds.get((name, raw))
+            if kind and re.search(r"%[,0-9]*l+u", raw):
+                raw = re.sub(r"%[,0-9]*l+u", "{%s}" % kind, raw, count=1)
+            text = _clean(raw.replace("{score}", "\x01").replace("{award}", "\x02")).replace("\x01", "{score}").replace("\x02", "{award}")
             if not text:
                 continue
             item = (text, int(r["font"]), int(r["x"]), int(r["y"]))
@@ -46,6 +67,10 @@ def _font(data, n):
         with open(os.path.join(data, "fonts", "font%02d.json" % n), encoding="utf-8") as f:
             _fonts[n] = json.load(f)
     return _fonts[n]
+
+
+def is_live(pages):
+    return any("{" in t for page in pages for t, _f, _x, _y in page)
 
 
 def render(data, lines, path):

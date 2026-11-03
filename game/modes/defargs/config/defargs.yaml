@@ -1,0 +1,7 @@
+#config_version=6
+# Run-time values for ROM text effects (got.defargs). Always on.
+mode:
+  start_events: reset_complete
+  priority: 22
+  game_mode: false
+  code: got.defargs.DefArgs
