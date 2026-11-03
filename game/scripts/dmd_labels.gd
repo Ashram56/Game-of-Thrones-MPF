@@ -46,8 +46,8 @@ func _process(_delta: float) -> void:
 			var gkey: String = "x20" if c == " " else c
 			var g = gl.get(gkey, gl.get(gkey.to_upper(), gl.get("x20")))
 			glyphs.append(g)
-			width += int(g["w"]) + 1
-		width -= 1
+			width += int(g.get("advance", int(g["w"]) + 1))
+		width -= int(_font.get("spacing", 1))
 		var ox: int = clampi(64 - width / 2, 0, maxi(0, 128 - width))
 		var oy: int = rows[k] - int(_font["height_px"]) + 1
 		for g in glyphs:
@@ -56,10 +56,10 @@ func _process(_delta: float) -> void:
 				var row: String = grows[j]
 				for i in row.length():
 					var v := row.substr(i, 1).hex_to_int()
-					var gx := ox + i
-					var gy := oy + j
+					var gx := ox + int(g.get("dx", 0)) + i
+					var gy := oy + int(g.get("dy", 0)) + j
 					if v > 0 and gx >= 0 and gx < 128 and gy >= 0 and gy < 32:
 						var kk := v / 15.0
 						img.set_pixel(gx, gy, Color(COLOR.r * kk, COLOR.g * kk, COLOR.b * kk, 1.0))
-			ox += int(g["w"]) + 1
+			ox += int(g.get("advance", int(g["w"]) + 1))
 	texture = ImageTexture.create_from_image(img)

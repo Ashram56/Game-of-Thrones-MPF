@@ -95,17 +95,19 @@ def render(data, lines, path):
         font = _font(data, fnum)
         gl = font["glyphs"]
         glyphs = [gl.get("x20" if c == " " else c) or gl.get(c.upper()) or gl.get("x20") for c in text]
-        width = sum(g["w"] + 1 for g in glyphs) - 1
+        spacing = font.get("spacing", 1)
+        adv = [g.get("advance", g["w"] + 1) for g in glyphs]
+        width = sum(adv) - spacing                           # docs/21: the last glyph's trailing spacing is not counted
         height = font["height_px"]
-        ox, oy = max(0, min(x - width // 2, W - width)), y - height + 1      # keep whole text on screen
-        for g in glyphs:
+        ox, oy = max(0, min(x - width // 2, W - width)), y - height + 1      # centre anchor; kept whole on screen
+        for g, a in zip(glyphs, adv):
             for j, row in enumerate(g["rows"]):
                 for i, ch in enumerate(row):
                     v = int(ch, 16)
-                    gx, gy = ox + i, oy + j
+                    gx, gy = ox + g.get("dx", 0) + i, oy + g.get("dy", 0) + j
                     if v and 0 <= gx < W and 0 <= gy < H:
                         k = v / 15.0
                         px[gx, gy] = (int(COLOR[0] * k), int(COLOR[1] * k), int(COLOR[2] * k), 255)
-            ox += g["w"] + 1
+            ox += a
     os.makedirs(os.path.dirname(path), exist_ok=True)
     img.save(path)

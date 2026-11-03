@@ -39,8 +39,8 @@ func _draw_page(page: Array) -> ImageTexture:
 			var key: String = "x20" if c == " " else c
 			var g = gl.get(key, gl.get(key.to_upper(), gl.get("x20")))
 			glyphs.append(g)
-			width += int(g["w"]) + 1
-		width -= 1
+			width += int(g.get("advance", int(g["w"]) + 1))
+		width -= int(font.get("spacing", 1))
 		var ox: int = clampi(int(line[2]) - width / 2, 0, maxi(0, 128 - width))   # never clipped at the left/right edge
 		var oy: int = int(line[3]) - int(font["height_px"]) + 1
 		for g in glyphs:
@@ -49,12 +49,12 @@ func _draw_page(page: Array) -> ImageTexture:
 				var row: String = rows[j]
 				for i in row.length():
 					var v := row.substr(i, 1).hex_to_int()
-					var gx := ox + i
-					var gy := oy + j
+					var gx := ox + int(g.get("dx", 0)) + i
+					var gy := oy + int(g.get("dy", 0)) + j
 					if v > 0 and gx >= 0 and gx < 128 and gy >= 0 and gy < 32:
 						var k := v / 15.0
 						img.set_pixel(gx, gy, Color(COLOR.r * k, COLOR.g * k, COLOR.b * k, 1.0))
-			ox += int(g["w"]) + 1
+			ox += int(g.get("advance", int(g["w"]) + 1))
 	return ImageTexture.create_from_image(img)
 
 func _ready() -> void:
