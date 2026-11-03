@@ -72,6 +72,23 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual([1], got)
         self.assertEqual("5,000,000", self.machine.variables.get_machine_var("got_arg_award"))
 
+    def test_mode_champion_table_entry(self):
+        """docs/22 2b: a mode score above the mode's champion earns an initials entry in that mode's table."""
+        sb = self.machine.modes["scoreboard"]
+        self._start_house("greyjoy")
+        self.machine.game.player.score += 20000000                 # above the 17.5 M default champion
+        self.machine.modes["greyjoy"].stop()
+        self.advance_time_and_run(0.5)
+        self.assertEqual(20000000, int(self.machine.game.player.got_best_greyjoy))
+        entries = sb._champion_entries(self.machine.game)
+        self.assertEqual([(1, 20000000, "greyjoy")], entries)
+        sb._todo = list(entries)
+        sb._next_entry()
+        sb._entry["name"] = "ZZ"
+        sb._entry_done()
+        self.assertEqual("ZZ", sb.champions()["greyjoy"]["name"])
+        self.assertEqual(20000000, sb.champions()["greyjoy"]["score"])
+
     def test_full_game(self):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)

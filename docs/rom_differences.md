@@ -43,3 +43,6 @@ MPF's ball search replaces the ROM's: 10 s without activity, then slingshots, el
 
 ## Skill shot, top lanes and initials entry (docs/22, 2026-11-03)
 The ROM's "SKILL SHOT" display needs flag 27, which nothing sets in 1.37.0, so it is not built (dead code, medium confidence). Top lanes follow the ROM: 5,000 for a newly lit lane, 500 if already lit, a flipper swaps the lanes, both lit = 25,000 and +1 bonus X. Initials entry: alphabet A-Z plus SPACE, BACKSPACE and END, 30 s timer reloaded to 15 s at each input, default initials when nothing is typed (SSR, XAQ, GGF, JMR, T), cursor sounds 278-280 and tune_hstd. Not done: the 1.45 s / 3.2 s launch windows that route a fast right-loop shot to the elevator, the 13 champion tables, the ROM's entry screen layout (fonts and alphabet strip), 10-letter initials (adjustment 95).
+
+## Mode champion tables (docs/22 2b, 2026-11-03)
+12 tables (7 houses, Winter Is Coming, Winter Has Come, Hand of the King, Iron Throne, Midnight Madness) with the ROM default initials and scores (adjustments 134-145). A player's best score in a mode is the points gained while the mode ran (inferred). The entry runs after the main high-score entry. Tracked now: the AwardMode modes (houses, Hand, Iron Throne, Winter Has Come); not yet: Winter Is Coming and Midnight Madness (their modes are not AwardMode), and the champion attract pages.

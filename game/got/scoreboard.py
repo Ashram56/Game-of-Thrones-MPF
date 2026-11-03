@@ -16,6 +16,14 @@ DEFAULTS = [("GRAND CHAMPION", 75000000, "SSR"), ("HIGH SCORE #1", 50000000, "XA
 # alphabet A-Z, then the ROM's control entries: SPACE (always), BACKSPACE (only once a letter is typed), END (always)
 LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 CONTROLS = ("SPC", "BKSP", "END")
+# mode champion tables (data/hstd_defaults.csv entries 6-18; default scores are adjustments 134-145): key -> (label, initials, score)
+CHAMPIONS = {
+    "targaryen": ("TARGARYEN CHAMPION", "MXV", 10000000), "stark": ("STARK CHAMPION", "NED", 17500000),
+    "baratheon": ("BARATHEON CHAMPION", "ROB", 17500000), "lannister": ("LANNISTER CHAMPION", "TYR", 17500000),
+    "greyjoy": ("GREYJOY CHAMPION", "THN", 17500000), "tyrell": ("TYRELL CHAMPION", "MCE", 17500000),
+    "martell": ("MARTELL CHAMPION", "OBR", 17500000), "winter_is_coming": ("WINTER IS COMING CHAMPION", "SNO", 1500000),
+    "winter_has_come": ("WINTER HAS COME CHAMPION", "WHC", 7500000), "hand_of_the_king": ("HAND OF THE KING CHAMPION", "JON", 25000000),
+    "iron_throne": ("IRON THRONE CHAMPION", "KNG", 25000000), "midnight_madness": ("MIDNIGHT MADNESS CHAMPION", "ZZZ", 25000000)}
 ENTRY_FIRST_S = 30           # entry timer: 30 s, reloaded to 15 s at every input (docs/22 2c)
 ENTRY_STEP_S = 15
 COINS = ("s_left_coin", "s_center_coin", "s_right_coin", "s_fourth_coin", "s_fifth_coin")
@@ -112,6 +120,24 @@ class Scoreboard(Mode):
     def _save(self, t):
         self.machine.variables.set_machine_var("got_highscores", json.dumps(t))
 
+    def champions(self):
+        raw = self.machine.variables.get_machine_var("got_champions")
+        try:
+            saved = json.loads(raw) if raw else {}
+        except ValueError:
+            saved = {}
+        return {k: saved.get(k) or {"name": v[1], "score": v[2]} for k, v in CHAMPIONS.items()}
+
+    def _champion_entries(self, game):
+        """(player number, best mode score, key) for every mode champion a player beat (docs/22 2b: one table per mode)."""
+        champs = self.champions()
+        out = []
+        for key in CHAMPIONS:
+            best = max(((int(getattr(pl, "got_best_" + key, 0) or 0), pl.number) for pl in game.player_list), default=(0, 0))
+            if best[0] > champs[key]["score"]:
+                out.append((best[1], best[0], key))
+        return out
+
     def _qualifies(self, score):
         return score > self.table()[-1]["score"]
 
@@ -167,18 +193,20 @@ class Scoreboard(Mode):
         self._queue = queue
         if queue:
             queue.wait()
-        self._todo = [(i + 1, s) for i, s in enumerate(scores) if self._qualifies(s)]
+        self._todo = [(i + 1, s, None) for i, s in enumerate(scores) if self._qualifies(s)]
+        if game:
+            self._todo += self._champion_entries(game)
         self._next_entry()
 
     def _debug_entry(self, **kwargs):
-        self._todo = [(1, 80000000)]
+        self._todo = [(1, 80000000, None)]
         self._next_entry()
 
     def _next_entry(self):
         if not self._todo:
             return self._match()
-        num, score = self._todo.pop(0)
-        self._entry = {"num": num, "score": score, "name": "", "pos": 0, "touched": False}
+        num, score, key = self._todo.pop(0)
+        self._entry = {"num": num, "score": score, "key": key, "name": "", "pos": 0, "touched": False}
         self.delay.reset(ENTRY_FIRST_S * 1000, self._entry_timeout, name="entry")
         self.machine.events.post("got_se_tune_hstd")                  # effect 67 tune_hstd
         self.machine.events.post("got_se_vo_hstd_anouncement_v1")     # voice 430
@@ -223,8 +251,9 @@ class Scoreboard(Mode):
         e = self._entry
         rank = [r["score"] for r in self.table()]
         idx = next((i for i, v in enumerate(rank) if e["score"] > v), len(rank) - 1)
+        title = CHAMPIONS[e["key"]][0] if e.get("key") else self.table()[idx]["label"]
         self._flip = not getattr(self, "_flip", False)
-        self.machine.events.post("got_initials_" + ("a" if self._flip else "b"), num=e["num"], title=self.table()[idx]["label"],
+        self.machine.events.post("got_initials_" + ("a" if self._flip else "b"), num=e["num"], title=title,
                                  initials=e["name"], alpha=",".join(self._alphabet()), pos=e["pos"], maxlen=3)
 
     def _entry_timeout(self):
@@ -233,13 +262,18 @@ class Scoreboard(Mode):
             if not e["name"].strip():                 # nothing typed: the entry's default initials (docs/22)
                 rank = [r["score"] for r in self.table()]
                 idx = next((i for i, v in enumerate(rank) if e["score"] > v), len(rank) - 1)
-                e["name"] = DEFAULTS[min(idx, len(DEFAULTS) - 1)][2]
+                e["name"] = CHAMPIONS[e["key"]][1] if e.get("key") else DEFAULTS[min(idx, len(DEFAULTS) - 1)][2]
             self._entry_done()
 
     def _entry_done(self):
         e, self._entry = self._entry, None
         self.delay.remove("entry")
-        self._insert(e["name"], e["score"])
+        if e.get("key"):
+            champs = self.champions()
+            champs[e["key"]] = {"name": e["name"], "score": e["score"]}
+            self.machine.variables.set_machine_var("got_champions", json.dumps(champs))
+        else:
+            self._insert(e["name"], e["score"])
         self.machine.events.post("got_initials_done")
         self.screen_clear()
         self._next_entry()

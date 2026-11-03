@@ -93,6 +93,10 @@ machine_vars:
     initial_value: ""
     value_type: str
     persist: true
+  got_champions:
+    initial_value: ""
+    value_type: str
+    persist: true
   got_arg_score:
     initial_value: "0"
     value_type: str

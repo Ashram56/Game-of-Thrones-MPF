@@ -30,8 +30,12 @@ class AwardMode(Mode):
 
     def mode_stop(self, **kwargs):
         """The ROM's TotalChoreo: when the mode ends, the points it earned are shown (the total is inferred as the score gained while it ran)."""
-        name = self.TOTAL_DEF.get(getattr(self, "_cfg", {}).get("key"))
+        key = getattr(self, "_cfg", {}).get("key")
+        name = self.TOTAL_DEF.get(key)
         player = self.machine.game.player if self.machine.game else None
+        if player is not None and getattr(self, "_score0", None) is not None and key:
+            best = "got_best_" + key                                  # mode champion tables: the player's best mode score
+            setattr(player, best, max(int(getattr(player, best, 0) or 0), int(player.score) - self._score0))
         if name and player is not None and getattr(self, "_score0", None) is not None:
             total = int(player.score) - self._score0
             if total > 0:
