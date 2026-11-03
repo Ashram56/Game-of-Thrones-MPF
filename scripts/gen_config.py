@@ -369,6 +369,72 @@ def lightshow(rules):
     return out
 
 
+# My rule events -> the ROM's display effects (def_*). Each def plays its sounds and its DMD clip (data/triggers_sound_video.csv,
+# call sites decoded by the extraction; H for the def, M for the rule event it is attached to).
+HOUSE_DEF = {"targaryen": "def_targaryen_start_1", "stark": "def_stark_start", "baratheon": "def_baratheon_start",
+             "lannister": "def_lannister_start", "greyjoy": "def_greyjoy_start", "tyrell": "def_tyrell_start", "martell": "def_martell_start",
+             "winter_is_coming": "def_winter_hurry_up_start", "wall": "def_start_wall", "blackwater": "def_start_blackwater",
+             "hand_of_the_king": "def_start_hand", "castle": "def_castle_multiball_start", "winter_has_come": "def_start_winter_mball",
+             "midnight_madness": "def_madness_multiball_start"}
+EVENT_DEF = {"got_light_extra_ball": "def_extra_ball_lit", "got_award_extra_ball": "def_extra_ball_award",
+             "got_lock_lit": "def_lock_is_lit", "got_blackwater_jackpot": "def_blackwater_jackpot",
+             "got_blackwater_super": "def_blackwater_super_jackpot", "got_wildfire_start": "def_wildfire_lit",
+             "got_lord_of_light_lit": "def_lord_of_light_lit", "got_light_swords": "def_swords_is_lit", "got_award_sword": "def_award_sword",
+             "got_bump_wall_jackpot": "def_wall_jackpot_grows", "got_castle_level_award": "def_upper_playfield_mode_new_level_award",
+             "got_special_credit": "def_replay_award", "got_match": "def_match", "ball_save_default_saving_ball": "def_ball_save",
+             "got_stark_award": "def_award_stark", "got_martell_award": "def_award_martell", "got_greyjoy_award": "def_award_greyjoy",
+             "got_lannister_award": "def_award_lannister", "got_targaryen_award": "def_award_targaryen_1",
+             "got_tyrell_award": "def_tyrell_award_1"}
+for _h in ("baratheon", "greyjoy", "lannister", "tyrell"):
+    EVENT_DEF['got_house_complete{key=="%s"}' % _h] = "def_%s_complete" % _h
+# ROM switch handlers (swdf_*, call sites that play one sound when the switch is hit) -> MPF switch
+SWITCH_TRIGGER = {"swdf_left_outlane": "s_left_outlane", "swdf_right_outlane": "s_right_outlane",
+                  "swdf_left_return_lane": "s_left_return_lane", "swdf_right_return_lane": "s_right_return_lane",
+                  "swdf_left_ramp_entrance": "s_left_ramp_entrance", "swdf_right_ramp_entrance": "s_right_ramp_entrance",
+                  "swdf_upper_playfield_center_standup": "s_u_p_center_target", "swdf_upper_playfield_left_standup": "s_u_p_left_target",
+                  "swdf_upper_playfield_right_standup": "s_u_p_right_target", "swdf_upper_playfield_left_rollover": "s_u_p_left_rollover",
+                  "swdf_upper_playfield_right_rollover": "s_u_p_right_rollover", "swdf_upper_playfield_loop": "s_u_p_left_loop",
+                  "elevator_event_handler": "s_elevator_popper", "throne_event_handler": "s_throne", "lock_event_handler": "s_lock_1"}
+
+
+def triggers(data, rules):
+    """Wire the ROM's display effects: event got_def_<name> posts the effect's sounds (got_se_*) and plays its DMD clip."""
+    rows_ = rows(data, "triggers_sound_video.csv")
+    vids = {int(r["video_id"]): int(r["frames"]) for r in rows(data, "dmd_videos.csv")}
+    fps = float(rules["dmd"]["fps"])
+    sfx, vid, first = {}, {}, {}
+    for r in rows_:
+        t, kind, ident = r["trigger"], r["kind"], r["id_or_name"]
+        if kind == "sound" and ident.startswith("se_"):
+            first.setdefault(t, [])
+            ev = "got_se_" + ident[3:]
+            if ev not in first[t]:
+                first[t].append(ev)
+        elif kind == "video" and ident.lstrip("-").isdigit():
+            vid.setdefault(t, int(ident))
+    player, slides_ = {}, {}
+    for t, evs in first.items():
+        if t.startswith("def_"):
+            player["got_def_" + t[4:]] = evs
+    for t, v in vid.items():
+        if t.startswith("def_") and v in vids:
+            slides_["got_def_" + t[4:]] = {"vid%03d" % v: {"expire": "%.1fs" % (max(1, vids[v]) / fps + 0.5)}}
+    for h, d in HOUSE_DEF.items():
+        player["mode_%s_started" % h] = ["got_def_" + d[4:]]
+    for ev, d in EVENT_DEF.items():
+        player[ev] = ["got_def_" + d[4:]]
+    for t, sw in SWITCH_TRIGGER.items():
+        if first.get(t):
+            player[sw + "_active"] = [first[t][0]]
+    # a def with a clip but no sound still needs its event
+    for k in slides_:
+        player.setdefault(k, [])
+    player = {k: v for k, v in player.items() if v or k.startswith("got_def_")}
+    for k in [k for k, v in player.items() if not v]:
+        del player[k]
+    return {"event_player": player, "slide_player": slides_}
+
+
 def build(data):
     with open(os.path.join(GAME, "config", "rules.yaml"), encoding="utf-8") as f:
         rules = yaml.safe_load(f)
@@ -385,6 +451,7 @@ def build(data):
     files["modes/scoring/config/scoring.yaml"] = dump(sc)       # variable_player is only valid inside a game mode
     files["config/rom/lightshow.yaml"] = dump(lightshow(rules))
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
+    files["config/rom/defs.yaml"] = dump(triggers(data, rules))
     files["config/rom/sounds_all.yaml"] = dump(all_sounds(data, rules))
     files["config/rom/sound_variants.json"] = json.dumps(all_sounds.variants, indent=1, sort_keys=True) + "\n"
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"

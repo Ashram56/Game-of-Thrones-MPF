@@ -1130,3 +1130,15 @@ class TestGotGame(MpfGameTestCase):
         self.post_event(ev)
         self.advance_time_and_run(0.1)
         self.assertEqual(1, len(played))
+
+    def test_rom_display_effect_plays_sounds_and_clip(self):
+        self._start_game()
+        played = []
+        self.machine.events.add_handler("got_def_stark_start", lambda **kwargs: played.append("def"))
+        for ev in ("got_se_fx_mode_start_stark", "got_se_vo_mode_start_stark"):
+            self.machine.events.add_handler(ev, lambda **kwargs: played.append("se"))
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(0.5)
+        self.assertIn("def", played)
+        self.assertIn("got_def_stark_start", self.machine.config["event_player"])
+        self.assertTrue(self.machine.config["event_player"]["got_def_stark_start"])
