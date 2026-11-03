@@ -127,6 +127,12 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.2)
         self.assertEventCalled("got_def_cash_in_multipliers")
 
+    def test_shoot_again_is_wired_to_extra_ball_replay(self):
+        """docs/24 (H): def_shoot_again only on an extra-ball replay (ball_starting with is_extra_ball), never on a normal ball."""
+        ep = self.machine.config["event_player"]
+        self.assertIn("got_def_shoot_again", ep["ball_starting{is_extra_ball}"])
+        self.assertNotIn("ball_starting", ep)
+
     def test_castle_of_shot_map(self):
         """ciron::GetCastleFromShotID: switch -> castle idx (data/ciron_castle_shots.csv)."""
         from got.multiballs import CASTLE_OF
