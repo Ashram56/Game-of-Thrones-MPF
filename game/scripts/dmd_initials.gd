@@ -25,6 +25,9 @@ func _val(key: String) -> String:
 	var n = get_parent().get_node_or_null(key)
 	return "" if n == null else String(n.text)
 
+func _int(key: String) -> int:
+	return int(float(_val(key))) if _val(key) != "" else 0
+
 func _glyph(font: Dictionary, c: String):
 	var gl: Dictionary = font["glyphs"]
 	var key: String = "x20" if c == " " else c
@@ -63,19 +66,22 @@ func _process(_delta: float) -> void:
 	if f0.is_empty() or f14.is_empty():
 		return
 	var img := Image.create(128, 32, false, Image.FORMAT_RGBA8)
-	var head := "PLAYER %s - ENTER INITIALS" % _val("Num")
+	var head := "PLAYER %d - ENTER INITIALS" % _int("Num")
 	_text(img, f0, head, clampi(64 - _width(f0, head) / 2, 0, 127), 4)
 	var title := _val("Title")
 	if title != "":
 		_text(img, f0, title, clampi(64 - _width(f0, title) / 2, 0, 127), 10)
-	var maxlen := maxi(1, int(_val("MaxLen")))
+	var maxlen := maxi(1, _int("MaxLen"))
 	var name := _val("Name")
 	var x0 := (129 - 7 * maxlen) / 2
 	for k in maxlen:
-		var ch := "_" if k >= name.length() else name.substr(k, 1)
-		_text(img, f14, ch, x0 + k * 7, 21)
+		if k >= name.length():
+			for gx in range(x0 + k * 7, x0 + k * 7 + 5):
+				img.set_pixel(gx, 21, COLOR)                       # empty cell: an underline (font 14 has no underscore)
+		else:
+			_text(img, f14, name.substr(k, 1), x0 + k * 7, 21)
 	var items := _val("Alpha").split(",")
-	var pos := clampi(int(_val("Pos")), 0, maxi(0, items.size() - 1))
+	var pos := clampi(_int("Pos"), 0, maxi(0, items.size() - 1))
 	var widths: Array = []
 	var total := 0
 	for it in items:
