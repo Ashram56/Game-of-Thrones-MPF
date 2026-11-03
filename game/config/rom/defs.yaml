@@ -42,10 +42,10 @@ event_player:
   got_def_award_sword:
   - got_se_fx_award_sword_medium
   - got_se_vo_light_bringer
+  - got_se_vo_oathkeeper
   - got_se_vo_widows_wail
   - got_se_vo_hearteater
   - got_se_vo_needle
-  - got_se_vo_oathkeeper
   - got_se_vo_long_claw
   - got_se_vo_ice
   got_def_award_targaryen_1:
@@ -121,17 +121,17 @@ event_player:
   - got_se_fx_lanister_build
   got_def_build_stark:
   - got_se_tune_hand_ready
+  - got_se_vo_mode_build_stark_beric_dondarrion
   - got_se_vo_mode_build_stark_cersei
+  - got_se_vo_mode_build_stark_illyn_payne
   - got_se_vo_mode_build_stark_joffery
   - got_se_vo_mode_build_stark_meryn_trant
+  - got_se_vo_mode_build_stark_the_hound
+  - got_se_vo_mode_build_stark_the_mountain
+  - got_se_vo_mode_build_stark_the_red_woman
+  - got_se_vo_mode_build_stark_thoros_of_myr
   - got_se_vo_mode_build_stark_tywin_lannister
   - got_se_vo_mode_build_stark_walder_frey
-  - got_se_vo_mode_build_stark_the_red_woman
-  - got_se_vo_mode_build_stark_beric_dondarrion
-  - got_se_vo_mode_build_stark_thoros_of_myr
-  - got_se_vo_mode_build_stark_illyn_payne
-  - got_se_vo_mode_build_stark_the_mountain
-  - got_se_vo_mode_build_stark_the_hound
   got_def_cash_in_multipliers:
   - got_se_iron_bank_award
   - got_se_vo_cashing_in_iron_bank
