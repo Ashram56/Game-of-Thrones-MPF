@@ -35,6 +35,8 @@ class Scoreboard(Mode):
         self.add_mode_event_handler("mode_attract_started", self._attract_start)
         self.add_mode_event_handler("mode_attract_stopped", self._attract_stop)
         self.add_mode_event_handler("game_ending", self._game_ending)
+        self.add_mode_event_handler("got_service_open", self._attract_stop)
+        self.add_mode_event_handler("got_service_close", self._service_closed)
         self.add_mode_event_handler("s_l_flipper_button_active", self._letter, step=-1)
         self.add_mode_event_handler("s_r_flipper_button_active", self._letter, step=1)
         self.add_mode_event_handler("s_start_button_active", self._confirm_letter)
@@ -126,6 +128,10 @@ class Scoreboard(Mode):
     def _attract_start(self, **kwargs):
         self._page = 0
         self._show_page()
+
+    def _service_closed(self, **kwargs):
+        if self.machine.modes["attract"].active:
+            self._attract_start()
 
     def _attract_stop(self, **kwargs):
         self.delay.remove("page")

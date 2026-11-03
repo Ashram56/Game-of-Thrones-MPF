@@ -1,0 +1,61 @@
+#config_version=6
+# Headless display test of the service menu: mpf game . -c smoke_service
+config:
+  - config.yaml
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 0.1s
+      switch: s_trough_1
+      action: activate
+    - time: 0.1s
+      switch: s_trough_2
+      action: activate
+    - time: 0.1s
+      switch: s_trough_3
+      action: activate
+    - time: 0.1s
+      switch: s_trough_4
+      action: activate
+    - time: 0.1s
+      switch: s_trough_5
+      action: activate
+    - time: 0.1s
+      switch: s_trough_6
+      action: activate
+    - time: 3s
+      switch: s_service_select
+      action: hit
+    - time: 0.1s
+      switch: s_service_select
+      action: release
+    - time: 1.5s
+      switch: s_service_select
+      action: hit
+    - time: 0.1s
+      switch: s_service_select
+      action: release
+    - time: 1.5s
+      switch: s_service_select
+      action: hit
+    - time: 0.1s
+      switch: s_service_select
+      action: release
+    - time: 1.5s
+      switch: s_service_select
+      action: hit
+    - time: 0.1s
+      switch: s_service_select
+      action: release
+    - time: 1.5s
+      switch: s_service_plus
+      action: hit
+    - time: 0.1s
+      switch: s_service_plus
+      action: release
+    - time: 1.5s
+      switch: s_service_select
+      action: hit
+    - time: 0.1s
+      switch: s_service_select
+      action: release

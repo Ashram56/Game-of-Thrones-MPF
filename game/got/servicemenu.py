@@ -39,6 +39,7 @@ class ServiceMenu(Mode):
             if self.machine.game:                       # the menu only opens between games
                 return
             self._level, self._i = "top", 0
+            self.machine.events.post("got_service_open")
         elif self._level == "top":
             self._level = {"AUDITS": "audits", "ADJUSTMENTS": "adj", "SWITCH TEST": "switch", "COIL TEST": "coil"}[TOP[self._i]]
             self._top_i, self._i = self._i, 0
@@ -61,6 +62,7 @@ class ServiceMenu(Mode):
         if self._level == "top":
             self._level = None
             self.machine.events.post("got_screen_clear")
+            self.machine.events.post("got_service_close")
             return
         if self._level == "edit":
             self._level = "adj"
