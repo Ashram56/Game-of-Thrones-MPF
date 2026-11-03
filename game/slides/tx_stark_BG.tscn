@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages_json = "[[[\"ARYA'S TRAINING\",0,32,5],[\"{score}\",4,32,11]]]"
+pages_json = "[[[\"VALUE = {award}\",0,32,17],[\"{timer}\",0,32,23]],[[\"ARYA'S TRAINING\",0,32,5],[\"{score}\",4,32,11]]]"

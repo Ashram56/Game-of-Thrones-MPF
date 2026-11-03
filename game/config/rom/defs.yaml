@@ -1029,7 +1029,7 @@ slide_player:
   got_def_baratheon_BG:
     tx_baratheon_BG:
       priority: 70
-      expire: 5.1s
+      expire: 6.3s
   got_def_award_winter_hurry_up:
     tx_award_winter_hurry_up:
       priority: 70
@@ -1117,7 +1117,7 @@ slide_player:
   got_def_castle_multiball_bg:
     tx_castle_multiball_bg:
       priority: 70
-      expire: 2.5s
+      expire: 3.9s
   got_def_castle_multiball_total:
     tx_castle_multiball_total:
       priority: 70
@@ -1320,6 +1320,126 @@ slide_player:
       expire: 2.5s
   got_def_match_background:
     tx_match_background:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_0:
+    tx_award_iron_0:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_1:
+    tx_award_iron_1:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_2:
+    tx_award_iron_2:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_3:
+    tx_award_iron_3:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_4:
+    tx_award_iron_4:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_5:
+    tx_award_iron_5:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_6:
+    tx_award_iron_6:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron_7:
+    tx_award_iron_7:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_0:
+    tx_iron_tour_award_0:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_1:
+    tx_iron_tour_award_1:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_2:
+    tx_iron_tour_award_2:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_3:
+    tx_iron_tour_award_3:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_4:
+    tx_iron_tour_award_4:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_5:
+    tx_iron_tour_award_5:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_6:
+    tx_iron_tour_award_6:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_7:
+    tx_iron_tour_award_7:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_8:
+    tx_iron_tour_award_8:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_9:
+    tx_iron_tour_award_9:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_10:
+    tx_iron_tour_award_10:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_11:
+    tx_iron_tour_award_11:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_12:
+    tx_iron_tour_award_12:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_13:
+    tx_iron_tour_award_13:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_14:
+    tx_iron_tour_award_14:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_15:
+    tx_iron_tour_award_15:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_16:
+    tx_iron_tour_award_16:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_17:
+    tx_iron_tour_award_17:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_18:
+    tx_iron_tour_award_18:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_19:
+    tx_iron_tour_award_19:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_20:
+    tx_iron_tour_award_20:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award_21:
+    tx_iron_tour_award_21:
       priority: 70
       expire: 2.5s
 shows:

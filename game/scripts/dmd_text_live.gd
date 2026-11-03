@@ -41,7 +41,9 @@ func _draw_page(page: Array) -> ImageTexture:
 			glyphs.append(g)
 			width += int(g.get("advance", int(g["w"]) + 1))
 		width -= int(font.get("spacing", 1))
-		var ox: int = clampi(int(line[2]) - width / 2, 0, maxi(0, 128 - width))   # never clipped at the left/right edge
+		var al: String = str(line[4]) if line.size() > 4 else "c"      # ROM align: "l" x is the left edge, "r" the right edge, "c" the centre
+		var ax: int = int(line[2]) - (width if al == "r" else 0 if al == "l" else width / 2)
+		var ox: int = clampi(ax, 0, maxi(0, 128 - width))               # never clipped at the left/right edge
 		var oy: int = int(line[3]) - int(font["height_px"]) + 1
 		for g in glyphs:
 			var rows: Array = g["rows"]

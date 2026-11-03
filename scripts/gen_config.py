@@ -316,6 +316,17 @@ def text_slides(data):
         slide = "tx_" + name[4:]
         scenes["slides/%s.tscn" % slide] = body
         player["got_" + name] = {slide: {"priority": 70, "expire": "2.5s"}}
+    # per-index layouts read from tables (data/dmd_table_layouts.csv, H): one live slide per castle / tour index, event got_<def>_<idx>
+    lp = os.path.join(data, "dmd_table_layouts.csv")
+    if os.path.exists(lp):
+        for r in rows(data, "dmd_table_layouts.csv"):
+            if r["effect"] not in ("def_award_iron", "def_iron_tour_award") or not r["index"].isdigit():
+                continue
+            al = "r" if r["align"].startswith("right") else "l" if r["align"].startswith("left") else "c"
+            pages = [[("{award}", int(r["font"]), int(r["x"]), int(r["y"]), al)]]
+            slide = "tx_%s_%s" % (r["effect"][4:], r["index"])
+            scenes["slides/%s.tscn" % slide] = TEXT_LIVE % json.dumps(pages, separators=(",", ":")).replace("\\", "\\\\").replace('"', '\\"')
+            player["got_%s_%s" % (r["effect"], r["index"])] = {slide: {"priority": 70, "expire": "2.5s"}}
     return scenes, player
 
 

@@ -86,14 +86,16 @@ def _font(data, n):
 
 
 def is_live(pages):
-    return any("{" in t for page in pages for t, _f, _x, _y in page)
+    return any("{" in t for page in pages for t, *_rest in page)
 
 
 def render(data, lines, path):
     from PIL import Image
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     px = img.load()
-    for text, fnum, x, y in lines:
+    for ln in lines:
+        text, fnum, x, y = ln[:4]
+        align = ln[4] if len(ln) > 4 else "c"
         font = _font(data, fnum)
         gl = font["glyphs"]
         glyphs = [gl.get("x20" if c == " " else c) or gl.get(c.upper()) or gl.get("x20") for c in text]
@@ -101,7 +103,8 @@ def render(data, lines, path):
         adv = [g.get("advance", g["w"] + 1) for g in glyphs]
         width = sum(adv) - spacing                           # docs/21: the last glyph's trailing spacing is not counted
         height = font["height_px"]
-        ox, oy = max(0, min(x - width // 2, W - width)), y - height + 1      # centre anchor; kept whole on screen
+        ox = x - (width if align == "r" else 0 if align == "l" else width // 2)
+        ox, oy = max(0, min(ox, W - width)), y - height + 1      # centre anchor; kept whole on screen
         for g, a in zip(glyphs, adv):
             for j, row in enumerate(g["rows"]):
                 for i, ch in enumerate(row):

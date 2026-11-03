@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages_json = "[[[\"CASTLE MULTIBALL\",0,0,5]],[[\"{award}\",0,127,5]]]"
+pages_json = "[[[\"SHOOT CASTLE DRAGON SHOTS\",0,64,11],[\"SUPER JACKPOT VALUE\",0,64,17],[\"{award}\",0,64,23]],[[\"CASTLE MULTIBALL\",0,0,5]],[[\"{award}\",0,127,5]]]"
