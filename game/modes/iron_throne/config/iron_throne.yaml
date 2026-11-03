@@ -5,7 +5,7 @@ mode:
   stop_events: stop_mode_iron_throne, multiball_iron_throne_ended, tilt
   priority: 400
   game_mode: true
-  code: got.multiballs.SetMultiball
+  code: got.iron.IronThroneMode
 mode_settings:
   kind: multiball
   id: 3
@@ -15,12 +15,17 @@ mode_settings:
     bump: 1250000
     cap: 12500000
   shots:
+  - s_3_bank_drop_tgt_btm
+  - s_3_bank_drop_tgt_mid
+  - s_3_bank_drop_tgt_top
   - s_battering_ram
+  - s_kickback
   - s_left_loop
   - s_left_ramp_exit
+  - s_right_2_bank_bottom
+  - s_right_2_bank_top
   - s_right_loop
   - s_right_ramp_exit
-  - s_throne
   shots_to_complete: 0
   start_bonus: 100000000
   flag: 41

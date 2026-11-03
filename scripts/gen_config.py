@@ -414,7 +414,8 @@ def slide_scenes(rules, data):
 HOUSE_CODE = {"winter_is_coming": "got.winter.WinterMode", "stark": "got.houses.StarkMode", "martell": "got.houses.MartellMode",
               "baratheon": "got.houses.BaratheonMode", "lannister": "got.houses.LannisterMode",
               "greyjoy": "got.houses.GreyjoyMode", "tyrell": "got.houses.TyrellMode", "targaryen": "got.houses.TargaryenMode"}
-MB_CODE = {k: "got.multiballs.SetMultiball" for k in ("wall", "hand_of_the_king", "iron_throne")}
+MB_CODE = {k: "got.multiballs.SetMultiball" for k in ("wall", "hand_of_the_king")}
+MB_CODE["iron_throne"] = "got.iron.IronThroneMode"
 MB_CODE["blackwater"] = "got.multiballs.BlackwaterMode"
 MB_CODE["winter_has_come"] = "got.multiballs.WinterHasComeMode"
 

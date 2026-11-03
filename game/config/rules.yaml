@@ -108,7 +108,7 @@ multiballs:
      jackpot_switches: [s_left_return_lane, s_right_return_lane, s_left_ramp_exit, s_right_ramp_exit],
      jackpot: {start: 2500000, bump: 0, cap: 0, conf: H, growth_conf: CFG}, super: {start: 0, conf: CFG}}
   - {id: 3, key: iron_throne, label: Iron Throne Multiball, flag: 41, start_bonus: 100000000, ball_save_adjustment: ad_iron_throne_ball_save_timer, ball_save_s: 25,
-     jackpot_switches: [s_throne, s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
+     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],      # ciron shot groups: got.iron
      jackpot: {start: 5000000, bump: 1250000, cap: 12500000, conf: M},
      super: {start: 10000000, bump: 1250000, cap: 50000000, conf: M}}
   - {id: 4, key: midnight_madness, label: Midnight Madness Multiball, flag: 39, start_bonus: 3000000, ball_save_adjustment: ad_madness_multiball_ball_save_timer, ball_save_s: 12,

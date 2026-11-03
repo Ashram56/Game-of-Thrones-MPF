@@ -52,6 +52,42 @@ class TestGotGame(MpfGameTestCase):
         self.assertFalse(mode.elevator_window)
         self.assertFalse(mode.fast_loop_window)
 
+    def test_iron_throne_state_machine(self):
+        """docs/23 (H): choose a castle, defeat it with all 7 groups, ram pays the super and adds a ball, castle mask -> tour at the end."""
+        self._start_mb("iron_throne")
+        mode = self.machine.modes["iron_throne"]
+        self.mock_event("got_def_award_iron_2")
+        self.mock_event("got_iron_throne_super")
+        player = self.machine.game.player
+        self.assertEqual(0, mode._state)
+        self.hit_and_release_switch("s_left_loop")                 # state 0: pick Pyke (left loop = castle 2)
+        self.advance_time_and_run(0.2)
+        self.assertEqual(1, mode._state)
+        self.assertEventCalled("got_def_award_iron_2")
+        self.assertNotIn("left_loop", mode._remaining)
+        for sw in ("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop", "s_right_2_bank_top",
+                   "s_3_bank_drop_tgt_top"):
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(0.1)
+        self.assertEqual(2, mode._state)
+        before = player.score
+        self.hit_and_release_switch("s_battering_ram")
+        self.advance_time_and_run(0.2)
+        self.assertGreater(player.score, before)
+        self.assertEventCalled("got_iron_throne_super")
+        self.assertEqual(0, mode._state)                          # castles remain: back to choosing
+
+    def test_iron_throne_tour_wraps_after_22(self):
+        self._start_mb("iron_throne")
+        mode = self.machine.modes["iron_throne"]
+        from got.iron import TOUR_LAST
+        mode._state, mode._remaining, mode._tour = 4, set(), TOUR_LAST
+        mode._mask = {"left_loop"}
+        self.hit_and_release_switch("s_left_loop")
+        self.advance_time_and_run(0.1)
+        self.assertEqual(0, mode._tour)
+        self.assertEqual(3, len(mode._mask))
+
     def test_build_stark_kill_list_cycles(self):
         """def_build_stark: each Stark ramp shot shows the next character of the global kill list (0..10, then wraps)."""
         self._start_game()

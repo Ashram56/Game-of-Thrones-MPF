@@ -46,3 +46,6 @@ The ROM's "SKILL SHOT" display needs flag 27, which nothing sets in 1.37.0, so i
 
 ## Mode champion tables (docs/22 2b, 2026-11-03)
 12 tables (7 houses, Winter Is Coming, Winter Has Come, Hand of the King, Iron Throne, Midnight Madness) with the ROM default initials and scores (adjustments 134-145). A player's best score in a mode is the points gained while the mode ran (inferred). The entry runs after the main high-score entry. Tracked now: the AwardMode modes (houses, Hand, Iron Throne, Winter Has Come); the champion attract pages follow the high scores. Winter Is Coming uses the best hurry-up award, Midnight Madness the points gained while it ran.
+
+## Iron Throne: ciron state machine (got.iron)
+Iron Throne runs the ROM's state machine (docs/23 of Game-of-Thrones, H states/transitions, M multipliers): choose castle, defeat it with the 7 shot groups, battering-ram super (+1 ball), King's Landing final ram, then the 22-castle tour with random 3-group masks. The 3-bank counts as one shot group on any of its three drops, the right 2-bank on either target (the ROM's individual-drop bits are not modelled). Not modelled: state 3 with one ball returns to state 0 with an empty mask and the mode simply waits for the drain; when all castles were taken before a new start the mask is refilled (inferred); lamp effects 89/91/92 and audits 164/166 only partly.
