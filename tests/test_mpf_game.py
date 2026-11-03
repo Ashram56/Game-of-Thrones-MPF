@@ -77,6 +77,15 @@ class TestGotGame(MpfGameTestCase):
         self.assertEventCalled("got_iron_throne_super")
         self.assertEqual(0, mode._state)                          # castles remain: back to choosing
 
+    def test_iron_throne_final_ram_starts_the_tour(self):
+        self._start_mb("iron_throne")
+        mode = self.machine.modes["iron_throne"]
+        mode._state, mode._remaining = 3, set()
+        mode._mask = {"ram"}
+        self.hit_and_release_switch("s_battering_ram")
+        self.advance_time_and_run(0.2)
+        self.assertEqual(4, mode._state)                         # several balls in play: the tour starts
+
     def test_iron_throne_tour_wraps_after_22(self):
         self._start_mb("iron_throne")
         mode = self.machine.modes["iron_throne"]

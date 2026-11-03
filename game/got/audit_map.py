@@ -19,7 +19,7 @@ EVENT_AUDITS = {
     "mode_hand_of_the_king_started": "au_hand_multiball_started", "mode_iron_throne_started": "au_iron_multiball_started",
     "mode_winter_has_come_started": "au_winter_multiball_started", "mode_castle_started": "au_castle_multiball_started",
     "got_winter_has_come_super": "au_winter_super_jackpot", "got_castle_super": "au_castle_super_jackpot",
-    "got_wall_super": "au_wall_super_jackpot", "got_iron_throne_super": "au_iron_super_jackpot",
+    "got_wall_super": "au_wall_super_jackpot", "got_iron_throne_super": "au_iron_super_jackpot", "got_iron_throne_completed": "au_iron_multiball_completed",
     "got_hand_of_the_king_super": "au_hand_super_jackpot_hurry_up",
     "mode_winter_is_coming_started": "au_start_winter_is_coming", "got_winter_is_coming_award": "au_complete_winte_is_coming",
     "got_mystery_award": "au_mystery_total_awards",
