@@ -1,0 +1,7 @@
+#config_version=6
+# ROM-style service menu on the DMD (got.servicemenu). Always on; opens on the Select button between games.
+mode:
+  start_events: reset_complete
+  priority: 95
+  game_mode: false
+  code: got.servicemenu.ServiceMenu

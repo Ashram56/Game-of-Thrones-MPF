@@ -66,15 +66,32 @@ class TestGotGame(MpfGameTestCase):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)
         self.advance_time_and_run(3)
-        self.mock_event("service_mode_entered")
+        menu = self.machine.modes["servicemenu"]
         self.hit_and_release_switch("s_service_select")
-        self.advance_time_and_run(1)
-        self.assertEventCalled("service_mode_entered")
-        self.assertTrue(self.machine.modes["service"].active)
-        # the ROM's settings are in MPF's settings menu
-        self.assertIn("ad_balls_per_game", self.machine.settings.get_setting_names()) if hasattr(self.machine.settings, "get_setting_names") else None
+        self.advance_time_and_run(0.2)
+        self.assertEqual("top", menu._level)
+        self.assertEqual("SERVICE MENU", menu.lines()[0])
+        self.hit_and_release_switch("s_service_plus")                  # ADJUSTMENTS
+        self.hit_and_release_switch("s_service_select")
+        self.advance_time_and_run(0.2)
+        self.assertEqual("adj", menu._level)
+        name = menu._entries()[0]
+        old = self.machine.settings.get_setting_value(name)
+        self.hit_and_release_switch("s_service_select")                # edit
+        self.hit_and_release_switch("s_service_plus")
+        self.hit_and_release_switch("s_service_select")                # save
+        self.advance_time_and_run(0.2)
+        self.assertNotEqual(old, self.machine.settings.get_setting_value(name))
+        self.hit_and_release_switch("s_service_back")                  # to top
+        self.hit_and_release_switch("s_service_minus")                 # AUDITS
+        self.hit_and_release_switch("s_service_select")
+        self.advance_time_and_run(0.2)
+        self.assertEqual("audits", menu._level)
+        self.assertTrue(menu.lines()[0].startswith("AUDITS 1/"))
         self.hit_and_release_switch("s_service_back")
-        self.advance_time_and_run(1)
+        self.hit_and_release_switch("s_service_back")
+        self.advance_time_and_run(0.2)
+        self.assertIsNone(menu._level)
 
     def test_settings_drive_game(self):
         self.machine.settings.set_setting_value("ad_balls_per_game", 1)

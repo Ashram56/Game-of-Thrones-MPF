@@ -686,6 +686,8 @@ def build(data):
     files["config/rom/defs.yaml"] = dump(triggers(data, rules))
     files["config/rom/sounds_all.yaml"] = dump(all_sounds(data, rules))
     files["config/rom/sound_variants.json"] = json.dumps(all_sounds.variants, indent=1, sort_keys=True) + "\n"
+    files["config/rom/audit_labels.json"] = json.dumps(
+        {r["name"]: r["decoded_meaning"] for r in rows(data, "audits_meaning.csv") if r["name"] != "au_invalid"}, indent=1, sort_keys=True) + "\n"
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"
     files["config/rom/mystery_awards.csv"] = open(os.path.join(data, "mystery_awards.csv")).read()
     files["config/rom/swords.csv"] = open(os.path.join(data, "swords.csv")).read()

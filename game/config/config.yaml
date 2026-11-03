@@ -21,7 +21,7 @@ modes:
   - attract
   - scoreboard
   - music
-  - service
+  - servicemenu
   - tilt
   - extras
   - lights
@@ -60,12 +60,7 @@ displays:
     height: 32
     default: true
 
-# Service buttons (D-switches) -> MPF's built-in service mode: select = enter / confirm, back = esc, +/- = up/down.
-event_player:
-  s_service_select_active: sw_service_enter_active
-  s_service_back_active: sw_service_esc_active
-  s_service_plus_active: sw_service_up_active
-  s_service_minus_active: sw_service_down_active
+# Service buttons (D-switches): select / back / +/- drive got.servicemenu (ROM-style menu on the DMD).
 
 # Audits (service menu > Audits). MPF's auditor counts switches, shots, player score and these events; the ROM's own
 # 207 audit counters (data/audits.csv) are not all mapped yet.

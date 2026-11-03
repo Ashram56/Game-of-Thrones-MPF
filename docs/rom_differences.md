@@ -9,7 +9,7 @@ Confidence per rule: `game/config/rules.yaml` (H table/constant, M constants plu
 | # | Area | ROM | Here | Why |
 |---|---|---|---|---|
 | 1 | House start with no lit house | Choose Your Battle always decides | The throne starts the next incomplete house; with lit houses Choose Your Battle opens (single, stacked pair, PASS) | Entry set of the ROM menu is M |
-| 2 | Service menu | The ROM's own menu | MPF's service mode on the four service buttons, the 159 ROM adjustments as MPF settings; audits via MPF's auditor | ROM menu screens not decoded |
+| 2 | Service menu | The ROM's own menu | `got.servicemenu` on the four service buttons: audits (207 ROM counters), adjustments (159, edit and save), switch test, coil test, drawn on the DMD | ROM screen layouts, coin and utility pages not rebuilt |
 | 3 | DMD effects | Procedural `def_*` effects, ROM font and text layout | Text screens drawn by Godot slides (score with ball/player, attract pages, credits, high scores, initials, match, game over, Mystery, Choose Your Battle, video duel); ROM videos play for the 9 extracted clips | Effect table and font not decoded |
 | 4 | Attract, credits, high scores, match | ROM screens and rules | Mine (CFG): pages every 4 s, 1 coin = 1 credit (adj 65 limit, adj 66 free play), initials by flippers + Start, tables 75/50/40/30/20 M from docs/03, match draw from adj 61 | Screens and match odds not decoded |
 | 5 | Lamps, flashers | ROM lamp and flasher effects (`lef_*`) | The ROM's 101 named lights; attract sweep, GI, Start, Shoot Again, house sigils, flasher pulses on switch events (CFG choreography) | Effects not decoded |
@@ -24,7 +24,7 @@ Blackwater rounds and Super Jackpots, lock and ram Super Jackpot, Special (credi
 casual mode, Wall, Castle, Hand of the King, Iron Throne, Midnight Madness, bonus, tilt, ball save, extra balls.
 
 ## Not built
-- About 100 of the 207 audit counters (score and game-time histograms, ball search, fixture, remaining mystery light counters); the ROM service menu. Counted: flippers, shots, multiballs, battles, house select, mystery awards, coins, Pict-O-Pops awards, video mode results, matches.
+- About 100 of the 207 audit counters (score and game-time histograms, ball search, fixture, remaining mystery light counters); the ROM service menu screen layouts. Counted: flippers, shots, multiballs, battles, house select, mystery awards, coins, Pict-O-Pops awards, video mode results, matches.
 - Display effects with runtime values or lines without a known position (they fall back to a Godot font); the 'ready' music states and `_spacer` tunes; graphics for the video duel; Castle Collection; the Iron Throne victory lap.
 - Greyjoy start-of-ball award; Wildfire details beyond docs/10; dragon waves and Stark/Targaryen refinements beyond docs/14.
 - ROM coil times and lamp/flasher choreography (CFG values above).
