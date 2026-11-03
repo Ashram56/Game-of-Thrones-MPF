@@ -1,6 +1,6 @@
 # Status
 
-Current state (2026-11-03): see docs/rom_differences.md for what is built, departed from and missing; 82 tests pass; lights, attract, credits, high scores, match are in. The notes below are the running log of each feature.
+Current state (2026-11-03, 92 tests pass): built from the extraction: lights, attract, credits, high scores, match, all sounds and clips available, ROM display effects wired from def_callers (text effects drawn with the ROM bitmap fonts, run-time values for score, award, mode timer, shots, player and ball), background music by state, coil times, Pict-O-Pops and other audits, a ROM-style service menu on the DMD. Missing and departures: docs/rom_differences.md. The notes below are the running log of each feature.
 
 Verification: MPF 0.80.1 boots the game headless (smart_virtual) and tests/test_mpf_game.py plays a full 3-ball game (start, house mode shot, drains, game end). Still no Spike 1 traces.
 
