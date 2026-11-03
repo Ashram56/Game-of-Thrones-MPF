@@ -5,14 +5,14 @@ and the house-completion progression (03 s6). Values come from game/config/rules
 """
 import os
 
-import yaml
+from ruamel.yaml import YAML   # MPF's own dependency: the platform installs no PyYAML
 
 RULES_PATH = os.path.join(os.path.dirname(__file__), "..", "config", "rules.yaml")
 
 
 def load_rules(path=RULES_PATH):
     with open(path, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return YAML(typ="safe").load(f)
 
 
 class Award:
