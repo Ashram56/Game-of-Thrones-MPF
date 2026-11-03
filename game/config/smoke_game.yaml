@@ -24,6 +24,9 @@ switch_player:
       switch: s_trough_6
       action: activate
     - time: 3s
+      switch: s_left_coin
+      action: hit
+    - time: 0.3s
       switch: s_start_button
       action: hit
     - time: 4s

@@ -17,6 +17,7 @@ config:
 
 modes:
   - attract
+  - scoreboard
   - service
   - tilt
   - extras

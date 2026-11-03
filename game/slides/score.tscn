@@ -34,3 +34,40 @@ script = ExtResource("2")
 variable_name = "score"
 comma_separate = true
 initialize_empty = false
+
+[node name="Ball" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -52.0
+offset_right = 400.0
+offset_bottom = -8.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "BALL 1"
+script = ExtResource("2")
+variable_name = "ball"
+template_string = "BALL %s"
+initialize_empty = false
+
+[node name="Player" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -52.0
+offset_right = -24.0
+offset_bottom = -8.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "P1"
+horizontal_alignment = 2
+script = ExtResource("2")
+variable_name = "number"
+template_string = "PLAYER %s"
+initialize_empty = false

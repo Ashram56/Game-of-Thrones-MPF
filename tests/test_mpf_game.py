@@ -17,6 +17,10 @@ class TestGotGame(MpfGameTestCase):
     def get_enable_plugins(self):
         return True
 
+    def setUp(self):
+        super().setUp()
+        self.machine.variables.set_machine_var("credits", 20)        # the game needs credits (adjustment 66 = free play off)
+
     def get_platform(self):
         return "smart_virtual"
 
@@ -797,13 +801,14 @@ class TestGotGame(MpfGameTestCase):
 
     def test_special_pays_credit_then_points_over_limit(self):
         self._start_game()
+        credits = int(self.machine.variables.get_machine_var("credits") or 0)
         player = self.machine.game.player
         score = player.score
         self.post_event("got_special")
         self.advance_time_and_run(0.1)
         self.assertEqual(1, player.got_specials)
         self.assertEqual(score, player.score)                 # adjustment 54 = 0: one credit
-        self.assertEqual(1, int(self.machine.variables.get_machine_var("credits") or 0))
+        self.assertEqual(credits + 1, int(self.machine.variables.get_machine_var("credits") or 0))
         self.post_event("got_special")                        # limit 1 reached: 25M points instead
         self.advance_time_and_run(0.1)
         self.assertGreaterEqual(player.score - score, 25000000)
@@ -1061,3 +1066,56 @@ class TestGotGame(MpfGameTestCase):
         self.assertTrue(self._lit("fl_pop_bumpers"))          # flasher pulse
         self.advance_time_and_run(0.5)
         self.assertFalse(self._lit("fl_pop_bumpers"))
+
+    def _trough(self):
+        for i in range(1, 7):
+            self.hit_switch_and_run("s_trough_%d" % i, 0.1)
+        self.advance_time_and_run(3)
+
+    def test_start_needs_a_credit_and_coins_add_them(self):
+        self._trough()
+        self.machine.variables.set_machine_var("credits", 0)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(2)
+        self.assertIsNone(self.machine.game)
+        self.hit_and_release_switch("s_left_coin")
+        self.hit_and_release_switch("s_right_coin")
+        self.assertEqual(2, self.machine.variables.get_machine_var("credits"))
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+        self.assertIsNotNone(self.machine.game)
+        self.assertEqual(1, self.machine.variables.get_machine_var("credits"))
+
+    def _entry_started(self, seen):
+        return bool(seen)
+
+    def test_attract_pages_and_high_score_entry_and_match(self):
+        self._trough()
+        pages = []
+        self.machine.events.add_handler("got_attract_page", lambda **kwargs: pages.append(kwargs["line1"]))
+        self.advance_time_and_run(30)
+        self.assertIn("GAME OF THRONES", pages)
+        self.assertIn("GRAND CHAMPION", pages)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+        self.machine.game.player.score = 80000000                      # beats the grand champion (75 M)
+        seen = []
+        self.machine.events.add_handler("got_initials", lambda **kwargs: seen.append(kwargs["line2"]))
+        self.machine.events.add_handler("got_game_over", lambda **kwargs: seen.append("OVER"))
+        self.machine.game.balls_per_game = 1 if False else self.machine.game.balls_per_game
+        for _ in range(6):
+            if self._entry_started(seen):
+                break
+            self.advance_time_and_run(10)
+            if self.machine.ball_devices["bd_plunger"].balls:
+                self.release_switch_and_run("s_shooter_lane", 1)
+            self.drain_all_balls()
+        self.advance_time_and_run(1)
+        for ch in 1, 2, 3:                                             # right flipper once = B, then Start
+            self.hit_and_release_switch("s_r_flipper_button")
+            self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(10)
+        t = self.machine.modes["scoreboard"].table()
+        self.assertEqual("BBB", t[0]["name"])
+        self.assertGreaterEqual(t[0]["score"], 80000000)
+        self.assertIn("OVER", seen)
