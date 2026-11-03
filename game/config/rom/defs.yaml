@@ -33,14 +33,21 @@ event_player:
   - got_se_fx_lanister_award
   - got_se_fx_house_award_score_flash
   got_def_award_martell:
+  - got_se_fx_martell_award
   - got_se_fx_martell_complete
   - got_se_fx_house_award_score_flash
-  - got_se_fx_martell_award
   got_def_award_stark:
   - got_se_fx_stark_complete_dots
   - got_se_fx_house_award_score_flash
   got_def_award_sword:
   - got_se_fx_award_sword_medium
+  - got_se_vo_hearteater
+  - got_se_vo_widows_wail
+  - got_se_vo_light_bringer
+  - got_se_vo_needle
+  - got_se_vo_oathkeeper
+  - got_se_vo_long_claw
+  - got_se_vo_ice
   got_def_award_targaryen_1:
   - got_se_fx_targaryen_1_award
   got_def_award_targaryen_2:
@@ -80,6 +87,12 @@ event_player:
   - got_se_vo_blackwater_jackpot
   - got_se_vo_get_the_super_jackpot
   - got_se_fx_house_award_score_flash
+  - got_se_blackwater_award_2
+  - got_se_blackwater_award_2_fx
+  - got_se_blackwater_award_3
+  - got_se_blackwater_award_3_fx
+  - got_se_blackwater_award_1_4_5
+  - got_se_blackwater_award_1_4_5_fx
   - got_lef_blackwater_jackpot_part_1
   - got_lef_blackwater_jackpot_part_2
   got_def_blackwater_super_jackpot:
@@ -108,6 +121,17 @@ event_player:
   - got_se_fx_lanister_build
   got_def_build_stark:
   - got_se_tune_hand_ready
+  - got_se_vo_mode_build_stark_joffery
+  - got_se_vo_mode_build_stark_cersei
+  - got_se_vo_mode_build_stark_walder_frey
+  - got_se_vo_mode_build_stark_meryn_trant
+  - got_se_vo_mode_build_stark_tywin_lannister
+  - got_se_vo_mode_build_stark_the_red_woman
+  - got_se_vo_mode_build_stark_beric_dondarrion
+  - got_se_vo_mode_build_stark_thoros_of_myr
+  - got_se_vo_mode_build_stark_illyn_payne
+  - got_se_vo_mode_build_stark_the_mountain
+  - got_se_vo_mode_build_stark_the_hound
   got_def_cash_in_multipliers:
   - got_se_iron_bank_award
   - got_se_vo_cashing_in_iron_bank
@@ -257,6 +281,9 @@ event_player:
   - got_se_fx_light_house
   got_def_targaryen_total:
   - got_se_fx_mode_total
+  got_def_test_mode:
+  - got_se_test_enter
+  - got_se_test_escape
   got_def_tickle_house:
   - got_se_fx_house_award_score_flash
   - got_se_vo_advance_stark
@@ -287,6 +314,8 @@ event_player:
   - got_se_fx_climb_to_castle_multiball
   - got_se_fx_climb_to_castle_multiball_end
   - got_se_vo_wall_multiball_award
+  - got_se_vo_archers
+  - got_se_vo_charge
   got_def_wall_jackpot:
   - got_se_fx_battle_at_wall_award
   - got_se_fx_house_award_score_flash
@@ -538,6 +567,12 @@ event_player:
   s_lock_1_active:
   - got_se_fx_sword_lock_sword
 slide_player:
+  got_def_award_greyjoy:
+    vid050:
+      expire: 2.8s
+  got_def_award_lannister:
+    vid042:
+      expire: 1.9s
   got_def_award_martell:
     vid107:
       expire: 6.9s
@@ -556,6 +591,9 @@ slide_player:
   got_def_baratheon_start:
     vid030:
       expire: 3.1s
+  got_def_blackwater_jackpot:
+    vid150:
+      expire: 1.6s
   got_def_build_baratheon_dragon:
     vid024:
       expire: 1.8s
@@ -574,6 +612,9 @@ slide_player:
   got_def_greyjoy_start:
     vid049:
       expire: 3.5s
+  got_def_house_lit:
+    vid003:
+      expire: 0.6s
   got_def_lannister_complete:
     vid042:
       expire: 1.9s
@@ -604,6 +645,9 @@ slide_player:
   got_def_targaryen_start_3:
     vid006:
       expire: 4.2s
+  got_def_tickle_house:
+    vid020:
+      expire: 1.5s
   got_def_tyrell_award_1:
     vid074:
       expire: 2.5s
@@ -616,6 +660,9 @@ slide_player:
   got_def_tyrell_start:
     vid073:
       expire: 5.2s
+  got_def_wall_jackpot:
+    vid111:
+      expire: 2.6s
   got_def_wall_jackpot_grows:
     vid108:
       expire: 2.0s
