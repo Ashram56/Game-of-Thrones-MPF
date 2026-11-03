@@ -38,6 +38,20 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(1)
         self.assertGreater(self.machine.game.player.score, 0)
 
+    def test_launch_windows_fast_right_loop(self):
+        """docs/22 1c: a right loop within 1.45 s of the launch is routed to the elevator; the elevator window lasts 3.2 s."""
+        self._start_game()
+        self.mock_event("got_right_loop_fast")
+        self.release_switch_and_run("s_shooter_lane", 1)
+        mode = [m for m in self.machine.modes if hasattr(m, "fast_loop_window")][0]
+        self.assertTrue(mode.elevator_window)
+        self.hit_and_release_switch("s_right_loop")
+        self.advance_time_and_run(0.1)
+        self.assertEventCalled("got_right_loop_fast")
+        self.advance_time_and_run(3)
+        self.assertFalse(mode.elevator_window)
+        self.assertFalse(mode.fast_loop_window)
+
     def test_ball_search_starts_after_ten_idle_seconds(self):
         """docs/20: 10 s without a switch while a ball is in play starts the search; flippers are never part of it."""
         self._start_game()

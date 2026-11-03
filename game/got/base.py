@@ -39,9 +39,33 @@ class GotBase(Mode):
         for sw in pr["wall_advance_switches"]:
             self.add_mode_event_handler(sw + "_active", self._wall_advance)
         self.add_mode_event_handler("s_elevator_popper_active", self._wall_start)
+        # Launch windows (docs/22 1c, H): ball leaves the shooter lane -> proc 73 (1.45 s) and proc 74 (3.2 s)
+        self.fast_loop_window = False                   # a right loop inside it is a throne/elevator entry, not a normal shot
+        self.elevator_window = False                    # ok_to_enter_elevator is true while it runs
+        self.add_mode_event_handler("s_shooter_lane_inactive", self._launch_windows)
+        self.add_mode_event_handler("s_right_loop_active", self._right_loop_window)
         # Midnight Madness: real-time clock at 00:00, waits up to 10 min for a ball on the playfield (docs/06, H)
         self._madness_day = None
         self.delay.add_if_doesnt_exist(1000, self._madness_check, "madness_check")
+
+    def _launch_windows(self, **kwargs):
+        self.fast_loop_window = self.elevator_window = True
+        self.delay.add(1450, self._end_fast_window, "fast_loop_window")
+        self.delay.add(3200, self._end_elevator_window, "elevator_window")
+
+    def _end_fast_window(self, **kwargs):
+        self.fast_loop_window = False
+
+    def _end_elevator_window(self, **kwargs):
+        self.elevator_window = False
+
+    def _right_loop_window(self, **kwargs):
+        """swdf_right_loop (0x4c49c): inside proc 73 the loop is routed to the elevator (event for the lights/sound); the window is then
+        killed. The normal right-loop shot award is not suppressed in every mode (modes read the switch themselves)."""
+        if self.fast_loop_window:
+            self.fast_loop_window = False
+            self.delay.remove("fast_loop_window")
+            self.machine.events.post("got_right_loop_fast")
 
     def _progression(self):
         p = self.player

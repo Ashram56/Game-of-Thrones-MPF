@@ -78,6 +78,8 @@ def rom_lines(data):
             if pages[-1] and item[3] <= pages[-1][-1][3]:     # the y goes back up: the next screen of the same effect
                 pages.append([])
             pages[-1].append(item)
+    # docs/20 section 7 (static): ball search text, font 12 centred, y 13 / 25 (the table row has no font)
+    out["def_ball_search"] = [[("LOCATING PINBALLS", 12, 64, 13), ("PLEASE WAIT...", 12, 64, 25)]]
     return out
 
 
