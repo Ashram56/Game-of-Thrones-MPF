@@ -2,12 +2,13 @@
 # Stern Game of Thrones LE/Premium 1.37.0 (Spike 1), MPF machine config. Switch/coil/light numbers are the ROM's
 # ids (S<id>, C<id>, L<id>, D<idx> for dedicated switches), from game/config/rom/ (generated, scripts/gen_config.py).
 # Platform neutral: launch with an overlay, e.g.  mpf game . -c config,hw_virtual
-# VERIFICATION: no PinMAME/traces exist for Spike 1; nothing here has been run in MPF (MPF was not installable).
+# VERIFICATION: no PinMAME/traces exist for Spike 1; rules are checked against the extraction by tests (pytest -q tests).
 
 config:
   - rom/switches.yaml
   - rom/coils.yaml
   - rom/lights.yaml
+  - rom/lightshow.yaml     # attract light show, GI and flasher pulses (generated; choreography CFG)
   - rom/settings.yaml
   - rom/sounds.yaml        # sound_player only (GMC registers game/sounds/<track>/<stem>)
   - rom/slides.yaml        # slide_player only (slides are scenes in game/slides/)
@@ -19,6 +20,7 @@ modes:
   - service
   - tilt
   - extras
+  - lights
   - combos
   - videomode
   - audits

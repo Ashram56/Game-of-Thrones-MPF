@@ -1034,3 +1034,30 @@ class TestGotGame(MpfGameTestCase):
         for i in range(40):
             self._hit(("s_left_pop_bumper", "s_bottom_pop_bumper", "s_right_pop_bumper")[i % 3])
         self.assertTrue(got)
+
+    def _lit(self, name):
+        return self.machine.lights["l_" + name].get_color() is not None and sum(self.machine.lights["l_" + name].get_color().rgb) > 0
+
+    def test_lights_attract_gi_start_and_house(self):
+        for i in range(1, 7):
+            self.hit_switch_and_run("s_trough_%d" % i, 0.1)
+        self.advance_time_and_run(3)
+        self.assertTrue(self._lit("backbox_gi"))
+        self.assertTrue(self._lit("start_button"))            # attract show lights the Start button
+        seen = set()
+        for i in range(8):                                    # the sigils sweep through the houses
+            self.advance_time_and_run(0.5)
+            seen |= {h for h in ("targaryen", "stark", "baratheon", "lannister", "greyjoy", "tyrell", "martell") if self._lit(h + "_sigil")}
+        self.assertGreaterEqual(len(seen), 5)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+        self.assertFalse(self._lit("stark_sigil"))            # show stopped with attract
+        self.assertTrue(self._lit("start_button"))            # ball 1
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(0.5)
+        self.assertTrue(self._lit("stark_sigil"))             # running house
+        self.hit_and_release_switch("s_left_pop_bumper")
+        self.advance_time_and_run(0.05)
+        self.assertTrue(self._lit("fl_pop_bumpers"))          # flasher pulse
+        self.advance_time_and_run(0.5)
+        self.assertFalse(self._lit("fl_pop_bumpers"))

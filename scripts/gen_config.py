@@ -83,13 +83,26 @@ def coils(data):
 
 
 def lights(data):
+    """The ROM's 101 named light groups (data/lights.csv: type 1 flasher/button, 2 lamp, 3 GI, 4 backbox GI).
+    Tags group them for the light shows (game/config/lightshow.yaml): gi, flasher, lamp, sigil, house_<key>, arrow."""
     out = {}
-    for r in rows(data, "lamps.csv"):
+    houses = ("targaryen", "stark", "baratheon", "lannister", "greyjoy", "tyrell", "martell")
+    for r in rows(data, "lights.csv"):
         n = r["name"]
-        if n == "invalid":
+        if n == "lt_invalid":
             continue
-        name = "l_lamp_%s" % n if n.isdigit() else "l_" + n
-        out[name] = {"number": "L%s" % r["lamp_id"], "label": r["label_en"].title()}
+        n = n[3:] if n.startswith("lt_") else n
+        tags = {"1": ["flasher"], "2": ["lamp"], "3": ["gi"], "4": ["gi"]}[r["type"]]
+        if n.endswith("_sigil"):
+            tags.append("sigil")
+            for h in houses:
+                if h in n:
+                    tags.append("house_" + h)
+        if "arrow" in n:
+            tags.append("arrow")
+        if n.startswith("fl_") or n.startswith("topper_dragon_flasher"):
+            tags.append("flashfx")
+        out["l_" + n] = {"number": "L%s" % r["light_id"], "label": n.replace("_", " ").title(), "tags": ", ".join(tags)}
     return {"lights": out}
 
 
@@ -276,6 +289,48 @@ def switch_scores(data, rules):
     return {"variable_player": {k + "_active": {"score": v} for k, v in sorted(pts.items())}}
 
 
+HOUSE_COLORS = {"targaryen": "ff1a00", "stark": "bfdfff", "baratheon": "ffd000", "lannister": "ff8c00", "greyjoy": "1a4dff",
+                "tyrell": "22dd44", "martell": "ff4000"}
+FLASH_FX = {"s_left_pop_bumper": "fl_pop_bumpers", "s_right_pop_bumper": "fl_pop_bumpers", "s_bottom_pop_bumper": "fl_pop_bumpers",
+            "s_left_slingshot": "fl_left_right_sling", "s_right_slingshot": "fl_left_right_sling", "s_throne": "fl_throne",
+            "s_right_ramp_exit": "fl_right_ramp", "s_left_loop": "fl_left_loop", "s_battering_ram": "fl_battering_ram",
+            "s_lock_1": "fl_sword_lock"}
+
+
+def lightshow(rules):
+    """Attract light show, GI, flasher pulses: the ROM's lamp/flasher effects (lef_*) are not decoded for Spike 1, so the
+    choreography is CFG (sigils sweep in house colours, arrows chase); which light is lit when follows the rules (got/lightshow.py)."""
+    keys = [h["key"] for h in rules["houses"] if h["key"] in HOUSE_COLORS]
+    off = {"house_" + k: "000000" for k in keys}
+    sweep = []
+    for i, k in enumerate(keys):
+        step = {"time": i * 0.5, "lights": dict(off, **{"house_" + k: HOUSE_COLORS[k]})}
+        step["lights"]["arrow"] = "ffffff" if i % 2 == 0 else "000000"
+        sweep.append(step)
+    sweep.append({"time": len(keys) * 0.5})
+    out = {
+        "shows": {
+            "attract_sweep": sweep,
+            "pulse": [{"time": 0, "lights": {"(lights)": "ffffff"}}, {"time": "+0.12", "lights": {"(lights)": "000000"}},
+                      {"time": "+0.05"}],
+        },
+        "show_player": {
+            "mode_attract_started": {"attract_sweep": {"loops": -1, "key": "attract_sweep"}},
+            "mode_attract_stopped": {"attract_sweep": {"action": "stop", "key": "attract_sweep"}},
+        },
+        "light_player": {
+            "init_done": {"gi": "ffffff"},
+            "mode_attract_started": {"l_start_button": "ffffff"},
+            "ball_starting": {"gi": "ffffff"},
+            "tilt": {"gi": "000000"},
+            "game_ended": {"lamp": "000000", "flashfx": "000000"},
+        },
+    }
+    for sw, fx in FLASH_FX.items():
+        out["show_player"][sw + "_active"] = {"pulse": {"show_tokens": {"lights": "l_" + fx}, "key": "fx_" + fx, "loops": 0}}
+    return out
+
+
 def build(data):
     with open(os.path.join(GAME, "config", "rules.yaml"), encoding="utf-8") as f:
         rules = yaml.safe_load(f)
@@ -290,6 +345,7 @@ def build(data):
         [{"id": int(r["symbol_id"]), "award": r["award"], "tape": int(r["tape_count_of_112"])} for r in rows(data, "pop_awards.csv")],
         indent=1) + "\n"                                   # Pict-O-Pops awards and tape frequency (docs/09)
     files["modes/scoring/config/scoring.yaml"] = dump(sc)       # variable_player is only valid inside a game mode
+    files["config/rom/lightshow.yaml"] = dump(lightshow(rules))
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"
     files["config/rom/mystery_awards.csv"] = open(os.path.join(data, "mystery_awards.csv")).read()
