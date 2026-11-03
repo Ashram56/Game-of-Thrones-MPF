@@ -10,7 +10,8 @@ PHASES = {
     "wall": {"groups": [("s_left_ramp_exit", "s_right_ramp_exit", "s_u_p_left_loop"),
                         ("s_left_loop", "s_right_loop", "s_right_2_bank_top")], "super_mult": 3, "sets": 0, "window": 0,
              "super_switch": "s_kickback"},                                                    # ramps, dragon Super, then loops
-    "hand_of_the_king": {"groups": [("s_left_return_lane", "s_right_return_lane", "s_left_ramp_exit", "s_right_ramp_exit")],
+    "hand_of_the_king": {"groups": [("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop", "s_right_2_bank_top", "s_right_2_bank_bottom",
+                                   "s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm", RAM)],     # chand groups (got.hand)
                          "super_mult": 1, "sets": 3, "window": 0},                              # 3 sets, then it ends
     "iron_throne": {"groups": [("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop", "s_right_2_bank_top", "s_right_2_bank_bottom",
                                "s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm", RAM)],     # ciron groups (got.iron)

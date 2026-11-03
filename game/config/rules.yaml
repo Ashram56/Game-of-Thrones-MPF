@@ -105,7 +105,7 @@ multiballs:
      jackpot: {start: 5000000, bump: 250000, cap: 10000000, conf: M},
      super: {start: 20000000, bump: 10000000, cap: 50000000, conf: M}}
   - {id: 2, key: hand_of_the_king, label: Hand of the King Multiball, flag: 38, start_bonus: 50000000, ball_save_adjustment: ad_hand_multiball_ball_save_timer, ball_save_s: 20,
-     jackpot_switches: [s_left_return_lane, s_right_return_lane, s_left_ramp_exit, s_right_ramp_exit],
+     jackpot_switches: [s_left_loop, s_kickback, s_left_ramp_exit, s_right_ramp_exit, s_right_loop],      # chand shot groups: got.hand
      jackpot: {start: 2500000, bump: 0, cap: 0, conf: H, growth_conf: CFG}, super: {start: 0, conf: CFG}}
   - {id: 3, key: iron_throne, label: Iron Throne Multiball, flag: 41, start_bonus: 100000000, ball_save_adjustment: ad_iron_throne_ball_save_timer, ball_save_s: 25,
      jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],      # ciron shot groups: got.iron

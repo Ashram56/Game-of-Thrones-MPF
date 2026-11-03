@@ -1000,28 +1000,58 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
         self.assertGreaterEqual(player.score - score, 25000000)
 
-    def test_hand_needs_two_sets_with_greyjoy(self):
-        self._start_game()
-        player = self.machine.game.player
-        self._progression_of(player).complete.add(4)
-        self.post_event("start_mode_hand_of_the_king")
-        self.advance_time_and_run(0.5)
-        for _ in range(2):
-            for sw in ("s_left_return_lane", "s_right_return_lane", "s_left_ramp_exit", "s_right_ramp_exit"):
-                self._hit(sw)
-            self._hit("s_battering_ram")
-        self.assertFalse(self.machine.modes["hand_of_the_king"].active)
-
     def _progression_of(self, player):
         return self.machine.modes["base"]._progression()
 
-    def test_hand_ends_after_three_sets(self):
-        self._start_mb("hand_of_the_king")
-        for _ in range(3):
-            for sw in ("s_left_return_lane", "s_right_return_lane", "s_left_ramp_exit", "s_right_ramp_exit"):
-                self._hit(sw)
+    def _start_hand(self, houses):
+        self._start_game()
+        self._progression_of(self.machine.game.player).complete.update(houses)
+        self.post_event("start_mode_hand_of_the_king")
+        self.advance_time_and_run(0.5)
+        return self.machine.modes["hand_of_the_king"]
+
+    def test_hand_state_machine_sets_bonus_round_and_hurry_up(self):
+        """docs/25 (H): single shots -> ram super -> (Stark) bonus round 20 s -> next set; after 3 sets the 16 s hurry-up, then back to set 1."""
+        mode = self._start_hand({0, 1})                            # Targaryen (kickback) + Stark (right ramp): 3 sets, bonus round
+        player = self.machine.game.player
+        self.assertEqual(3, mode._levels_total)
+        for level in range(3):
+            self.assertEqual(1, mode._state)
+            before = player.score
+            self._hit("s_kickback")
+            self._hit("s_right_ramp_exit")
+            self.assertEqual(2, mode._state)
+            self.assertGreaterEqual(player.score - before, 2 * 3000000)    # 2.5M + 0.5M (Targaryen) each
             self._hit("s_battering_ram")
-        self.assertFalse(self.machine.modes["hand_of_the_king"].active)
+            self.assertEqual(3, mode._state)                       # the Stark bit gives the bonus round
+            self._hit("s_left_loop")                               # a free shot pays and is not removed
+            self.advance_time_and_run(25)
+        self.assertEqual(4, mode._state)
+        before = player.score
+        self.advance_time_and_run(2)
+        self._hit("s_battering_ram")
+        self.assertGreater(player.score - before, 0)
+        self.assertEqual(1, mode._state)
+        self.assertEqual(1, mode._done_hurry)
+        self.assertTrue(mode.active)                               # the Hand never ends by itself
+
+    def test_hand_needs_two_sets_with_greyjoy(self):
+        mode = self._start_hand({4})                               # Greyjoy (left loop)
+        self.assertEqual(2, mode._levels_total)
+        for _ in range(2):
+            self._hit("s_left_loop")
+            self._hit("s_battering_ram")                           # no Stark bit: the ram goes straight to the next set
+        self.assertEqual(4, mode._state)
+
+    def test_hand_hurry_up_expires_back_to_set_one(self):
+        mode = self._start_hand({4})
+        for _ in range(2):
+            self._hit("s_left_loop")
+            self._hit("s_battering_ram")
+        self.assertEqual(4, mode._state)
+        self.advance_time_and_run(20)
+        self.assertEqual(1, mode._state)
+        self.assertTrue(mode.active)
 
     def test_wall_ramps_then_dragon_super_then_loops(self):
         self._start_mb("wall")
