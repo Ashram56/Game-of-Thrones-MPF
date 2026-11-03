@@ -65,16 +65,16 @@ houses:
      shots: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop, s_kickback],   # waves on ramps/loops, the dragon shot (kickback, ELF bit 4) collects
      award: {start: 8000000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
      note: "3 dragon stages; 16 s at init, 20 s at Start; hurry-up decay: ROM formula (docs/06)"}
-  - {id: 1, key: stark, label: House Stark, timer_id: 1, timer_s: 30, timer_conf: L,
+  - {id: 1, key: stark, label: House Stark, timer_id: 1, timer_s: 40, timer_conf: H,
      shots: [s_right_ramp_exit, s_left_ramp_exit, s_left_loop, s_right_loop],   # VPX: ramps build value, an orbit finishes (vpx/README.md)
      award: {start: 500000, bump: 375000, cap: 75000000, conf: M},
      note: "Dire Wolf button ends a running mode; timer is the cmode default (30 s), Stark listed no override"}
   - {id: 2, key: baratheon, label: House Baratheon, timer_id: 3, timer_s: 40, timer_conf: M,
-     shots: [s_left_spinner, s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm],   # VPX: spinner builds value, 3-bank collects (vpx/README.md)
+     shots: [s_left_spinner, s_left_loop, s_kickback, s_left_ramp_exit, s_3_bank_drop_tgt_top, s_3_bank_drop_tgt_mid, s_3_bank_drop_tgt_btm],   # H docs/30: ladder
      award: {start: 13250000, bump: 375000, cap: 150000000, conf: M},
      note: "max score cut 275M -> 150M in 1.37; left 3-bank advances Wall MB"}
   - {id: 3, key: lannister, label: House Lannister, timer_id: 4, timer_s: 40, timer_conf: M,
-     shots: [s_target_1, s_target_2, s_target_3, s_target_4, s_target_5, s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],   # gold standups give credit, 5 main shots end it (rulesheet)
+     shots: [s_target_1, s_target_2, s_target_3, s_target_4, s_target_5, s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop, s_kickback],   # H docs/30: red shots
      award: {start: 100000, bump: 75000, cap: 100000000, conf: M},
      note: "gold economy (multipliers cost 600 gold each) not modelled yet"}
   - {id: 4, key: greyjoy, label: House Greyjoy, timer_id: 6, timer_s: 15, timer_conf: M,
@@ -82,7 +82,7 @@ houses:
      award: {start: 500000, bump: 175000, cap: 100000000, conf: M},
      note: "steals the ability of the last completed house (not modelled)"}
   - {id: 5, key: tyrell, label: House Tyrell, timer_id: 9, timer_s: 30, timer_conf: L,
-     shots: [s_left_ramp_exit, s_right_ramp_exit, s_right_2_bank_top, s_right_2_bank_bottom],   # ramps, then the lock targets, then the right ramp (rulesheet)
+     shots: [s_kickback, s_left_ramp_exit, s_right_ramp_exit, s_right_2_bank_top, s_right_2_bank_bottom],   # H docs/30: run shots 4/8/32 and the 2-bank
      award: {start: 8250000, bump: 875000, cap: 75000000, conf: M},
      note: "two-bank; timer is the cmode default, no override seen"}
   - {id: 6, key: martell, label: House Martell, timer_id: 10, timer_s: 30, timer_conf: M, hurry_up: true,    # rulesheet: 30 s mode timer (the ROM's 10 s timer is the orbit window / hurry-up)

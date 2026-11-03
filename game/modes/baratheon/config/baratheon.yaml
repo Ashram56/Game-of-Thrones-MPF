@@ -16,6 +16,9 @@ mode_settings:
     cap: 150000000
   shots:
   - s_left_spinner
+  - s_left_loop
+  - s_kickback
+  - s_left_ramp_exit
   - s_3_bank_drop_tgt_top
   - s_3_bank_drop_tgt_mid
   - s_3_bank_drop_tgt_btm

@@ -294,13 +294,13 @@ class TestGotGame(MpfGameTestCase):
         elif key == "martell":
             seq = ["s_left_loop"] * 3 + ["s_left_ramp_exit"]
         elif key == "baratheon":
-            seq = ["s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm"]
+            seq = ["s_left_spinner", "s_kickback", "s_left_ramp_exit", "s_3_bank_drop_tgt_top"]
         elif key == "lannister":
-            seq = ["s_target_1", "s_left_loop"] * 5
+            seq = ["s_target_1", "s_left_loop", "s_kickback", "s_target_2", "s_kickback", "s_left_ramp_exit", "s_target_5", "s_right_ramp_exit"]
         elif key == "greyjoy":
             seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback"]
         elif key == "tyrell":
-            seq = ["s_left_ramp_exit", "s_right_ramp_exit", "s_right_2_bank_top", "s_right_2_bank_bottom", "s_right_ramp_exit"]
+            seq = ["s_kickback", "s_right_2_bank_top", "s_left_ramp_exit", "s_right_2_bank_top", "s_right_ramp_exit", "s_right_2_bank_top"]
         elif key == "targaryen":
             for dragon in range(3):                                 # Viserion, Rhaegal, Drogon: one mode start each
                 self.post_event("start_mode_targaryen")
@@ -619,27 +619,44 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_left_ramp_exit")
         self.assertTrue(self.machine.modes["martell"].active)
 
-    def test_baratheon_spinner_builds_bank_cashes_in(self):
+    def test_baratheon_ladder_builds_bank_cashes_in(self):
+        """docs/30 section 4 (H): spinner/left loop -> kickback -> left ramp -> 3-bank; earlier shots keep building; a 3-bank shot collects."""
         self._start_house("baratheon")
+        mode = self.machine.modes["baratheon"]
+        self._hit("s_3_bank_drop_tgt_top")                    # not armed yet: nothing
+        self.assertTrue(mode.active)
         self._hit("s_left_spinner", 2)
-        self.assertTrue(self.machine.modes["baratheon"].active)
-        self._hit("s_3_bank_drop_tgt_top")
-        self._hit("s_3_bank_drop_tgt_mid")
-        self.assertTrue(self.machine.modes["baratheon"].active)
+        self.assertEqual(13250000 + 2 * 375000, mode._award.value)
+        self._hit("s_left_ramp_exit")                         # kickback first
+        self.assertEqual(13250000 + 2 * 375000, mode._award.value)
+        self._hit("s_kickback")
+        self._hit("s_left_ramp_exit")
+        self._hit("s_left_loop")                              # the loop keeps building
+        self.assertEqual(13250000 + 5 * 375000, mode._award.value)
         before = self.machine.game.player.score
         self._hit("s_3_bank_drop_tgt_btm")
-        self.assertFalse(self.machine.modes["baratheon"].active)
-        self.assertGreater(self.machine.game.player.score - before, 13250000 + 2 * 375000 - 1)
+        self.assertFalse(mode.active)
+        self.assertGreater(self.machine.game.player.score - before, 13250000 + 5 * 375000 - 1)
 
-    def test_lannister_five_credited_shots(self):
+    def test_lannister_standups_light_red_shots(self):
+        """docs/30 section 5 (H): a standup builds and lights its two neighbouring red shots; five red shots complete."""
         self._start_house("lannister")
-        self._hit("s_left_loop")                              # no gold credit: nothing
-        self.assertEqual(0, self.machine.modes["lannister"]._made)
-        for i in range(5):
-            self._hit("s_target_%d" % (i + 1))
-            self.assertTrue(self.machine.modes["lannister"].active)
-            self._hit(("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_left_loop")[i])
-        self.assertFalse(self.machine.modes["lannister"].active)
+        mode = self.machine.modes["lannister"]
+        self._hit("s_left_loop")                              # no red shot lit: nothing
+        self.assertEqual(0, mode._made)
+        self._hit("s_target_1")
+        self.assertEqual(175000, mode._award.value)
+        self.assertEqual({"s_left_loop", "s_kickback"}, mode._red)
+        for sw in ("s_left_loop", "s_kickback"):
+            self._hit(sw)
+        self.assertEqual(2, mode._made)
+        self._hit("s_target_2")
+        self._hit("s_kickback")
+        self._hit("s_left_ramp_exit")
+        self._hit("s_target_5")
+        self.assertTrue(mode.active)
+        self._hit("s_right_ramp_exit")
+        self.assertFalse(mode.active)
         self.assertIn(3, self.machine.game.player.got_progression.complete)
 
     def test_greyjoy_each_main_shot_once_and_timer_refresh(self):
@@ -657,17 +674,24 @@ class TestGotGame(MpfGameTestCase):
         self.assertFalse(self.machine.modes["greyjoy"].active)
         self.assertIn(4, self.machine.game.player.got_progression.complete)
 
-    def test_tyrell_ramps_then_bank_then_right_ramp(self):
+    def test_tyrell_run_shots_then_bank_three_times(self):
+        """docs/30 section 7 (H): run shots 4/8/32 make the 2-bank the target; a bank hit re-arms 8/32, then 32; hit 3 completes."""
         self._start_house("tyrell")
-        self._hit("s_right_2_bank_top")                       # bank before the ramps: nothing
+        mode = self.machine.modes["tyrell"]
+        self._hit("s_right_2_bank_top")                       # bank before a run shot: nothing
+        self.assertEqual(0, mode._hits)
         self._hit("s_left_ramp_exit")
+        self._hit("s_right_2_bank_top")
+        self.assertEqual({"s_left_ramp_exit", "s_right_ramp_exit"}, mode._run)
+        self._hit("s_kickback")                               # no longer armed
+        self.assertFalse(mode._bank)
+        self._hit("s_right_ramp_exit")
+        self._hit("s_right_2_bank_bottom")
+        self.assertEqual({"s_right_ramp_exit"}, mode._run)
+        self.assertTrue(mode.active)
         self._hit("s_right_ramp_exit")
         self._hit("s_right_2_bank_top")
-        self.assertTrue(self.machine.modes["tyrell"].active)
-        self._hit("s_right_2_bank_bottom")
-        self.assertTrue(self.machine.modes["tyrell"].active)
-        self._hit("s_right_ramp_exit")
-        self.assertFalse(self.machine.modes["tyrell"].active)
+        self.assertFalse(mode.active)
         self.assertIn(5, self.machine.game.player.got_progression.complete)
 
     def _dragon_pass(self):
@@ -1144,7 +1168,8 @@ class TestGotGame(MpfGameTestCase):
         v = mb._value()
         before = player.score
         self._hit(sw_of[sorted(mb._lieutenant)[0]])
-        self.assertAlmostEqual(v * 3, player.score - before, delta=5000)         # combo 1 + 2
+        gained = player.score - before
+        self.assertTrue(any(abs(gained - v * (c + 2)) < 5000 for c in (1, 2, 3, 4, 5)), gained)   # award 18 x (combo + 2)
         for _ in range(3):
             self._hit(sw_of[sorted(mb._lieutenant)[0]])
         v = mb._value()

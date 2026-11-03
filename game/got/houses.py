@@ -8,127 +8,165 @@ ORBITS = ("s_left_loop", "s_right_loop")
 ORBIT_WINDOW_S = 10                 # rulesheet: three orbit shots within 10 seconds, refreshed after the second
 
 
-class StarkMode(AwardMode):
-    """Ramp shots advance the kill list (each bumps the value); after 3 ramp shots a left or right orbit collects the
-    payoff and finishes the mode. Greyjoy's extra requirements are not modelled."""
+KICK = "s_kickback"
+LOOP_L, LOOP_R = "s_left_loop", "s_right_loop"
+RAMP_L, RAMP_R = "s_left_ramp_exit", "s_right_ramp_exit"
+BANK = ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm")
+BANK2 = ("s_right_2_bank_top", "s_right_2_bank_bottom")
 
-    RAMPS_NEEDED = 3
+
+class RomHouse(AwardMode):
+    """Shared payment of the ROM house classes (docs/30): GiveAward(award, combo, bump) and Complete."""
+
+    def _give(self, bump=True, complete=False):
+        points = self._award.give(global_mult=self._gm())
+        self.player.score += points
+        self._last_points = points
+        if bump:
+            self._award.bump()
+        setattr(self.player, self._award_key, self._award.value)
+        self.machine.events.post("got_%s_award" % self._cfg["key"], points=points)
+        if complete:
+            self.machine.events.post("got_house_complete", house_id=self._cfg["id"], key=self._cfg["key"])
+            self.stop()
+        return points
+
+    def _build(self):
+        self._award.bump()
+        setattr(self.player, self._award_key, self._award.value)
+
+    def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
+        self._hit(sw)
+
+
+class MartellMode(RomHouse):
+    """cmartell (docs/30 section 8): orbits build (each restarts the 10 s mini timer and adds 12 s to the 30 s main timer, hits 1 and 2 pay
+    nothing); the mini timer running out resets the count and the value; the 3rd orbit pays the value and starts the hurry-up (ramps, 15 s,
+    decaying), a ramp pays the decayed value and completes."""
+
+    MINI_S, ADD_S, MAIN_S, HURRY_S = 10, 12, 30, 15
+
+    def mode_start(self, **kwargs):
+        super().mode_start(**kwargs)
+        self._orbits, self._hurry = 0, False
+        self._start_value = self._award.value
+
+    def _hit(self, sw):
+        timer = self.machine.timers["martell_timer"]
+        if not self._hurry and sw in ORBITS:
+            self._orbits += 1
+            self.delay.remove("martell_mini")
+            self.delay.add(self.MINI_S * 1000, self._mini_expired, name="martell_mini")
+            timer.ticks = min(self.MAIN_S, int(timer.ticks) + self.ADD_S)
+            self._award.bump()
+            setattr(self.player, self._award_key, self._award.value)
+            self.machine.events.post("got_martell_orbit", count=self._orbits)
+            if self._orbits >= 3:
+                self.delay.remove("martell_mini")
+                self._hurry = True
+                timer.ticks = self.HURRY_S
+                self._give(bump=False)
+            return
+        if self._hurry and sw in RAMPS:
+            points = int(self._award.hurry_up(timer.ticks, self.HURRY_S)) * self._gm()
+            self.player.score += points
+            self._last_points = points
+            self.machine.events.post("got_martell_award", points=points)
+            self._award.bump()
+            setattr(self.player, self._award_key, self._award.value)
+            self.machine.events.post("got_house_complete", house_id=self._cfg["id"], key=self._cfg["key"])
+            self.stop()
+
+    def _mini_expired(self, **kwargs):                           # OnGraceMini: the count and the value start again
+        self._orbits = 0
+        self._award.value = self._start_value
+        setattr(self.player, self._award_key, self._award.value)
+
+    def mode_stop(self, **kwargs):
+        self.delay.remove("martell_mini")
+        super().mode_stop(**kwargs)
+
+
+GREYJOY_SHOTS = (RAMP_L, RAMP_R, LOOP_L, LOOP_R, KICK)      # H: mask 0x6e (docs/13)
+MAINS = (RAMP_L, RAMP_R, LOOP_L, LOOP_R)
+
+
+class StarkMode(RomHouse):
+    """cstark (docs/30 section 3): ramps build (+375,000, the kill list advances), from the 3rd ramp an orbit pays value x combo and completes."""
 
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
         self._ramps = 0
 
-    def _accepts(self, sw):
+    def _hit(self, sw):
         if sw in RAMPS:
             self._ramps += 1
-            self._award.bump()
-            setattr(self.player, self._award_key, self._award.value)
+            self._build()
             self.machine.events.post("got_stark_kill", count=self._ramps)
             idx = int(getattr(self.machine, "got_stark_kill_idx", 0))       # the ROM's global build_order_kill_list (0x47e6c8), cycled 0..10
             self.machine.got_stark_kill_idx = (idx + 1) % 11
             self.machine.events.post("got_def_build_stark_%d" % idx)
-            return False
-        if sw in ORBITS and self._ramps >= self.RAMPS_NEEDED:
-            return True                 # the payoff: normal award path, then the house completes
-        return False
-
-    def _shot(self, sw=None, **kwargs):
-        if state.fast_loop(self.machine, sw):
-            return
-        self._shots = self._cfg["shots_to_complete"] - 1       # one collected shot completes the house
-        super()._shot(sw=sw, **kwargs)
+        elif sw in ORBITS and self._ramps >= 3:
+            self._give(bump=False, complete=True)
 
 
-class MartellMode(AwardMode):
-    """Three orbit shots within 10 s (the window refreshes after the second) build the hurry-up; either ramp then collects
-    it (decaying with the mode timer) and finishes the mode."""
-
-    ORBITS_NEEDED = 3
+class BaratheonMode(RomHouse):
+    """cbaratheon (docs/30 section 4): a ladder. Active at the start: spinner and left loop; each builds and adds the kickback; the kickback
+    adds the left ramp; the left ramp adds the left 3-bank; a 3-bank shot pays the value x combo and completes. Earlier shots keep building."""
 
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
-        self._orbits = 0
-        self._last = None
+        self._active = {"s_left_spinner", LOOP_L}
 
-    def _accepts(self, sw):
-        now = self.machine.clock.get_time()
-        if sw in ORBITS:
-            if self._last is not None and now - self._last > ORBIT_WINDOW_S and self._orbits < 2:
-                self._orbits = 0                                   # window missed: start the count again
-            self._orbits += 1
-            self._last = now
-            self._award.bump()
-            setattr(self.player, self._award_key, self._award.value)
-            self.machine.events.post("got_martell_orbit", count=self._orbits)
-            return False
-        return sw in RAMPS and self._orbits >= self.ORBITS_NEEDED
-
-    def _shot(self, sw=None, **kwargs):
-        if state.fast_loop(self.machine, sw):
+    def _hit(self, sw):
+        if sw in BANK:
+            if sw in self._active:
+                self._give(bump=False, complete=True)
             return
-        self._shots = self._cfg["shots_to_complete"] - 1
-        super()._shot(sw=sw, **kwargs)
-
-
-GREYJOY_SHOTS = ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback")      # H: mask 0x6e (docs/13)
-MAINS = ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop")
-BANK = ("s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm")
-
-
-class BaratheonMode(AwardMode):
-    """Spinner hits build the value; completing the left 3-bank cashes it in (rulesheet, M). The shield/dragon cue is not shown."""
-
-    def mode_start(self, **kwargs):
-        super().mode_start(**kwargs)
-        self._bank = set()
-
-    def _accepts(self, sw):
-        if sw == "s_left_spinner":
-            self._award.bump()
-            setattr(self.player, self._award_key, self._award.value)
-            return False
-        self._bank.add(sw)
-        return self._bank >= set(BANK)
-
-    def _shot(self, sw=None, **kwargs):
-        if state.fast_loop(self.machine, sw):
+        if sw not in self._active:
             return
-        self._shots = self._cfg["shots_to_complete"] - 1
-        super()._shot(sw=sw, **kwargs)
+        self._build()
+        if sw in ("s_left_spinner", LOOP_L):
+            self._active.add(KICK)
+        elif sw == KICK:
+            self._active.add(RAMP_L)
+        elif sw == RAMP_L:
+            self._active.update(BANK)
 
 
-class LannisterMode(AwardMode):
-    """Gold standups raise the shot value and light a shot; five lit main shots end the mode (rulesheet, M: the target to
-    adjacent-shot geometry is simplified to 'a gold target gives credit for one main shot')."""
+RED_OF = {"s_target_1": (LOOP_L, KICK), "s_target_2": (KICK, RAMP_L), "s_target_3": (RAMP_L, RAMP_R),
+          "s_target_4": (RAMP_L, RAMP_R), "s_target_5": (RAMP_R, LOOP_R)}
+
+
+class LannisterMode(RomHouse):
+    """clannister (docs/30 section 5): five standups; a hit builds (+75,000), removes the target and lights its two neighbouring red shots; a lit
+    red shot pays the value x combo (bump); five red shots complete (+200 gold, done by the manager)."""
 
     SHOTS_NEEDED = 5
 
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
-        self._lit = 0
-        self._made = 0
+        self._targets, self._red, self._made = set(RED_OF), set(), 0
 
     @property
     def shots_left(self):
         return max(0, self.SHOTS_NEEDED - self._made)
 
-    def _accepts(self, sw):
-        if sw.startswith("s_target_"):
-            self._lit += 1
-            self._award.bump()
-            setattr(self.player, self._award_key, self._award.value)
-            return False
-        if sw in MAINS and self._lit > 0:
-            self._lit -= 1
+    def _hit(self, sw):
+        if sw in self._targets:
+            self._targets.discard(sw)
+            self._build()
+            self._red.update(RED_OF[sw])
+        elif sw in self._red:
+            self._red.discard(sw)
             self._made += 1
-            self._shots = self._cfg["shots_to_complete"] - 1 if self._made >= self.SHOTS_NEEDED else 0
-            return True
-        return False
+            self._give(bump=True, complete=self._made >= self.SHOTS_NEEDED)
 
 
-class GreyjoyMode(AwardMode):
-    """All main shots are lit; each is collected once, every completed shot refreshes the 15 s timer; all five complete (ELF mask 0x6e) the
-    mode (rulesheet, M)."""
+class GreyjoyMode(RomHouse):
+    """cgreyjoy (docs/30 section 6): five shots in any order, each pays (bump) and adds 10 s to the 15 s timer (cap 15); the fifth pays again and completes."""
 
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
@@ -138,52 +176,42 @@ class GreyjoyMode(AwardMode):
     def shots_left(self):
         return len(GREYJOY_SHOTS) - len(self._done)
 
-    def _accepts(self, sw):
+    def _hit(self, sw):
         if sw in self._done or sw not in GREYJOY_SHOTS:
-            return False
-        self._done.add(sw)
-        timer = self.machine.timers["greyjoy_timer"]
-        timer.reset()
-        timer.start()
-        return True
-
-    def _shot(self, sw=None, **kwargs):
-        if state.fast_loop(self.machine, sw):
             return
-        self._shots = 0
-        super()._shot(sw=sw, **kwargs)
-        if len(self._done) >= len(GREYJOY_SHOTS) and self.active:
-            self.machine.events.post("got_house_complete", house_id=self._cfg["id"], key=self._cfg["key"])
-            self.stop()
+        self._done.add(sw)
+        self._give(bump=True)
+        timer = self.machine.timers["greyjoy_timer"]
+        timer.ticks = min(15, int(timer.ticks) + 10)
+        if len(self._done) >= len(GREYJOY_SHOTS):
+            self._give(bump=True, complete=True)                  # the last shot pays a second GiveAward
 
 
-class TyrellMode(AwardMode):
-    """Cycle 1: both ramps; the right 2-bank (lock targets) then lights the ramps again; cycle 2: the right ramp finishes
-    (rulesheet, M: the dragon shot and Greyjoy's extra shots are not modelled)."""
+class TyrellMode(RomHouse):
+    """ctyrell (docs/30 section 7): run shots 4, 8, 32 (kickback, left and right ramp) pay and make the right 2-bank the target; a 2-bank hit pays,
+    counts and re-arms the run shots (8, 32 after hit 1; 32 after hit 2); the 3rd bank hit pays and completes."""
+
+    RUN_AFTER = {0: (KICK, RAMP_L, RAMP_R), 1: (RAMP_L, RAMP_R), 2: (RAMP_R,)}
 
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
-        self._phase = 0
-        self._seen = set()
+        self._hits = 0
+        self._run = set(self.RUN_AFTER[0])
+        self._bank = False
 
-    def _accepts(self, sw):
-        ramps = ("s_left_ramp_exit", "s_right_ramp_exit")
-        bank = ("s_right_2_bank_top", "s_right_2_bank_bottom")
-        self._shots = 0                       # only the last step completes the house
-        if self._phase == 0 and sw in ramps:
-            self._seen.add(sw)
-            if self._seen >= set(ramps):
-                self._phase, self._seen = 1, set()
-            return True
-        if self._phase == 1 and sw in bank:
-            self._seen.add(sw)
-            if self._seen >= set(bank):
-                self._phase = 2
-            return True
-        if self._phase == 2 and sw == "s_right_ramp_exit":
-            self._shots = self._cfg["shots_to_complete"] - 1
-            return True
-        return False
+    def _hit(self, sw):
+        if sw in self._run:
+            self._run = set()
+            self._bank = True
+            self._give(bump=True)
+        elif self._bank and sw in BANK2:
+            self._hits += 1
+            self._bank = False
+            if self._hits >= 3:
+                self._give(bump=True, complete=True)
+                return
+            self._run = set(self.RUN_AFTER[self._hits])
+            self._give(bump=True)
 
 
 VISERION_VALUES = (8000000, 10000000, 12000000)               # H (docs/18 2.2): SetHurryUpAwardValue per step, 3 hurry-ups
