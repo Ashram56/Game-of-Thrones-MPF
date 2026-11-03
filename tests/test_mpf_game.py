@@ -62,6 +62,16 @@ class TestGotGame(MpfGameTestCase):
         self._hit("s_left_top_lane")                                # new again: completes the pair
         self.assertEqual(x + 1, int(player.got_bonus_x))
 
+    def test_mode_total_effect_when_a_house_ends(self):
+        self._start_house("greyjoy")
+        got = []
+        self.machine.events.add_handler("got_def_greyjoy_total", lambda **kwargs: got.append(1))
+        self.machine.game.player.score += 5000000                  # earned while the mode runs
+        self.machine.modes["greyjoy"].stop()
+        self.advance_time_and_run(0.5)
+        self.assertEqual([1], got)
+        self.assertEqual("5,000,000", self.machine.variables.get_machine_var("got_arg_award"))
+
     def test_full_game(self):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)

@@ -18,11 +18,15 @@ class DefArgs(Mode):
                 self.add_mode_event_handler(ev, self._set, priority=1000)
         self.add_mode_event_handler("player_score", self._score)
         self.add_mode_event_handler("got_tickle_progress", self._tickle)
+        self.add_mode_event_handler("got_mode_total", self._mode_total)
         self._tickle_left = 0
 
     def _score(self, change=0, **kwargs):
         if change and int(change) > 0:
             self._award = int(change)
+
+    def _mode_total(self, total=0, **kwargs):
+        self._award = int(total)                  # the effect that follows shows the mode total in {award}
 
     def _tickle(self, left=0, **kwargs):
         self._tickle_left = int(left)

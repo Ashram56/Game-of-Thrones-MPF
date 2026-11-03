@@ -18,9 +18,25 @@ class AwardMode(Mode):
         if player is not None and getattr(player, self._award_key):
             self._award.value = getattr(player, self._award_key)
         self._shots = 0
+        self._score0 = int(player.score) if player is not None else 0
         for sw in cfg["shots"]:
             self.add_mode_event_handler(sw + "_active", self._shot, sw=sw)
         self.add_mode_event_handler("timer_%s_timer_complete" % cfg["key"], self._timeout)
+
+    TOTAL_DEF = {"blackwater": "blackwater_total", "wall": "wall_total", "hand_of_the_king": "hand_total", "iron_throne": "iron_total",
+                 "castle": "castle_multiball_total", "winter_has_come": "winter_mball_total", "midnight_madness": "madness_multiball_total",
+                 "greyjoy": "greyjoy_total", "lannister": "lannister_total", "martell": "martell_total", "tyrell": "tyrell_total",
+                 "targaryen": "targaryen_total"}
+
+    def mode_stop(self, **kwargs):
+        """The ROM's TotalChoreo: when the mode ends, the points it earned are shown (the total is inferred as the score gained while it ran)."""
+        name = self.TOTAL_DEF.get(getattr(self, "_cfg", {}).get("key"))
+        player = self.machine.game.player if self.machine.game else None
+        if name and player is not None and getattr(self, "_score0", None) is not None:
+            total = int(player.score) - self._score0
+            if total > 0:
+                self.machine.events.post("got_mode_total", total=total)    # sets {award}; mode_<key>_stopped then plays got_def_<key>_total
+        super().mode_stop(**kwargs)
 
     def _shot(self, sw=None, **kwargs):
         if not self._accepts(sw):
