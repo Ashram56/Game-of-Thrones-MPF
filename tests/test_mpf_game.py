@@ -38,6 +38,15 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(1)
         self.assertGreater(self.machine.game.player.score, 0)
 
+    def test_ball_search_starts_after_ten_idle_seconds(self):
+        """docs/20: 10 s without a switch while a ball is in play starts the search; flippers are never part of it."""
+        self._start_game()
+        self.mock_event("ball_search_started")
+        self.release_switch_and_run("s_shooter_lane", 1)       # the plunge: the ball is on the playfield
+        self.advance_time_and_run(25)
+        self.assertEventCalled("ball_search_started")
+        self.assertEqual(0, self.machine.flippers["f_left"].config["ball_search_order"])
+
     def test_full_game(self):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)
@@ -1323,3 +1332,5 @@ def test_histogram_buckets():
     from got import audit_map as am
     f = lambda sc: next((i for i, b in enumerate(am.SCORE_BOUNDS) if sc < b), len(am.SCORE_BOUNDS)) + 1
     assert f(10_000_000) == 1 and f(25_000_000) == 2 and f(560_000_000) == 12 and f(2_000_000_000) == 17
+
+

@@ -5,6 +5,12 @@ playfields:
   playfield:
     default_source_device: bd_plunger
     tags: default
+    # docs/20 (ball search): 10 s (620 ticks) without activity, then the coils one after another; failed search = virtual recovery (trough kick)
+    enable_ball_search: true
+    ball_search_timeout: 10s
+    ball_search_interval: 300ms
+    ball_search_wait_after_iteration: 10s
+    ball_search_failed_action: new_ball
 
 ball_devices:
   bd_trough:
@@ -23,35 +29,42 @@ ball_devices:
     eject_coil: c_lock_release_post
     eject_timeouts: 3s
     tags: lock
+    ball_search_order: 0                  # never release the locked balls
   bd_elevator:
     ball_switches: s_elevator_popper
     eject_coil: c_elevator_popper
     eject_timeouts: 3s
+    ball_search_order: 3
   bd_throne:
     ball_switches: s_throne
     eject_coil: c_throne
     eject_timeouts: 3s
+    ball_search_order: 4
 
 flippers:
   f_left:
     main_coil: c_left_flipper_power
     activation_switch: s_l_flipper_button
+    ball_search_order: 0                  # flippers are never pulsed by the ROM's ball search
   f_right:
     main_coil: c_right_flipper_power
     activation_switch: s_r_flipper_button
+    ball_search_order: 0
   f_up_left:
     main_coil: c_u_p_left_flipper
     activation_switch: s_up_left_flipper_button
+    ball_search_order: 0
   f_up_right:
     main_coil: c_u_p_right_flipper
     activation_switch: s_up_right_flipper_button
+    ball_search_order: 0
 
 autofire_coils:
-  ac_left_slingshot: {coil: c_left_slingshot, switch: s_left_slingshot}
-  ac_right_slingshot: {coil: c_right_slingshot, switch: s_right_slingshot}
-  ac_left_pop: {coil: c_left_pop_bumper, switch: s_left_pop_bumper}
-  ac_right_pop: {coil: c_right_pop_bumper, switch: s_right_pop_bumper}
-  ac_bottom_pop: {coil: c_bottom_pop_bumper, switch: s_bottom_pop_bumper}
+  ac_left_slingshot: {coil: c_left_slingshot, switch: s_left_slingshot, ball_search_order: 1}
+  ac_right_slingshot: {coil: c_right_slingshot, switch: s_right_slingshot, ball_search_order: 2}
+  ac_left_pop: {coil: c_left_pop_bumper, switch: s_left_pop_bumper, ball_search_order: 6}
+  ac_right_pop: {coil: c_right_pop_bumper, switch: s_right_pop_bumper, ball_search_order: 7}
+  ac_bottom_pop: {coil: c_bottom_pop_bumper, switch: s_bottom_pop_bumper, ball_search_order: 8}
 
 # H: ad_ball_save_time default 5 s. Each multiball has its own shoot_again (modes/*/config).
 ball_saves:

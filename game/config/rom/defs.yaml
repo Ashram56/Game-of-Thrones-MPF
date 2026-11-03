@@ -438,6 +438,8 @@ event_player:
   - got_def_add_time
   got_tickle_progress:
   - got_def_tickle_house
+  ball_search_started:
+  - got_def_ball_search
   s_left_spinner_active:
   - got_def_spinner
   got_house_complete{key=="baratheon"}:

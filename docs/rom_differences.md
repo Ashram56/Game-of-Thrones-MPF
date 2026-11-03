@@ -37,3 +37,6 @@ The ROM itself never chalks mystery ARROWS, CHARGE and BREACH separately (all ch
 
 ## Text drawn with the ROM fonts (2026-11-03)
 Score, attract, mystery and choose-your-battle screens now use the ROM bitmap fonts (scripts dmd_score.gd, dmd_labels.gd); the score takes the largest digit font (19-26) that fits 128 px (the ROM's own size table is not applied yet). Text placement follows docs/21 of the extraction (per-glyph advance, dx/dy, font spacing, centre anchor), so "OUTLANE BALL SAVE" (font 7, x=39) is 68 px wide and fits; text is still clamped on screen as a safety.
+
+## Ball search (2026-11-03, docs/20)
+MPF's ball search replaces the ROM's: 10 s without activity, then slingshots, elevator popper, throne, pops one after another (300 ms apart, the ROM pulses 64 ms); flippers and the lock device are excluded; a failed search is a virtual recovery (new ball from the trough, adjustment 98 default). Audits 39 and 40 count `ball_search_started` / `ball_search_failed`. Not modelled: the ROM's delay_search callers (video mode, choreos, Madness), the drop-target and gate moves of step 8, kickbacks.

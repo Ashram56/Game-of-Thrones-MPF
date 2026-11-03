@@ -23,6 +23,7 @@ EVENT_AUDITS = {
     "got_hand_of_the_king_super": "au_hand_super_jackpot_hurry_up",
     "mode_winter_is_coming_started": "au_start_winter_is_coming", "got_winter_is_coming_award": "au_complete_winte_is_coming",
     "got_mystery_award": "au_mystery_total_awards",
+    "ball_search_started": "au_total_ball_search_starts", "ball_search_failed": "au_total_lost_ball_feeds",
     "got_lord_of_light_save": "au_lord_of_light_saves", "got_light_lord_of_light": "au_lord_of_light_awarded",
 }
 
