@@ -32,6 +32,7 @@ class HandMode(AwardMode):
         super().mode_start(**kwargs)
         self._bg_on = False
         self._bg_timer = self.machine.clock.schedule_interval(self._bg_blink, BG_PERIOD / 2)
+        self._vars_timer = self.machine.clock.schedule_interval(self._publish, 0.2)
         prog = self.player.got_progression
         self._houses = set(prog.complete) if prog else set()
         self.machine.events.post("got_hand_started_houses", houses=sorted(self._houses))      # audits 155-161
@@ -41,6 +42,8 @@ class HandMode(AwardMode):
         self._levels_left = self._levels_total
         self._hurry = 0                                       # accumulated super jackpots (chand+0x60)
         self._start_set()
+        self._publish()
+        self.machine.events.post("got_hand_bg_show")
 
     def _bg_lights(self):
         names = {"hand_of_the_king"}
@@ -61,7 +64,23 @@ class HandMode(AwardMode):
             else:
                 light.remove_from_stack_by_key("hand_bg")
 
+    def _publish(self, **kwargs):
+        """def_hand_bg (docs/25 s7): the state page and its values (score, HURRY UP, SETS, bonus-round timer seconds)."""
+        v = self.machine.variables
+        fmt = "{:,}".format
+        hurry = int(self._hurry_value()) if self._state == 4 else int(self._hurry)
+        timer = 0
+        if self._state == 3:
+            timer = max(0, int(BONUS_ROUND_S - (self.machine.clock.get_time() - self._bonus_t0) / TIMER_SECOND))
+        v.set_machine_var("got_hand_state", str(self._state))
+        v.set_machine_var("got_arg_score", fmt(int(self.player.score)))
+        v.set_machine_var("got_arg_hurry", fmt(hurry))
+        v.set_machine_var("got_arg_sets", str(self._levels_left))
+        v.set_machine_var("got_arg_timer", str(timer))
+
     def mode_stop(self, **kwargs):
+        self.machine.events.post("got_hand_bg_hide")
+        self.machine.clock.unschedule(self._vars_timer)
         self.machine.clock.unschedule(self._bg_timer)
         for name in {"hand_of_the_king"} | {n for ls in BG_LIGHTS.values() for n in ls}:
             if "l_" + name in self.machine.lights:
@@ -92,6 +111,7 @@ class HandMode(AwardMode):
         elif s == 3:
             self._mask = set(ALL_GROUPS)
             self._bonus_value = self._single_value()
+            self._bonus_t0 = self.machine.clock.get_time()
             self.delay.add(int(BONUS_ROUND_S * TIMER_SECOND * 1000), self._bonus_over, "hand_timer")
         elif s == 4:
             self._mask = {"ram"}

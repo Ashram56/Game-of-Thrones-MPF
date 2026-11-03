@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/dmd_text_live.gd" id="2"]
+
+[node name="Text" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Bg" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+
+[node name="Pages" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("2")
+pages_json = "[[[\"HAND OF THE KING\",6,127,6,\"r\"],[\"{score}\",6,32,6,\"c\"],[\"COMPLETE ALL SHOTS\",10,64,16,\"c\"],[\"HURRY UP: {hurry}\",0,0,23,\"l\"],[\"{sets} SETS\",0,127,23,\"r\"]],[[\"HAND OF THE KING\",6,127,6,\"r\"],[\"{score}\",6,32,6,\"c\"],[\"HIT BATTERING RAM\",10,64,16,\"c\"],[\"HURRY UP: {hurry}\",0,0,23,\"l\"],[\"{sets} SETS\",0,127,23,\"r\"]],[[\"HAND OF THE KING\",6,127,6,\"r\"],[\"{score}\",6,32,6,\"c\"],[\"BONUS ROUND\",6,45,15,\"c\"],[\"{timer}\",14,124,20,\"r\"],[\"FREE SHOTS FOR 20 SECS\",6,45,23,\"c\"]],[[\"HAND OF THE KING\",6,127,6,\"r\"],[\"{score}\",6,32,6,\"c\"],[\"{hurry}\",10,64,15,\"c\"],[\"HIT BATTERING RAM\",6,64,23,\"c\"]]]"
+page_var = "got_hand_state"
+refresh = 0.2

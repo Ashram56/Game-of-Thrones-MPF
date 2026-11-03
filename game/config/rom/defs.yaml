@@ -1150,10 +1150,6 @@ slide_player:
     tx_award_hand:
       priority: 70
       expire: 2.5s
-  got_def_hand_bg:
-    tx_hand_bg:
-      priority: 70
-      expire: 6.3s
   got_def_hand_total:
     tx_hand_total:
       priority: 70
@@ -1454,6 +1450,12 @@ slide_player:
     tx_iron_tour_award_21:
       priority: 70
       expire: 2.5s
+  got_hand_bg_show:
+    tx_hand_bg_live:
+      priority: 65
+  got_hand_bg_hide:
+    tx_hand_bg_live:
+      action: remove
   got_def_build_stark_0:
     tx_build_stark_0:
       priority: 70

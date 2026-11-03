@@ -133,6 +133,18 @@ machine_vars:
     initial_value: "0"
     value_type: str
     persist: false
+  got_arg_hurry:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_arg_sets:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_hand_state:
+    initial_value: "1"
+    value_type: str
+    persist: false
   got_arg_wildfire:
     initial_value: "0"
     value_type: str
