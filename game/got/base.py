@@ -190,7 +190,13 @@ class GotBase(Mode):
         p.got_house_index = idx
         p.got_house = powers.HOUSES[idx]
         prog = self._progression()
-        if idx in (0, 4):                              # Targaryen / Greyjoy start with their house complete
+        kills = 2
+        if idx == 0:                                   # adjustment 118: 0 = one dragon killed, 1 = two, 2 (default) = house complete
+            kills = int(self.machine.settings.get_setting_value("ad_targaryen_house_select")) if "ad_targaryen_house_select" in self.machine.settings._settings else 2
+        if idx == 0 and kills < 2:
+            p.got_dragon_stage = kills + 1
+            p.score += 30000000 * (kills + 1)          # StarkKill(false) = 30M per dragon (docs/18, M)
+        elif idx in (0, 4):                            # Targaryen / Greyjoy start with their house complete
             self.machine.events.post("got_house_complete", house_id=idx, key=p.got_house)
         if p.got_house == "baratheon":
             p.got_wall_advances += powers.BARATHEON_WALL_ADVANCES

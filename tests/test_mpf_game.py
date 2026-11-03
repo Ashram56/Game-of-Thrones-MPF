@@ -1255,6 +1255,19 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(gold + 750, int(p.got_gold))
         self.assertEqual([1], voice)
 
+    def test_targaryen_start_one_dragon_killed_by_adjustment(self):
+        self.machine.settings.set_setting_value("ad_targaryen_house_select", 0)
+        self._start_game()
+        p = self.machine.game.player
+        p.got_house_index = 0
+        p.got_house_picked = 1
+        before = p.score
+        self.hit_switch_and_run("s_shooter_lane", 0.1)
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertEqual(1, int(p.got_dragon_stage))
+        self.assertGreaterEqual(p.score - before, 30000000)
+        self.assertNotIn(0, p.got_progression.complete)
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))
