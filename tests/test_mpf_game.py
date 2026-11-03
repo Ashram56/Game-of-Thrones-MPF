@@ -1176,7 +1176,7 @@ class TestGotGame(MpfGameTestCase):
         self._trough()
         pages = []
         self.machine.events.add_handler("got_attract_page", lambda **kwargs: pages.append(kwargs["line1"]))
-        self.advance_time_and_run(30)
+        self.advance_time_and_run(90)         # the page loop now includes the 12 champion pages
         self.assertIn("GAME OF THRONES", pages)
         self.assertIn("GRAND CHAMPION", pages)
         self.hit_and_release_switch("s_start_button")

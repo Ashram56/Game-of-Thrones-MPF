@@ -155,6 +155,9 @@ class Scoreboard(Mode):
                         "  ".join("P%d %s" % (i + 3, fmt(s)) for i, s in enumerate(self._last[2:4]))))
         for r in t:
             out.append((r["label"], r["name"], fmt(r["score"])))
+        champs = self.champions()
+        for key, (label, _ini, _sc) in CHAMPIONS.items():                # champion pages of the attract loop (docs/22 2d)
+            out.append((label, champs[key]["name"], fmt(champs[key]["score"])))
         return out
 
     def _attract_start(self, **kwargs):
