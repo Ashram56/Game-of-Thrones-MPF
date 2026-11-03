@@ -31,3 +31,6 @@ casual mode, Wall, Castle, Hand of the King, Iron Throne, Midnight Madness, bonu
 
 
 Built since: background music by state from `music_stack.csv` (`got.music`); ROM bitmap fonts at the ROM's x/y on 162 text effects (`scripts/dmd_text.py`, `dmd_text_pages.gd`; multi-screen effects rotate every 1.2 s).
+
+## Audits not counted (decided 2026-11-03)
+The ROM itself never chalks mystery ARROWS, CHARGE and BREACH separately (all chalk 118), nor 170 (castle super jackpot) and 171 (house select Targaryen chalks 172): they stay at 0 here too. Fixture (198-203) and auto-play (204-206) audits are written by a fixture tool outside the game binary; ball search counters wait for the extraction's data. Histogram and time audits follow docs/19.

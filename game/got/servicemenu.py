@@ -110,6 +110,10 @@ class ServiceMenu(Mode):
             info = next((m for m in self._audit_menu if m["name"] == name), None)
             label = info["label"] if info else self._audit_labels[name]
             text = "{:,}".format(int(val))
+            fmt = info.get("fmt") if info else None
+            if fmt in ("time", "ticks"):                  # docs/19: seconds shown m:ss; ticks about 62 per second
+                secs = int(val) if fmt == "time" else int(val) // 62
+                text = "%d:%02d" % (secs // 60, secs % 60)
             if info and info["pct"]:
                 plays = int((au.get("events") or {}).get("au_total_plays_ended", 0))
                 text += "  %d%%" % (100 * int(val) // plays if plays else 0)

@@ -725,7 +725,8 @@ def build(data):
     menu = [r for r in rows(data, "audits_units.csv") if r.get("display_index")]
     menu.sort(key=lambda r: int(r["display_index"]))
     files["config/rom/audit_menu.json"] = json.dumps(
-        [{"name": r["name"], "label": r["display_label"], "pct": "% of total plays" in r["unit"]} for r in menu], indent=1) + "\n"
+        [{"name": r["name"], "label": r["display_label"], "pct": "% of total plays" in r["unit"],
+         "fmt": "time" if r["unit"] == "seconds" else "ticks" if r["unit"].startswith("ticks") else "count"} for r in menu], indent=1) + "\n"
     files["config/rom/audit_labels.json"] = json.dumps(
         {r["name"]: r["decoded_meaning"] for r in rows(data, "audits_meaning.csv") if r["name"] != "au_invalid"}, indent=1, sort_keys=True) + "\n"
     files["config/rom/vm_sprites.json"] = json.dumps(vm_sprites(data), indent=1, sort_keys=True) + "\n"
