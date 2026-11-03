@@ -183,13 +183,32 @@ class GotBase(Mode):
 
     # --- Midnight Madness
     def _madness_check(self, **kwargs):
+        """proc_midnight_madness (docs/32, H): armed once per game; fires only in the first minute after midnight (hours == 0 and minutes == 0),
+        then waits up to 600 polls (~10 min) for a ball on the playfield and starts the multiball; nothing else is tested. One shot per game."""
         self.delay.add(1000, self._madness_check, "madness_check")
+        game = self.machine.game
+        if game is None:
+            return
         t = _now()
-        window_min = self._rules["progression"]["madness_window_s"] // 60
-        day = (t.tm_year, t.tm_yday)
-        if t.tm_hour == 0 and t.tm_min < window_min and self._madness_day != day \
-                and not self._multiball_running() and self.machine.game and self.machine.game.balls_in_play:
-            self._madness_day = day
+        now = self.machine.clock.get_time()
+        if getattr(self, "_madness_game", None) is not game:
+            self._madness_game, self._madness_done, self._madness_until = game, False, None
+        if self._madness_done:
+            return
+        try:
+            enabled = self.machine.settings.get_setting_value("ad_midnight_madness")
+        except Exception:
+            enabled = 1
+        if enabled in (0, False, "no"):
+            return
+        if self._madness_until is None:
+            if t.tm_hour == 0 and t.tm_min == 0:
+                self._madness_until = now + 600
+            return
+        if now > self._madness_until:
+            self._madness_done = True                                   # the wait timed out: no Midnight Madness this game
+        elif game.balls_in_play:
+            self._madness_done = True
             self.machine.events.post("start_mode_midnight_madness")
 
     # --- House choice and powers

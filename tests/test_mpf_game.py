@@ -458,6 +458,9 @@ class TestGotGame(MpfGameTestCase):
             self.assertFalse(self.machine.modes["midnight_madness"].active)
             base._now = lambda: time.struct_time((2026, 11, 2, 0, 5, 0, 0, 306, 0))
             self.advance_time_and_run(3)
+            self.assertFalse(self.machine.modes["midnight_madness"].active)      # ROM: only the first minute after midnight
+            base._now = lambda: time.struct_time((2026, 11, 2, 0, 0, 30, 0, 306, 0))
+            self.advance_time_and_run(3)
             self.assertTrue(self.machine.modes["midnight_madness"].active)
             before = self.machine.game.player.score
             self._hit("s_left_pop_bumper")
