@@ -1239,6 +1239,19 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
         self.assertEqual(["start", "player_attack"], heard)
 
+    def test_house_start_award_lannister_gets_gold_and_voice(self):
+        voice = []
+        self.machine.events.add_handler("got_se_vo_fn_house_selected_v4", lambda **kwargs: voice.append(1))
+        self._start_game()
+        p = self.machine.game.player
+        p.got_house_index = 3
+        p.got_house_picked = 1
+        gold = int(p.got_gold or 0)
+        self.hit_switch_and_run("s_shooter_lane", 0.1)
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertEqual(gold + 750, int(p.got_gold))
+        self.assertEqual([1], voice)
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))

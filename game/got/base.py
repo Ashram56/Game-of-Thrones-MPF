@@ -194,7 +194,22 @@ class GotBase(Mode):
             self.machine.events.post("got_house_complete", house_id=idx, key=p.got_house)
         if p.got_house == "baratheon":
             p.got_wall_advances += powers.BARATHEON_WALL_ADVANCES
+        self._house_start_award(idx)
         self.machine.events.post("got_house_confirmed", house=p.got_house)
+
+    def _house_start_award(self, idx):
+        """Once per player, on ball 1, when the house is confirmed (docs/18, data/house_start_awards.csv): voice 433 (one variant per house)
+        and the house's start award. Targaryen/Greyjoy complete at once (above); Martell has no award; Tyrell's extra return lane is not modelled."""
+        p = self.player
+        house = powers.HOUSES[idx]
+        self.machine.events.post("got_se_vo_fn_house_selected_v%d" % (idx + 1))
+        if house == "stark":                           # GiveAwardStark: Winter Is Coming value raised 5 steps (+75,000)
+            p.got_winter_award = int(p.got_winter_award or 4000000) + 5 * 75000
+        elif house == "baratheon":                     # Wall jackpot (award #11) starts at 5,000,000 instead of 3,250,000
+            p.got_award_wall = max(int(p.got_award_wall or 0), 5000000)
+        elif house == "lannister":                     # AddGold(750)
+            p.got_gold = int(p.got_gold or 0) + 750
+        self.machine.events.post("got_def_give_house_" + house)
 
     def _ability(self):
         """Mystery button abilities (docs/11 section 4): 3 Baratheon = Lord of Light, 4 Lannister = buy a playfield
