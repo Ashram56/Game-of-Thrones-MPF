@@ -1,0 +1,280 @@
+#config_version=6
+# Visual tour: mpf game game -c smoke_tour -t (screenshots every few seconds under Xvfb)
+config:
+  - config.yaml
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 0.1s
+      switch: s_trough_1
+      action: activate
+    - time: 0.1s
+      switch: s_trough_2
+      action: activate
+    - time: 0.1s
+      switch: s_trough_3
+      action: activate
+    - time: 0.1s
+      switch: s_trough_4
+      action: activate
+    - time: 0.1s
+      switch: s_trough_5
+      action: activate
+    - time: 0.1s
+      switch: s_trough_6
+      action: activate
+    - time: 12s
+      switch: s_left_coin
+      action: hit
+    - time: 0.3s
+      switch: s_start_button
+      action: hit
+    - time: 3s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 3s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 3s
+      switch: s_l_flipper_button
+      action: hit
+    - time: 6s
+      switch: s_shooter_lane
+      action: activate
+    - time: 1s
+      switch: s_shooter_lane
+      action: deactivate
+    - time: 2.5s
+      switch: s_left_loop
+      action: hit
+    - time: 2.5s
+      switch: s_right_loop
+      action: hit
+    - time: 2.5s
+      switch: s_left_ramp_entrance
+      action: hit
+    - time: 2.5s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2.5s
+      switch: s_right_ramp_entrance
+      action: hit
+    - time: 2.5s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2.5s
+      switch: s_left_spinner
+      action: hit
+    - time: 2.5s
+      switch: s_left_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_right_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_bottom_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_top
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_mid
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_btm
+      action: hit
+    - time: 2.5s
+      switch: s_throne
+      action: hit
+    - time: 2.5s
+      switch: s_elevator_popper
+      action: hit
+    - time: 2.5s
+      switch: s_target_1
+      action: hit
+    - time: 2.5s
+      switch: s_target_2
+      action: hit
+    - time: 2.5s
+      switch: s_target_3
+      action: hit
+    - time: 2.5s
+      switch: s_target_4
+      action: hit
+    - time: 2.5s
+      switch: s_target_5
+      action: hit
+    - time: 2.5s
+      switch: s_kickback
+      action: hit
+    - time: 2.5s
+      switch: s_battering_ram
+      action: hit
+    - time: 2.5s
+      switch: s_lock_1
+      action: hit
+    - time: 2.5s
+      switch: s_lock_2
+      action: hit
+    - time: 2.5s
+      switch: s_lock_3
+      action: hit
+    - time: 2.5s
+      switch: s_right_outlane
+      action: hit
+    - time: 2.5s
+      switch: s_left_loop
+      action: hit
+    - time: 2.5s
+      switch: s_right_loop
+      action: hit
+    - time: 2.5s
+      switch: s_left_ramp_entrance
+      action: hit
+    - time: 2.5s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2.5s
+      switch: s_right_ramp_entrance
+      action: hit
+    - time: 2.5s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2.5s
+      switch: s_left_spinner
+      action: hit
+    - time: 2.5s
+      switch: s_left_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_right_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_bottom_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_top
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_mid
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_btm
+      action: hit
+    - time: 2.5s
+      switch: s_throne
+      action: hit
+    - time: 2.5s
+      switch: s_elevator_popper
+      action: hit
+    - time: 2.5s
+      switch: s_target_1
+      action: hit
+    - time: 2.5s
+      switch: s_target_2
+      action: hit
+    - time: 2.5s
+      switch: s_target_3
+      action: hit
+    - time: 2.5s
+      switch: s_target_4
+      action: hit
+    - time: 2.5s
+      switch: s_target_5
+      action: hit
+    - time: 2.5s
+      switch: s_kickback
+      action: hit
+    - time: 2.5s
+      switch: s_battering_ram
+      action: hit
+    - time: 2.5s
+      switch: s_lock_1
+      action: hit
+    - time: 2.5s
+      switch: s_lock_2
+      action: hit
+    - time: 2.5s
+      switch: s_lock_3
+      action: hit
+    - time: 2.5s
+      switch: s_right_outlane
+      action: hit
+    - time: 2.5s
+      switch: s_left_loop
+      action: hit
+    - time: 2.5s
+      switch: s_right_loop
+      action: hit
+    - time: 2.5s
+      switch: s_left_ramp_entrance
+      action: hit
+    - time: 2.5s
+      switch: s_left_ramp_exit
+      action: hit
+    - time: 2.5s
+      switch: s_right_ramp_entrance
+      action: hit
+    - time: 2.5s
+      switch: s_right_ramp_exit
+      action: hit
+    - time: 2.5s
+      switch: s_left_spinner
+      action: hit
+    - time: 2.5s
+      switch: s_left_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_right_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_bottom_pop_bumper
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_top
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_mid
+      action: hit
+    - time: 2.5s
+      switch: s_3_bank_drop_tgt_btm
+      action: hit
+    - time: 2.5s
+      switch: s_throne
+      action: hit
+    - time: 2.5s
+      switch: s_elevator_popper
+      action: hit
+    - time: 2.5s
+      switch: s_target_1
+      action: hit
+    - time: 2.5s
+      switch: s_target_2
+      action: hit
+    - time: 2.5s
+      switch: s_target_3
+      action: hit
+    - time: 2.5s
+      switch: s_target_4
+      action: hit
+    - time: 2.5s
+      switch: s_target_5
+      action: hit
+    - time: 2.5s
+      switch: s_kickback
+      action: hit
+    - time: 2.5s
+      switch: s_battering_ram
+      action: hit
+    - time: 2.5s
+      switch: s_lock_1
+      action: hit
+    - time: 2.5s
+      switch: s_lock_2
+      action: hit
+    - time: 2.5s
+      switch: s_lock_3
+      action: hit
+    - time: 2.5s
+      switch: s_right_outlane
+      action: hit

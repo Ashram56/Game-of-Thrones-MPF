@@ -34,3 +34,6 @@ Built since: background music by state from `music_stack.csv` (`got.music`); ROM
 
 ## Audits not counted (decided 2026-11-03)
 The ROM itself never chalks mystery ARROWS, CHARGE and BREACH separately (all chalk 118), nor 170 (castle super jackpot) and 171 (house select Targaryen chalks 172): they stay at 0 here too. Fixture (198-203) and auto-play (204-206) audits are written by a fixture tool outside the game binary; ball search counters wait for the extraction's data. Histogram and time audits follow docs/19.
+
+## Text drawn with the ROM fonts (2026-11-03)
+Score, attract, mystery and choose-your-battle screens now use the ROM bitmap fonts (scripts dmd_score.gd, dmd_labels.gd); the score takes the largest digit font (19-26) that fits 128 px. Text wider than the 128 px display (for example "OUTLANE BALL SAVE" in font 7 at x=39, 115 px) is kept on screen by clamping its x position; the ROM's real placement for these lines (scroll or smaller size) is not known yet.

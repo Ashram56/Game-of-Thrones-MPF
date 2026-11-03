@@ -97,7 +97,7 @@ def render(data, lines, path):
         glyphs = [gl.get("x20" if c == " " else c) or gl.get(c.upper()) or gl.get("x20") for c in text]
         width = sum(g["w"] + 1 for g in glyphs) - 1
         height = font["height_px"]
-        ox, oy = x - width // 2, y - height + 1
+        ox, oy = max(0, min(x - width // 2, W - width)), y - height + 1      # keep whole text on screen
         for g in glyphs:
             for j, row in enumerate(g["rows"]):
                 for i, ch in enumerate(row):

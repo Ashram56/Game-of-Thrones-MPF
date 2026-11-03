@@ -41,7 +41,7 @@ func _draw_page(page: Array) -> ImageTexture:
 			glyphs.append(g)
 			width += int(g["w"]) + 1
 		width -= 1
-		var ox: int = int(line[2]) - width / 2
+		var ox: int = clampi(int(line[2]) - width / 2, 0, maxi(0, 128 - width))   # never clipped at the left/right edge
 		var oy: int = int(line[3]) - int(font["height_px"]) + 1
 		for g in glyphs:
 			var rows: Array = g["rows"]
