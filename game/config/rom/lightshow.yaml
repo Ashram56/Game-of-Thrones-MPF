@@ -6866,6 +6866,78 @@ shows:
       l_left_ramp_sigil: '000000'
       l_left_ramp_arrow_top: '000000'
   - time: 0.4516
+  wall_ready:
+  - time: 0
+    lights:
+      l_right_loop_arrow_bot: 8900ff
+      l_right_loop_arrow_top: 8900ff
+  - time: 0.1613
+    lights:
+      l_right_loop_arrow_bot: '000000'
+      l_right_loop_arrow_top: '000000'
+  - time: 0.3226
+  wall_super:
+  - time: 0.0
+    lights:
+      l_lower_playfield_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+      l_backbox_gi: ffffff
+  - time: 0.0161
+    lights:
+      l_lower_playfield_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+      l_backbox_gi: '000000'
+  - time: 0.129
+    lights:
+      l_lower_playfield_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+      l_backbox_gi: ffffff
+  - time: 0.1452
+    lights:
+      l_lower_playfield_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+      l_backbox_gi: '000000'
+  - time: 0.2581
+    lights:
+      l_lower_playfield_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+      l_backbox_gi: ffffff
+  - time: 0.2742
+    lights:
+      l_lower_playfield_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+      l_backbox_gi: '000000'
+  - time: 0.3871
+    lights:
+      l_lower_playfield_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+      l_backbox_gi: ffffff
+  - time: 0.4032
+    lights:
+      l_lower_playfield_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+      l_backbox_gi: '000000'
+  - time: 0.5161
+    lights:
+      l_lower_playfield_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+      l_backbox_gi: ffffff
+  - time: 0.8387
+    lights:
+      l_lower_playfield_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+      l_backbox_gi: '000000'
+  - time: 0.871
 show_player:
   mode_attract_started:
     attract_sweep:
@@ -6977,6 +7049,18 @@ show_player:
     hand_start:
       loops: 0
       key: hand_start
+  got_wall_ready_lamps:
+    wall_ready:
+      loops: -1
+      key: wall_ready
+  got_wall_ready_lamps_off:
+    wall_ready:
+      action: stop
+      key: wall_ready
+  got_wall_super:
+    wall_super:
+      loops: 0
+      key: wall_super
 light_player:
   init_done:
     gi: ffffff

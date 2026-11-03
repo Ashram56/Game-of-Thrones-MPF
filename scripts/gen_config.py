@@ -610,6 +610,7 @@ def lightshow(rules, data=None):
         out["show_player"][sw + "_active"] = {"pulse": {"show_tokens": {"lights": "l_" + fx}, "key": "fx_" + fx, "loops": 0}}
     iron_lamps(out, data)
     hand_lamps(out, data)
+    wall_lamps(out, data)
     return out
 
 
@@ -660,6 +661,29 @@ def hand_lamps(out, data):
         out["show_player"]["got_hand_ready_lamps"] = {"hand_ready": {"loops": -1, "key": "hand_ready"}}
         out["show_player"]["got_hand_ready_lamps_off"] = {"hand_ready": {"action": "stop", "key": "hand_ready"}}
     out["show_player"]["mode_hand_of_the_king_started"] = {"hand_start": {"loops": 0, "key": "hand_start"}}
+
+
+def wall_lamps(out, data):
+    """Wall lamp effects (data/cwall_lamps.csv): 119 ready (right-loop arrows purple 10 ticks on / 10 off, looping), 121 jackpot sweep of light string 4
+    (about 8 steps of 2 ticks over the playfield lights, M), 122 super jackpot GI flash (1-tick phases then 20 ticks white, about 62 ticks, M)."""
+    if not data or not os.path.exists(os.path.join(data, "cwall_lamps.csv")):
+        return
+    arrows = ["l_right_loop_arrow_bot", "l_right_loop_arrow_top"]
+    out["shows"]["wall_ready"] = [{"time": 0, "lights": {x: "8900ff" for x in arrows}}, {"time": round(10 * TICK, 4), "lights": {x: "000000" for x in arrows}},
+                                  {"time": round(20 * TICK, 4)}]
+    out["show_player"]["got_wall_ready_lamps"] = {"wall_ready": {"loops": -1, "key": "wall_ready"}}
+    out["show_player"]["got_wall_ready_lamps_off"] = {"wall_ready": {"action": "stop", "key": "wall_ready"}}
+    gi = ["l_lower_playfield_gi", "l_left_playfield_gi", "l_upper_right_playfield_gi", "l_backbox_gi"]
+    fr, t = [], 0.0
+    for _ in range(4):
+        fr.append({"time": round(t, 4), "lights": {x: "ffffff" for x in gi}})
+        fr.append({"time": round(t + 1 * TICK, 4), "lights": {x: "000000" for x in gi}})
+        t += 8 * TICK
+    fr.append({"time": round(t, 4), "lights": {x: "ffffff" for x in gi}})
+    fr.append({"time": round(t + 20 * TICK, 4), "lights": {x: "000000" for x in gi}})
+    fr.append({"time": round(t + 22 * TICK, 4)})
+    out["shows"]["wall_super"] = fr
+    out["show_player"]["got_wall_super"] = {"wall_super": {"loops": 0, "key": "wall_super"}}
 
 
 def iron_lamps(out, data):

@@ -73,7 +73,20 @@ class LightMode(Mode):
         self._set("iron_throne", "ffffff" if getattr(self.machine.modes["combos"], "cyb", None) else "000000")
 
         self._hand_lamps(prog)
+        self._wall_lamps(p)
         self._shot_lamps(p)
+
+    def _wall_lamps(self, p):
+        """lef_wall_multiball_ready (119, flag 34: both right-loop arrows blink purple 10/10 ticks) and lef_advance_wall_multiball (123, the
+        kickback arrow steady purple while the Wall can be advanced: no multiball running and flag 34 clear) (cwall_lamps.csv, H/M)."""
+        from got import state
+        wall = self.machine.modes["wall"]
+        ready = bool(p.got_wall_lit) and not wall.active
+        if ready != getattr(self, "_wall_ready", False):
+            self._wall_ready = ready
+            self.machine.events.post("got_wall_ready_lamps" if ready else "got_wall_ready_lamps_off")
+        advance = not p.got_wall_lit and not state.multiball_running(self.machine)
+        self._set("kickback_lane_arrow_bot", "8900ff" if advance else "000000")
 
     def _hand_lamps(self, prog):
         """lef_hand_of_the_king_ready (109) chases while the Hand is ready; lef_post_hand_background (112) keeps the Hand lamp steady once
