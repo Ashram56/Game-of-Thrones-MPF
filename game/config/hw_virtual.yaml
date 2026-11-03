@@ -1,4 +1,13 @@
 #config_version=6
-# Desktop overlay: MPF's smart_virtual platform (balls move, trough starts full).
+# Desktop overlay: MPF's smart_virtual platform (balls move).
 hardware:
   platform: smart_virtual
+
+# smart_virtual does not fill the trough by itself: with the six trough switches inactive MPF counts 0 balls and refuses to start a game
+virtual_platform_start_active_switches:
+  - s_trough_1
+  - s_trough_2
+  - s_trough_3
+  - s_trough_4
+  - s_trough_5
+  - s_trough_6
