@@ -26,8 +26,7 @@ casual mode, Wall, Castle, Hand of the King, Iron Throne, Midnight Madness, bonu
 ## Not built
 - About 100 of the 207 audit counters (score and game-time histograms, ball search, fixture, remaining mystery light counters); the ROM service menu screen layouts. Counted: flippers, shots, multiballs, battles, house select, mystery awards, coins, Pict-O-Pops awards, video mode results, matches.
 - Display effects with runtime values or lines without a known position (they fall back to a Godot font); the 'ready' music states and `_spacer` tunes; (video duel graphics are in: ROM sprites, labels, health bars). Castle Collection and the Iron Throne victory lap do not exist in the ROM (docs/17 of Game-of-Thrones): not missing.
-- Greyjoy start-of-ball award; Wildfire details beyond docs/10; dragon waves and Stark/Targaryen refinements beyond docs/14.
-- ROM coil times and lamp/flasher choreography (CFG values above).
+- Greyjoy start-of-ball award, dragon waves and Stark/Targaryen refinements: no ROM source in the extraction yet (asked); Wildfire details beyond docs/10.
 - Real-machine checks: nothing ran on a Spike 1 board.
 
 
