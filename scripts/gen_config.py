@@ -560,7 +560,11 @@ EVENT_DEF = {"got_light_extra_ball": "def_extra_ball_lit", "got_award_extra_ball
              "got_tyrell_award": "def_tyrell_award_1",
              "tilt_warning": "def_tilt_warning", "tilt": "def_tilt_background", "slam_tilt": "def_slam_tilt"}
 EVENT_DEF.update({'got_pop_award{award=="Big Points"}': "def_big_points_pops", 'got_pop_award{award=="Add Mode Time"}': "def_add_time",
-                  "got_tickle_progress": "def_tickle_house", "ball_search_started": "def_ball_search", "s_left_spinner_active": "def_spinner"})      # def_callers.csv: award_pops_*, AddTimerChoreo, Tickle, AwardSpinnerSpin
+                  "got_tickle_progress": "def_tickle_house", "ball_search_started": "def_ball_search",
+                  'got_mystery_award{award=="hold_bonus"}': "def_award_bonus_held",
+                  'got_mystery_award{award=="bonus_x_1"}': "def_award_bonus_multipliers",
+                  'got_mystery_award{award=="bonus_x_2"}': "def_award_bonus_multipliers",
+                  'got_mystery_award{award=="bonus_x_3"}': "def_award_bonus_multipliers", "s_left_spinner_active": "def_spinner"})      # def_callers.csv: award_pops_*, AddTimerChoreo, Tickle, AwardSpinnerSpin
 for _h in ("baratheon", "greyjoy", "lannister", "tyrell"):
     EVENT_DEF['got_house_complete{key=="%s"}' % _h] = "def_%s_complete" % _h
 # ROM switch handlers (swdf_*, call sites that play one sound when the switch is hit) -> MPF switch

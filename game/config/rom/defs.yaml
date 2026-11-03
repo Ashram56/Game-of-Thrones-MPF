@@ -440,6 +440,14 @@ event_player:
   - got_def_tickle_house
   ball_search_started:
   - got_def_ball_search
+  got_mystery_award{award=="hold_bonus"}:
+  - got_def_award_bonus_held
+  got_mystery_award{award=="bonus_x_1"}:
+  - got_def_award_bonus_multipliers
+  got_mystery_award{award=="bonus_x_2"}:
+  - got_def_award_bonus_multipliers
+  got_mystery_award{award=="bonus_x_3"}:
+  - got_def_award_bonus_multipliers
   s_left_spinner_active:
   - got_def_spinner
   got_house_complete{key=="baratheon"}:
