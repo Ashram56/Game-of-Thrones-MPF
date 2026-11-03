@@ -7,9 +7,8 @@ MAJORS = ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop"
 # sets before the mode ends (0 = until the balls drain), Super window in seconds (0 = until collected)
 PHASES = {
     "blackwater": {"groups": [MAJORS], "super_mult": 6, "sets": 0, "window": 20},              # rulesheet: 5 majors, Super lit 20 s
-    "wall": {"groups": [("s_left_ramp_exit", "s_right_ramp_exit", "s_u_p_left_loop"),
-                        ("s_left_loop", "s_right_loop", "s_right_2_bank_top")], "super_mult": 3, "sets": 0, "window": 0,
-             "super_switch": "s_kickback"},                                                    # ramps, dragon Super, then loops
+    "wall": {"groups": [("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback")], "super_mult": 3, "sets": 0,
+             "window": 0, "super_switch": "s_kickback"},                                       # cwall shots (got.wall)
     "hand_of_the_king": {"groups": [("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop", "s_right_2_bank_top", "s_right_2_bank_bottom",
                                    "s_3_bank_drop_tgt_top", "s_3_bank_drop_tgt_mid", "s_3_bank_drop_tgt_btm", RAM)],     # chand groups (got.hand)
                          "super_mult": 1, "sets": 3, "window": 0},                              # 3 sets, then it ends

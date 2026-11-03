@@ -1070,20 +1070,30 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(1, mode._state)
         self.assertTrue(mode.active)
 
-    def test_wall_ramps_then_dragon_super_then_loops(self):
+    def test_wall_cycle_ramps_super_orbits_super(self):
+        """docs/26 (H): 3 ramp jackpots, the kickback super, 3 orbit jackpots, the kickback super, back to the ramps; each jackpot bumps +175,000."""
         self._start_mb("wall")
+        mode = self.machine.modes["wall"]
         player = self.machine.game.player
-        for sw in ("s_left_ramp_exit", "s_right_ramp_exit", "s_u_p_left_loop"):
-            self._hit(sw)
+        self.assertEqual(0, mode._phase)
         before = player.score
-        self._hit("s_kickback")                               # dragon Super
-        self.assertGreater(player.score - before, 3 * 3250000 - 1)
+        self._hit("s_left_ramp_exit")
+        self.assertAlmostEqual(3250000, player.score - before, delta=5000)           # pays the current value, then bumps
+        self._hit("s_right_ramp_exit")
+        self._hit("s_left_loop")                                   # an orbit does not count in the ramp phase
+        self.assertEqual(2, mode._count)
+        self._hit("s_left_ramp_exit")
+        self.assertEqual(2, mode._phase)                           # 3 jackpots: the kickback is the super
         before = player.score
-        self._hit("s_left_ramp_exit")                         # jackpots moved to the loops: a ramp no longer pays a jackpot
-        self.assertLess(player.score - before, 3250000)
-        for sw in ("s_left_loop", "s_right_loop", "s_right_2_bank_top"):
+        self._hit("s_kickback")
+        self.assertAlmostEqual(3250000 + 3 * 175000 + 10000000, player.score - before, delta=5000)
+        self.assertEqual(1, mode._phase)                           # coming from the ramps: orbits next
+        for sw in ("s_left_loop", "s_right_loop", "s_right_loop"):
             self._hit(sw)
-        self.assertGreater(self.machine.modes["wall"]._set_points, 0)
+        self.assertEqual(2, mode._phase)
+        self._hit("s_kickback")
+        self.assertEqual(0, mode._phase)                           # coming from the orbits: ramps next
+        self.assertTrue(mode.active)                               # no timer, it ends when the balls drain
 
     def test_winter_has_come_horde_lieutenant_super(self):
         self._start_game()

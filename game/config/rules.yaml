@@ -116,7 +116,7 @@ multiballs:
      jackpot: {start: 100000, bump: 0, cap: 0, conf: H, growth_conf: CFG},
      note: "per-switch award (every listed switch pays award #10)", per_switch: true}
   - {id: 5, key: wall, label: Battle for the Wall Multiball, flag: 43, start_bonus: 25000000, ball_save_adjustment: ad_wall_multiball_ball_save_timer, ball_save_s: 20,
-     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop],
+     jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop, s_kickback],      # cwall shots: got.wall
      jackpot: {start: 3250000, bump: 175000, cap: 25000000, conf: M}, super: {start: 0, conf: CFG}}
   - {id: 6, key: winter_has_come, label: Winter Has Come Multiball, flag: 42, start_bonus: 25000000, ball_save_adjustment: ad_winter_has_come_ball_save_timer, ball_save_s: 15,
      jackpot_switches: [s_left_ramp_exit, s_right_ramp_exit, s_left_loop, s_right_loop],
