@@ -1,0 +1,57 @@
+#config_version=6
+# Video mode duel display check: mpf game . -c smoke_duel
+config:
+  - config.yaml
+event_player:
+  s_r_flipper_button_active: got_video_mode_start
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 0.1s
+      switch: s_trough_1
+      action: activate
+    - time: 0.1s
+      switch: s_trough_2
+      action: activate
+    - time: 0.1s
+      switch: s_trough_3
+      action: activate
+    - time: 0.1s
+      switch: s_trough_4
+      action: activate
+    - time: 0.1s
+      switch: s_trough_5
+      action: activate
+    - time: 0.1s
+      switch: s_trough_6
+      action: activate
+    - time: 3s
+      switch: s_left_coin
+      action: hit
+    - time: 0.1s
+      switch: s_left_coin
+      action: release
+    - time: 0.3s
+      switch: s_start_button
+      action: hit
+    - time: 0.1s
+      switch: s_start_button
+      action: release
+    - time: 3s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 0.1s
+      switch: s_r_flipper_button
+      action: release
+    - time: 2s
+      switch: s_l_flipper_button
+      action: hit
+    - time: 0.1s
+      switch: s_l_flipper_button
+      action: release
+    - time: 1.2s
+      switch: s_l_flipper_button
+      action: hit
+    - time: 0.1s
+      switch: s_l_flipper_button
+      action: release

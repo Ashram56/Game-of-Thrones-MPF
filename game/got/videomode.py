@@ -29,6 +29,10 @@ class VideoMode(Mode):
         self.machine.events.post("got_se_fx_video_mode_" + name)
 
     def _state(self):
+        v = self.machine.variables.set_machine_var
+        v("got_vm_me", self._me)
+        v("got_vm_ai", self._ai)
+        v("got_vm_ai_max", AI_HEALTH[min(4, max(0, self._level))])
         self.machine.events.post("got_video_mode_state", me=self._me, ai=self._ai, n=self._n)
 
     def _attack(self, **kwargs):

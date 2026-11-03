@@ -79,6 +79,15 @@ def main():
             continue
         for i, page in enumerate(pages):
             dmd_text.render(a.data, page, os.path.join(GAME, "images", "tx", "tx_%s_p%d.png" % (name[4:], i)))
+    vm = json.load(open(os.path.join(GAME, "config", "rom", "vm_sprites.json"), encoding="utf-8"))
+    ids = {i for side in ("player", "ai") for st in vm[side].values() for i in st} | set(vm["labels"].values())
+    os.makedirs(os.path.join(GAME, "images", "vm"), exist_ok=True)
+    for i in sorted(ids):                                       # video mode duel sprites
+        for sub in ("animations", os.path.join("images", "pictures")):
+            src = os.path.join(a.assets, "dmd", sub, "img%05d.png" % i)
+            if os.path.exists(src):
+                shutil.copyfile(src, os.path.join(GAME, "images", "vm", "%d.png" % i))
+                break
     print("text screens drawn: %d effects" % len(texts))
     print("sounds copied (missing %d), videos %s" % (missing, manifest))
     return 1 if missing else 0

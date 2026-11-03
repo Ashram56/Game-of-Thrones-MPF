@@ -116,3 +116,15 @@ machine_vars:
     initial_value: "0"
     value_type: str
     persist: false
+  got_vm_me:
+    initial_value: 3
+    value_type: int
+    persist: false
+  got_vm_ai:
+    initial_value: 3
+    value_type: int
+    persist: false
+  got_vm_ai_max:
+    initial_value: 3
+    value_type: int
+    persist: false

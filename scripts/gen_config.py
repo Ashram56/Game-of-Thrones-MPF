@@ -317,6 +317,33 @@ def text_slides(data):
     return scenes, player
 
 
+VM_TSCN = """[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/videomode_duel.gd" id="1"]
+
+[node name="VideoMode" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+"""
+
+
+def vm_sprites(data):
+    """Video mode duel sprites (data/videomode_sprites.csv): {element: {state: [image ids]}} for player and AI, plus the two labels."""
+    out = {"player": {}, "ai": {}, "labels": {}}
+    path = os.path.join(data, "videomode_sprites.csv")
+    if not os.path.exists(path):
+        return out
+    for r in rows(data, "videomode_sprites.csv"):
+        if r["element"] in ("player", "ai"):
+            out[r["element"]].setdefault(r["state"].split(":")[1], []).append(int(r["image_id"]))
+        elif r["element"].startswith("background_label") and r["image_id"]:
+            out["labels"][r["element"].replace("background_label_", "")] = int(r["image_id"])
+    return out
+
+
 def slides(data, rules):
     """GMC slides are scenes (game/slides/vidNNN.tscn, one per DMD video); MPF only gets the slide_player."""
     player = {}
@@ -695,6 +722,8 @@ def build(data):
     files["config/rom/sound_variants.json"] = json.dumps(all_sounds.variants, indent=1, sort_keys=True) + "\n"
     files["config/rom/audit_labels.json"] = json.dumps(
         {r["name"]: r["decoded_meaning"] for r in rows(data, "audits_meaning.csv") if r["name"] != "au_invalid"}, indent=1, sort_keys=True) + "\n"
+    files["config/rom/vm_sprites.json"] = json.dumps(vm_sprites(data), indent=1, sort_keys=True) + "\n"
+    files["slides/videomode.tscn"] = VM_TSCN
     files["config/rom/sound_files.json"] = json.dumps(sounds.files, indent=1, sort_keys=True) + "\n"
     files["config/rom/mystery_awards.csv"] = open(os.path.join(data, "mystery_awards.csv")).read()
     files["config/rom/swords.csv"] = open(os.path.join(data, "swords.csv")).read()
