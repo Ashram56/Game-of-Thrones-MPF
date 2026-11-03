@@ -348,7 +348,7 @@ FLASH_FX = {"s_left_pop_bumper": "fl_pop_bumpers", "s_right_pop_bumper": "fl_pop
             "s_lock_1": "fl_sword_lock"}
 
 
-def lightshow(rules):
+def lightshow(rules, data=None):
     """Attract light show, GI, flasher pulses: the ROM's lamp/flasher effects (lef_*) are not decoded for Spike 1, so the
     choreography is CFG (sigils sweep in house colours, arrows chase); which light is lit when follows the rules (got/lightshow.py)."""
     keys = [h["key"] for h in rules["houses"] if h["key"] in HOUSE_COLORS]
@@ -359,6 +359,12 @@ def lightshow(rules):
         step["lights"]["arrow"] = "ffffff" if i % 2 == 0 else "000000"
         sweep.append(step)
     sweep.append({"time": len(keys) * 0.5})
+    chase = []
+    csv_path = os.path.join(data, "light_shows.csv") if data else ""
+    if csv_path and os.path.exists(csv_path):                       # lef_attract_mode_background touches these lights (H); chase them
+        for r in rows(data, "light_shows.csv"):
+            if r["name"] == "lef_attract_mode_background":
+                chase = ["l_" + x[3:] for x in r["lights"].split() if x.startswith("lt_") and "gi" not in x and "flasher" not in x]
     out = {
         "shows": {
             "attract_sweep": sweep,
@@ -377,6 +383,11 @@ def lightshow(rules):
             "game_ended": {"lamp": "000000", "flashfx": "000000"},
         },
     }
+    if chase:
+        out["shows"]["attract_chase"] = [{"time": round(i * 0.1, 1), "lights": {chase[i]: "ffa000", chase[i - 1]: "000000"}} for i in range(len(chase))] \
+            + [{"time": round(len(chase) * 0.1, 1), "lights": {chase[-1]: "000000"}}]
+        out["show_player"]["mode_attract_started"]["attract_chase"] = {"loops": -1, "key": "attract_chase"}
+        out["show_player"]["mode_attract_stopped"]["attract_chase"] = {"action": "stop", "key": "attract_chase"}
     for sw, fx in FLASH_FX.items():
         out["show_player"][sw + "_active"] = {"pulse": {"show_tokens": {"lights": "l_" + fx}, "key": "fx_" + fx, "loops": 0}}
     return out
@@ -493,6 +504,16 @@ def triggers(data, rules):
     # lamp effects: a def_* requests lef_* effects (data/triggers_lamp_coil.csv); a lef's lights come from the same file (H light ids)
     lamp = rows(data, "triggers_lamp_coil.csv") if os.path.exists(os.path.join(data, "triggers_lamp_coil.csv")) else []
     lef_lights = {}
+    shows_csv = os.path.join(data, "light_shows.csv")
+    show_type = {}
+    if os.path.exists(shows_csv):
+        for r in rows(data, "light_shows.csv"):                 # 133 lamp effects with the lights each touches (H)
+            show_type[r["name"]] = r["type_meaning"]
+            for lt in r["lights"].split():
+                if lt.startswith("lt_"):
+                    lef_lights.setdefault(r["name"], [])
+                    if "l_" + lt[3:] not in lef_lights[r["name"]]:
+                        lef_lights[r["name"]].append("l_" + lt[3:])
     for r in lamp:
         if r["kind"] == "light" and r["id_or_name"].startswith("lt_") and r["rule_function"].startswith("lef_"):
             lef_lights.setdefault(r["rule_function"], [])
@@ -505,7 +526,7 @@ def triggers(data, rules):
             lst = player.setdefault("got_def_" + r["rule_function"][4:], [])
             if ev not in lst:
                 lst.append(ev)
-    triggers.lef_shows = {"lef_" + k[4:]: v for k, v in lef_lights.items() if not k.endswith("_background")}
+    triggers.lef_shows = {k: v for k, v in lef_lights.items() if not k.endswith("_background") and "background" not in show_type.get(k, "")}
     for h, d in HOUSE_DEF.items():
         player["mode_%s_started" % h] = ["got_def_" + d[4:]]
     for ev, d in EVENT_DEF.items():
@@ -544,7 +565,7 @@ def build(data):
         [{"id": int(r["symbol_id"]), "award": r["award"], "tape": int(r["tape_count_of_112"])} for r in rows(data, "pop_awards.csv")],
         indent=1) + "\n"                                   # Pict-O-Pops awards and tape frequency (docs/09)
     files["modes/scoring/config/scoring.yaml"] = dump(sc)       # variable_player is only valid inside a game mode
-    files["config/rom/lightshow.yaml"] = dump(lightshow(rules))
+    files["config/rom/lightshow.yaml"] = dump(lightshow(rules, data))
     files["config/rom/sounds.yaml"] = dump(sounds(data, rules))
     files["config/rom/defs.yaml"] = dump(triggers(data, rules))
     files["config/rom/sounds_all.yaml"] = dump(all_sounds(data, rules))
