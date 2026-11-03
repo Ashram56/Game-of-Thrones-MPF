@@ -477,9 +477,11 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(0, self.machine.game.player.got_winter_lit_shots)
         s0 = self.machine.game.player.got_winter_super
         self.advance_time_and_run(8)                                                # half the 16 s timer
-        self._hit("s_kickback")
+        self._hit("s_kickback")                                                     # not the active shot (the 3-bank): nothing
+        self.assertEqual(s0, self.machine.game.player.got_winter_super)
+        self._hit("s_3_bank_drop_tgt_top")
         gained = self.machine.game.player.got_winter_super - s0
-        self.assertTrue(1500000 < gained < 2600000, gained)                        # ~2.2M of the 4M start
+        self.assertTrue(any(1500000 < gained / c < 2800000 for c in (1, 2, 3, 4)), gained)   # ~half of the 4.2M value x combo
 
     def test_switch_base_points_from_rom_table(self):
         self._start_game()
@@ -506,9 +508,10 @@ class TestGotGame(MpfGameTestCase):
             self.post_event("start_mode_winter_is_coming")
             self.advance_time_and_run(0.2)
             self._hit("s_kickback", 3)
+            self.assertEqual(4000000 + 3 * 75000, player.got_winter_award)    # BumpAwardValue +75,000 per counted shot
             self.hit_and_release_switch("s_kickback")
             self.advance_time_and_run(0.3)
-        self.assertEqual(4000000 + 2 * 75000, player.got_winter_award)    # BumpAward +75,000 per completion (ROM)
+        self.assertEqual(4000000, player.got_winter_award)                # ResetHurryUpValues after each completion (docs/29)
 
     def test_wall_bank_complete_advances_once(self):
         self._start_game()
