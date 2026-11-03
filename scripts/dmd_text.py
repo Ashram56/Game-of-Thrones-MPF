@@ -50,14 +50,6 @@ def rom_lines(data):
     with open(os.path.join(data, "font_usage.csv"), encoding="utf-8", newline="") as f:
         for r in csv.DictReader(f):
             name = r["function"] if r["function"].startswith("def_") else None
-            if name and re.fullmatch(r"%[,0-9]*l+u", r["text_en"]) and not (r["font"] and r["x"] and r["y"]):
-                # a bare 64-bit points argument with no font/position in the table: the real value, centred in font 6 (inferred)
-                kind = kinds.get((name, r["text_en"]), "award")
-                item = ("{%s}" % kind, 6, 64, 20)
-                pages = out.setdefault(name, [[]])
-                if item not in pages[-1]:
-                    pages[-1].append(item)
-                continue
             if r["font_kind"] != "font_index" or not r["text_en"] or not r["font"] or not r["x"] or not r["y"]:
                 continue
             if not name:
