@@ -197,6 +197,75 @@ VIDEO_EVENTS = {"got_targaryen_award": 8, "got_stark_award": 23, "got_martell_aw
 VIDEO_FRAMES = {}
 
 
+TEXT_TSCN_HEAD = """[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1"]
+
+[node name="Text" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Bg" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+
+[node name="Lines" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+"""
+TEXT_LINE = """
+[node name="L%d" type="Label" parent="Lines"]
+layout_mode = 2
+theme_override_font_sizes/font_size = %d
+text = "%s"
+horizontal_alignment = 1
+"""
+
+
+def clean_text(line):
+    """ROM message text -> what the player reads: runtime/unknown arguments are dropped, %d/%u become 0, plurals S."""
+    line = line.strip()
+    if line in ("<runtime>", "<msg?>") or not line:
+        return ""
+    line = re.sub(r"%[,0-9]*l?[du]", "0", line)
+    line = re.sub(r"%P\d//(.*?)/%", r"\1", line)
+    line = line.replace("%s", "").replace('"', "'")
+    return line.strip()
+
+
+def text_slides(data):
+    """Effects that only show text (data/dmd_triggers.csv, ROM message text): one Godot slide each, event got_def_<name>. The text is
+    the ROM's; the font is Godot's default until the ROM fonts (data/fonts) are used."""
+    path = os.path.join(data, "dmd_triggers.csv")
+    if not os.path.exists(path):
+        return {}, {}
+    scenes, player = {}, {}
+    for r in rows(data, "dmd_triggers.csv"):
+        if r["kind"] != "effect" or r["has_video"] != "no" or r["n_text_lines"] in ("", "0"):
+            continue
+        name = r["name"]
+        lines = [clean_text(x) for x in r["text"].split(" | ")]
+        lines = [x for x in lines if x]
+        if not lines or "tx_" + name[4:] in [k[7:-5] for k in scenes]:
+            continue
+        lines = list(dict.fromkeys(lines))[:6]
+        size = 60 if len(lines) <= 2 else 46 if len(lines) <= 4 else 32
+        body = TEXT_TSCN_HEAD + "".join(TEXT_LINE % (i, size, t) for i, t in enumerate(lines))
+        slide = "tx_" + name[4:]
+        scenes["slides/%s.tscn" % slide] = body
+        player["got_" + name] = {slide: {"priority": 70, "expire": "2.5s"}}
+    return scenes, player
+
+
 def slides(data, rules):
     """GMC slides are scenes (game/slides/vidNNN.tscn, one per DMD video); MPF only gets the slide_player."""
     player = {}
@@ -408,7 +477,8 @@ EVENT_DEF = {"got_light_extra_ball": "def_extra_ball_lit", "got_award_extra_ball
              "got_special_credit": "def_replay_award", "got_match": "def_match", "ball_save_default_saving_ball": "def_ball_save",
              "got_stark_award": "def_award_stark", "got_martell_award": "def_award_martell", "got_greyjoy_award": "def_award_greyjoy",
              "got_lannister_award": "def_award_lannister", "got_targaryen_award": "def_award_targaryen_1",
-             "got_tyrell_award": "def_tyrell_award_1"}
+             "got_tyrell_award": "def_tyrell_award_1",
+             "tilt_warning": "def_tilt_warning", "tilt": "def_tilt_background", "slam_tilt": "def_slam_tilt"}
 for _h in ("baratheon", "greyjoy", "lannister", "tyrell"):
     EVENT_DEF['got_house_complete{key=="%s"}' % _h] = "def_%s_complete" % _h
 # ROM switch handlers (swdf_*, call sites that play one sound when the switch is hit) -> MPF switch
@@ -548,6 +618,8 @@ def triggers(data, rules):
                        {"time": 0.6, "lights": {l: "ffffff" for l in lights_}}, {"time": 1.0, "lights": {l: "000000" for l in lights_}},
                        {"time": 1.2}]
         show_player["got_" + name] = {name: {"loops": 0, "key": name}}
+    for ev, v in text_slides(data)[1].items():
+        slides_.setdefault(ev, v)                                      # a def with a clip keeps its clip
     return {"event_player": player, "slide_player": slides_, "shows": shows, "show_player": show_player}
 
 
@@ -575,6 +647,7 @@ def build(data):
     files["config/rom/swords.csv"] = open(os.path.join(data, "swords.csv")).read()
     files["config/rom/slides.yaml"] = dump(slides(data, rules))
     files.update(slide_scenes(rules, data))
+    files.update(text_slides(data)[0])
     for rel, cfg in mode_files(rules).items():
         files["modes/" + rel] = dump(cfg)
     return files

@@ -397,6 +397,12 @@ event_player:
   - got_def_award_targaryen_1
   got_tyrell_award:
   - got_def_tyrell_award_1
+  tilt_warning:
+  - got_def_tilt_warning
+  tilt:
+  - got_def_tilt_background
+  slam_tilt:
+  - got_def_slam_tilt
   got_house_complete{key=="baratheon"}:
   - got_def_baratheon_complete
   got_house_complete{key=="greyjoy"}:
@@ -619,6 +625,642 @@ slide_player:
   got_def_winter_hurry_up_start:
     vid146:
       expire: 3.5s
+  got_def_power_distribution_board_signal_missing:
+    tx_power_distribution_board_signal_missing:
+      priority: 70
+      expire: 2.5s
+  got_def_interlock_voltage_disabled:
+    tx_interlock_voltage_disabled:
+      priority: 70
+      expire: 2.5s
+  got_def_node_board_locating:
+    tx_node_board_locating:
+      priority: 70
+      expire: 2.5s
+  got_def_node_board_overcurrent:
+    tx_node_board_overcurrent:
+      priority: 70
+      expire: 2.5s
+  got_def_node_board_runtime_update:
+    tx_node_board_runtime_update:
+      priority: 70
+      expire: 2.5s
+  got_def_node_board_runtime_update_finished:
+    tx_node_board_runtime_update_finished:
+      priority: 70
+      expire: 2.5s
+  got_def_factory_key_invalid:
+    tx_factory_key_invalid:
+      priority: 70
+      expire: 2.5s
+  got_def_volume:
+    tx_volume:
+      priority: 70
+      expire: 2.5s
+  got_def_headphones_volume:
+    tx_headphones_volume:
+      priority: 70
+      expire: 2.5s
+  got_def_test_mode:
+    tx_test_mode:
+      priority: 70
+      expire: 2.5s
+  got_def_powerup:
+    tx_powerup:
+      priority: 70
+      expire: 2.5s
+  got_def_serial_number:
+    tx_serial_number:
+      priority: 70
+      expire: 2.5s
+  got_def_factory_frequency_mismatch:
+    tx_factory_frequency_mismatch:
+      priority: 70
+      expire: 2.5s
+  got_def_factory_frequency_spoof:
+    tx_factory_frequency_spoof:
+      priority: 70
+      expire: 2.5s
+  got_def_hardware_software_mismatch:
+    tx_hardware_software_mismatch:
+      priority: 70
+      expire: 2.5s
+  got_def_fatal_non_fatal_error_counts:
+    tx_fatal_non_fatal_error_counts:
+      priority: 70
+      expire: 2.5s
+  got_def_credits:
+    tx_credits:
+      priority: 70
+      expire: 2.5s
+  got_def_ball_search:
+    tx_ball_search:
+      priority: 70
+      expire: 2.5s
+  got_def_mbdev_abandoned:
+    tx_mbdev_abandoned:
+      priority: 70
+      expire: 2.5s
+  got_def_mbdev_pinball_missing:
+    tx_mbdev_pinball_missing:
+      priority: 70
+      expire: 2.5s
+  got_def_tournament_credits:
+    tx_tournament_credits:
+      priority: 70
+      expire: 2.5s
+  got_def_tournament_game_start:
+    tx_tournament_game_start:
+      priority: 70
+      expire: 2.5s
+  got_def_ball_save:
+    tx_ball_save:
+      priority: 70
+      expire: 2.5s
+  got_def_tilt_background:
+    tx_tilt_background:
+      priority: 70
+      expire: 2.5s
+  got_def_tilt_warning:
+    tx_tilt_warning:
+      priority: 70
+      expire: 2.5s
+  got_def_slam_tilt:
+    tx_slam_tilt:
+      priority: 70
+      expire: 2.5s
+  got_def_redemption_award:
+    tx_redemption_award:
+      priority: 70
+      expire: 2.5s
+  got_def_hstd_enter_initials_begin:
+    tx_hstd_enter_initials_begin:
+      priority: 70
+      expire: 2.5s
+  got_def_hstd_enter_initials:
+    tx_hstd_enter_initials:
+      priority: 70
+      expire: 2.5s
+  got_def_hstd_enter_initials_end:
+    tx_hstd_enter_initials_end:
+      priority: 70
+      expire: 2.5s
+  got_def_tournament_hstd_no_qualifiers:
+    tx_tournament_hstd_no_qualifiers:
+      priority: 70
+      expire: 2.5s
+  got_def_tournament_hstd_enter_initials_begin:
+    tx_tournament_hstd_enter_initials_begin:
+      priority: 70
+      expire: 2.5s
+  got_def_tournament_hstd_enter_initials:
+    tx_tournament_hstd_enter_initials:
+      priority: 70
+      expire: 2.5s
+  got_def_match:
+    tx_match:
+      priority: 70
+      expire: 2.5s
+  got_def_player_competition_mode:
+    tx_player_competition_mode:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_hello_world:
+    tx_ee_hello_world:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_xaqery:
+    tx_ee_xaqery:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_trent:
+    tx_ee_trent:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_skb:
+    tx_ee_skb:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_genex:
+    tx_ee_genex:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_johndng:
+    tx_ee_johndng:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_frolic:
+    tx_ee_frolic:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_wurt:
+    tx_ee_wurt:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_goltz:
+    tx_ee_goltz:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_mandletort:
+    tx_ee_mandletort:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_mdoran:
+    tx_ee_mdoran:
+      priority: 70
+      expire: 2.5s
+  got_def_ee_mcalpine:
+    tx_ee_mcalpine:
+      priority: 70
+      expire: 2.5s
+  got_def_attract_midnight_madness_champion:
+    tx_attract_midnight_madness_champion:
+      priority: 70
+      expire: 2.5s
+  got_def_house_select_prompt_BG:
+    tx_house_select_prompt_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_turn_off_casual_prompt:
+    tx_turn_off_casual_prompt:
+      priority: 70
+      expire: 2.5s
+  got_def_give_house_tyrell:
+    tx_give_house_tyrell:
+      priority: 70
+      expire: 2.5s
+  got_def_give_house_martell:
+    tx_give_house_martell:
+      priority: 70
+      expire: 2.5s
+  got_def_give_house_greyjoy:
+    tx_give_house_greyjoy:
+      priority: 70
+      expire: 2.5s
+  got_def_give_house_targaryen:
+    tx_give_house_targaryen:
+      priority: 70
+      expire: 2.5s
+  got_def_mode_start_select_prompt:
+    tx_mode_start_select_prompt:
+      priority: 70
+      expire: 2.5s
+  got_def_skill_shot:
+    tx_skill_shot:
+      priority: 70
+      expire: 2.5s
+  got_def_spinner:
+    tx_spinner:
+      priority: 70
+      expire: 2.5s
+  got_def_build_stark:
+    tx_build_stark:
+      priority: 70
+      expire: 2.5s
+  got_def_stark_lit:
+    tx_stark_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_stark_BG:
+    tx_stark_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_greyjoy_lit:
+    tx_greyjoy_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_greyjoy_BG:
+    tx_greyjoy_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_greyjoy_total:
+    tx_greyjoy_total:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_lit:
+    tx_targaryen_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_add_time:
+    tx_targaryen_add_time:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_one_BG:
+    tx_targaryen_one_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_two_BG:
+    tx_targaryen_two_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_three_BG:
+    tx_targaryen_three_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_timer_end:
+    tx_targaryen_timer_end:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_total:
+    tx_targaryen_total:
+      priority: 70
+      expire: 2.5s
+  got_def_award_targaryen_dragon_level_three:
+    tx_award_targaryen_dragon_level_three:
+      priority: 70
+      expire: 2.5s
+  got_def_lannister_lit:
+    tx_lannister_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_lannister_BG:
+    tx_lannister_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_lannister_total:
+    tx_lannister_total:
+      priority: 70
+      expire: 2.5s
+  got_def_tyrell_lit:
+    tx_tyrell_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_tyrell_BG:
+    tx_tyrell_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_tyrell_total:
+    tx_tyrell_total:
+      priority: 70
+      expire: 2.5s
+  got_def_martell_lit:
+    tx_martell_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_martell_add_time:
+    tx_martell_add_time:
+      priority: 70
+      expire: 2.5s
+  got_def_martell_BG:
+    tx_martell_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_martell_total:
+    tx_martell_total:
+      priority: 70
+      expire: 2.5s
+  got_def_baratheon_lit:
+    tx_baratheon_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_build_baratheon_spinner:
+    tx_build_baratheon_spinner:
+      priority: 70
+      expire: 2.5s
+  got_def_baratheon_BG:
+    tx_baratheon_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_award_winter_hurry_up:
+    tx_award_winter_hurry_up:
+      priority: 70
+      expire: 2.5s
+  got_def_winter_grows:
+    tx_winter_grows:
+      priority: 70
+      expire: 2.5s
+  got_def_winter_BG:
+    tx_winter_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_winter_mball_BG:
+    tx_winter_mball_BG:
+      priority: 70
+      expire: 2.5s
+  got_def_winter_mball_total:
+    tx_winter_mball_total:
+      priority: 70
+      expire: 2.5s
+  got_def_award_horde_winter_mball:
+    tx_award_horde_winter_mball:
+      priority: 70
+      expire: 2.5s
+  got_def_award_boss_winter_mball:
+    tx_award_boss_winter_mball:
+      priority: 70
+      expire: 2.5s
+  got_def_unfrozen_winter_mball:
+    tx_unfrozen_winter_mball:
+      priority: 70
+      expire: 2.5s
+  got_def_light_super_jackpot:
+    tx_light_super_jackpot:
+      priority: 70
+      expire: 2.5s
+  got_def_lock_is_lit:
+    tx_lock_is_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_ball_locked:
+    tx_ball_locked:
+      priority: 70
+      expire: 2.5s
+  got_def_start_blackwater:
+    tx_start_blackwater:
+      priority: 70
+      expire: 2.5s
+  got_def_blackwater_super_jackpot:
+    tx_blackwater_super_jackpot:
+      priority: 70
+      expire: 2.5s
+  got_def_blackwater_total:
+    tx_blackwater_total:
+      priority: 70
+      expire: 2.5s
+  got_def_blackwater_bg:
+    tx_blackwater_bg:
+      priority: 70
+      expire: 2.5s
+  got_def_upper_playfield_mode_new_level_award:
+    tx_upper_playfield_mode_new_level_award:
+      priority: 70
+      expire: 2.5s
+  got_def_upper_playfield_bank_complete:
+    tx_upper_playfield_bank_complete:
+      priority: 70
+      expire: 2.5s
+  got_def_castle_multiball_start:
+    tx_castle_multiball_start:
+      priority: 70
+      expire: 2.5s
+  got_def_castle_multiball_award:
+    tx_castle_multiball_award:
+      priority: 70
+      expire: 2.5s
+  got_def_castle_multiball_loop_award:
+    tx_castle_multiball_loop_award:
+      priority: 70
+      expire: 2.5s
+  got_def_castle_multiball_super_jackpot:
+    tx_castle_multiball_super_jackpot:
+      priority: 70
+      expire: 2.5s
+  got_def_castle_multiball_bg:
+    tx_castle_multiball_bg:
+      priority: 70
+      expire: 2.5s
+  got_def_castle_multiball_total:
+    tx_castle_multiball_total:
+      priority: 70
+      expire: 2.5s
+  got_def_start_corner_combo:
+    tx_start_corner_combo:
+      priority: 70
+      expire: 2.5s
+  got_def_award_castle:
+    tx_award_castle:
+      priority: 70
+      expire: 2.5s
+  got_def_start_hand:
+    tx_start_hand:
+      priority: 70
+      expire: 2.5s
+  got_def_award_hand:
+    tx_award_hand:
+      priority: 70
+      expire: 2.5s
+  got_def_hand_bg:
+    tx_hand_bg:
+      priority: 70
+      expire: 2.5s
+  got_def_hand_total:
+    tx_hand_total:
+      priority: 70
+      expire: 2.5s
+  got_def_hand_bump_multiplier:
+    tx_hand_bump_multiplier:
+      priority: 70
+      expire: 2.5s
+  got_def_hand_ready_background:
+    tx_hand_ready_background:
+      priority: 70
+      expire: 2.5s
+  got_def_hand_add_time:
+    tx_hand_add_time:
+      priority: 70
+      expire: 2.5s
+  got_def_madness_multiball_background:
+    tx_madness_multiball_background:
+      priority: 70
+      expire: 2.5s
+  got_def_madness_multiball_start:
+    tx_madness_multiball_start:
+      priority: 70
+      expire: 2.5s
+  got_def_madness_multiball_total:
+    tx_madness_multiball_total:
+      priority: 70
+      expire: 2.5s
+  got_def_madness_multiball_sw_award:
+    tx_madness_multiball_sw_award:
+      priority: 70
+      expire: 2.5s
+  got_def_madness_multiball_pointy:
+    tx_madness_multiball_pointy:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron:
+    tx_award_iron:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award:
+    tx_iron_tour_award:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_ready_bg:
+    tx_iron_ready_bg:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_total:
+    tx_iron_total:
+      priority: 70
+      expire: 2.5s
+  got_def_wall_multiball_ready_background:
+    tx_wall_multiball_ready_background:
+      priority: 70
+      expire: 2.5s
+  got_def_wall_bg:
+    tx_wall_bg:
+      priority: 70
+      expire: 2.5s
+  got_def_wall_total:
+    tx_wall_total:
+      priority: 70
+      expire: 2.5s
+  got_def_award_sword:
+    tx_award_sword:
+      priority: 70
+      expire: 2.5s
+  got_def_mystery:
+    tx_mystery:
+      priority: 70
+      expire: 2.5s
+  got_def_keep_gold:
+    tx_keep_gold:
+      priority: 70
+      expire: 2.5s
+  got_def_award_golden_hand:
+    tx_award_golden_hand:
+      priority: 70
+      expire: 2.5s
+  got_def_award_bonus_held:
+    tx_award_bonus_held:
+      priority: 70
+      expire: 2.5s
+  got_def_big_points_pops:
+    tx_big_points_pops:
+      priority: 70
+      expire: 2.5s
+  got_def_award_bonus_multipliers:
+    tx_award_bonus_multipliers:
+      priority: 70
+      expire: 2.5s
+  got_def_add_a_player:
+    tx_add_a_player:
+      priority: 70
+      expire: 2.5s
+  got_def_cash_in_multipliers:
+    tx_cash_in_multipliers:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_bank_add_a_ball:
+    tx_iron_bank_add_a_ball:
+      priority: 70
+      expire: 2.5s
+  got_def_targaryen_button_ability:
+    tx_targaryen_button_ability:
+      priority: 70
+      expire: 2.5s
+  got_def_stark_ability_dire_wolf:
+    tx_stark_ability_dire_wolf:
+      priority: 70
+      expire: 2.5s
+  got_def_lannister_button_ability:
+    tx_lannister_button_ability:
+      priority: 70
+      expire: 2.5s
+  got_def_baratheon_button_ability:
+    tx_baratheon_button_ability:
+      priority: 70
+      expire: 2.5s
+  got_def_bought_button_ability:
+    tx_bought_button_ability:
+      priority: 70
+      expire: 2.5s
+  got_def_tickle_house_targaryen_1:
+    tx_tickle_house_targaryen_1:
+      priority: 70
+      expire: 2.5s
+  got_def_tickle_house_targaryen_2:
+    tx_tickle_house_targaryen_2:
+      priority: 70
+      expire: 2.5s
+  got_def_tickle_house_targaryen_3:
+    tx_tickle_house_targaryen_3:
+      priority: 70
+      expire: 2.5s
+  got_def_swords_is_lit:
+    tx_swords_is_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_mode_start:
+    tx_mode_start:
+      priority: 70
+      expire: 2.5s
+  got_def_mode_total:
+    tx_mode_total:
+      priority: 70
+      expire: 2.5s
+  got_def_lord_of_light_lit:
+    tx_lord_of_light_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_lord_of_light:
+    tx_lord_of_light:
+      priority: 70
+      expire: 2.5s
+  got_def_gold_collected:
+    tx_gold_collected:
+      priority: 70
+      expire: 2.5s
+  got_def_wildfire_lit:
+    tx_wildfire_lit:
+      priority: 70
+      expire: 2.5s
+  got_def_wildfire_award:
+    tx_wildfire_award:
+      priority: 70
+      expire: 2.5s
+  got_def_battering_ram_award:
+    tx_battering_ram_award:
+      priority: 70
+      expire: 2.5s
+  got_def_add_a_ball:
+    tx_add_a_ball:
+      priority: 70
+      expire: 2.5s
+  got_def_add_time:
+    tx_add_time:
+      priority: 70
+      expire: 2.5s
+  got_def_winter_add_time:
+    tx_winter_add_time:
+      priority: 70
+      expire: 2.5s
+  got_def_match_background:
+    tx_match_background:
+      priority: 70
+      expire: 2.5s
 shows:
   lef_advance_wall_multiball:
   - time: 0
