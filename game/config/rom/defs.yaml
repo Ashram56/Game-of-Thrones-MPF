@@ -922,10 +922,6 @@ slide_player:
     tx_spinner:
       priority: 70
       expire: 2.5s
-  got_def_build_stark:
-    tx_build_stark:
-      priority: 70
-      expire: 2.5s
   got_def_stark_lit:
     tx_stark_lit:
       priority: 70

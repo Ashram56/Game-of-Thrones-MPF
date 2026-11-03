@@ -294,6 +294,8 @@ def text_slides(data):
         if r["kind"] != "effect" or r["has_video"] != "no" or r["n_text_lines"] in ("", "0"):
             continue
         name = r["name"]
+        if name in ("def_build_stark", "def_award_iron", "def_iron_tour_award"):
+            continue                                         # shown per character / castle / tour index below (data/dmd_table_layouts.csv)
         if name in romtext:                                  # ROM bitmap fonts and positions: PNG pages drawn by gen_media.py
             pages = romtext[name]
             slide = "tx_" + name[4:]
