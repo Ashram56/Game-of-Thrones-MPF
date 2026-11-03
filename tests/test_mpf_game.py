@@ -1268,6 +1268,16 @@ class TestGotGame(MpfGameTestCase):
         self.assertGreaterEqual(p.score - before, 30000000)
         self.assertNotIn(0, p.got_progression.complete)
 
+    def test_hand_of_the_king_house_bits_add_super_bonus(self):
+        self._start_game()
+        from got.rules_core import Progression, load_rules
+        prog = Progression(load_rules())
+        prog.complete.update({3, 5})                          # Lannister (+100M) and Tyrell (+15M)
+        self.machine.game.player.got_progression = prog
+        self.post_event("start_mode_hand_of_the_king")
+        self.advance_time_and_run(0.3)
+        self.assertEqual(115000000, self.machine.modes["hand_of_the_king"]._super_bonus)
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))

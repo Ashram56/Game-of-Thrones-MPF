@@ -19,6 +19,13 @@ class SetMultiball(AwardMode):
         if self._cfg["key"] == "hand_of_the_king":      # GetTotalLevelsNeeded: 2 with the Greyjoy bit, else 3 (docs/13)
             prog = self.player.got_progression
             self._sets_needed = 2 if prog and 4 in prog.complete else 3
+            done = set(prog.complete) if prog else set()
+            self._house_bits = done                      # docs/18 1.6 (H): completed houses change the Hand of the King
+            if 0 in done:                                # Targaryen: +500,000 on the shot value
+                self._award.value += 500000
+            self._super_bonus = (100000000 if 3 in done else 0) + (15000000 if 5 in done else 0)   # Lannister +100M, Tyrell +15M
+        else:
+            self._super_bonus = 0
 
     def _group_shots(self):
         groups = self._ph["groups"]
@@ -53,7 +60,7 @@ class SetMultiball(AwardMode):
             self.machine.events.post("got_%s_super_lit" % self._cfg["key"])
 
     def _collect_super(self):
-        points = int(self._set_points * self._ph["super_mult"]) * (self.player.got_multiplier or 1)
+        points = (int(self._set_points * self._ph["super_mult"]) + self._super_bonus) * (self.player.got_multiplier or 1)
         self.player.score += points
         self.machine.events.post("got_%s_super" % self._cfg["key"], points=points)
         self._sets += 1
