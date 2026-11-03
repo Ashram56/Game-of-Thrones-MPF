@@ -7,6 +7,11 @@ from got.combos import jackpot_value
 from got.phases import PHASES, RAM
 
 
+# ciron::GetCastleFromShotID (docs data/ciron_castle_shots.csv, H): the castle whose shot was made -> effect def_award_iron idx
+CASTLE_OF = {"s_right_ramp_exit": 0, "s_right_2_bank_top": 1, "s_right_2_bank_bottom": 1, "s_left_loop": 2, "s_right_loop": 4,
+             "s_3_bank_drop_tgt_top": 5, "s_3_bank_drop_tgt_mid": 5, "s_3_bank_drop_tgt_btm": 5, "s_kickback": 6, "s_left_ramp_exit": 7}
+
+
 class SetMultiball(AwardMode):
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
@@ -51,12 +56,16 @@ class SetMultiball(AwardMode):
             return False
         if sw in self._group_shots() and sw not in self._done and not self._super_lit():
             self._done.add(sw)
+            self._last_sw = sw
             return True
         return False
 
     def _pay(self):
         super()._pay()
         self._set_points += self._last_points
+        castle = CASTLE_OF.get(getattr(self, "_last_sw", None)) if self._cfg["key"] == "iron_throne" else None
+        if castle is not None:
+            self.machine.events.post("got_def_award_iron_%d" % castle)      # the ROM shows the castle's award with its table layout
         if self._done >= set(self._group_shots()):
             window = self._ph["window"]
             self._super_until = 0 if not window else self.machine.clock.get_time() + window

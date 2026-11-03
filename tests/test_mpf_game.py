@@ -52,6 +52,14 @@ class TestGotGame(MpfGameTestCase):
         self.assertFalse(mode.elevator_window)
         self.assertFalse(mode.fast_loop_window)
 
+    def test_castle_of_shot_map(self):
+        """ciron::GetCastleFromShotID: switch -> castle idx (data/ciron_castle_shots.csv)."""
+        from got.multiballs import CASTLE_OF
+        self.assertEqual(0, CASTLE_OF["s_right_ramp_exit"])
+        self.assertEqual(2, CASTLE_OF["s_left_loop"])
+        self.assertEqual(7, CASTLE_OF["s_left_ramp_exit"])
+        self.assertEqual(5, CASTLE_OF["s_3_bank_drop_tgt_mid"])
+
     def test_fast_right_loop_skips_the_normal_shot(self):
         """docs/22 1c: inside the 1.45 s window state.fast_loop is true for the right loop only, and closes right after the hit."""
         from got import state
