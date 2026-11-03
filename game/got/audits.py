@@ -21,6 +21,11 @@ class RomAudits(Mode):
         self.add_mode_event_handler("got_mystery_award", self._mystery)
         self.add_mode_event_handler("got_house_confirmed", self._house_select)
         self.add_mode_event_handler("game_ended", self._players)
+        self.add_mode_event_handler("game_ended", self._game_over_histograms, priority=10)
+        self.add_mode_event_handler("game_started", self._game_started)
+        self.add_mode_event_handler("ball_started", self._ball_started)
+        self.add_mode_event_handler("ball_ended", self._ball_ended)
+        self._game_t0 = self._ball_t0 = None
         for key in am.BATTLE_START:
             self.add_mode_event_handler("mode_%s_started" % key, self._count, name=am.BATTLE_START[key])
         self.add_mode_event_handler("mode_targaryen_started", self._targaryen_start)
@@ -30,6 +35,42 @@ class RomAudits(Mode):
         auditor = getattr(self.machine, "auditor", None)
         if auditor:
             auditor.audit("events", name)
+
+    def _add(self, name, n):
+        auditor = getattr(self.machine, "auditor", None)
+        if auditor and n:
+            cur = auditor.current_audits.get("events", {}).get(name, 0)
+            auditor.audit("events", name, value=cur + n)
+
+    def _now(self):
+        return self.machine.clock.get_time()
+
+    def _game_started(self, **kwargs):
+        self._game_t0 = self._now()
+
+    def _ball_started(self, **kwargs):
+        self._ball_t0 = self._now()
+
+    def _ball_ended(self, **kwargs):
+        if self._ball_t0 is not None:
+            self._add("au_ball_time", int(self._now() - self._ball_t0))
+            self._add("au_ball_time_vp", int(self._now() - self._ball_t0))
+            self._ball_t0 = None
+
+    def _game_over_histograms(self, **kwargs):
+        game = self.machine.game
+        if game:
+            for pl in game.player_list:
+                score = int(pl.score or 0)
+                idx = next((i for i, b in enumerate(am.SCORE_BOUNDS) if score < b), len(am.SCORE_BOUNDS))
+                self._audit("au_score_histo_%d" % (idx + 1))
+        if self._game_t0 is not None:
+            secs = int(self._now() - self._game_t0)
+            idx = next((i for i, b in enumerate(am.GAME_TIME_BOUNDS) if secs <= b), len(am.GAME_TIME_BOUNDS))
+            self._audit("au_game_time_histo_%d" % (idx + 1))
+            self._add("au_game_time", secs)
+            self._add("au_game_time_vp", secs)
+            self._game_t0 = None
 
     def _count(self, name, **kwargs):
         self._audit(name)

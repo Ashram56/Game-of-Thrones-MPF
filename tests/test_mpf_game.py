@@ -1317,3 +1317,9 @@ def test_outlane_and_lord_of_light_audits():
     from got import audit_map as am
     assert am.SWITCH_AUDITS["au_total_left_drains"] == "s_left_outlane"
     assert am.EVENT_AUDITS["got_lord_of_light_save"] == "au_lord_of_light_saves"
+
+
+def test_histogram_buckets():
+    from got import audit_map as am
+    f = lambda sc: next((i for i, b in enumerate(am.SCORE_BOUNDS) if sc < b), len(am.SCORE_BOUNDS)) + 1
+    assert f(10_000_000) == 1 and f(25_000_000) == 2 and f(560_000_000) == 12 and f(2_000_000_000) == 17

@@ -58,3 +58,7 @@ POP_AUDITS = {"Big Points": "au_pops_big_points", "Light Wild Fire": "au_pops_li
               "Light Extra Ball": "au_pops_light_extra_ball", "Special": "au_pops_award_special",
               "Bump Winter Is Coming value": "au_pops_bump_winter_is_coming"}
 VIDEO_MODE_AUDITS = {"win": "au_video_mode_won", "tie": "au_video_mode_draw", "loss": "au_video_mode_lost"}
+
+# docs/19 of Game-of-Thrones: score histogram (first bucket whose bound is above the score), game-time histogram (seconds)
+SCORE_BOUNDS = [25_000_000, 50_000_000] + [x * 1_000_000 for x in range(100, 501, 50)] + [600_000_000 + i * 100_000_000 for i in range(5)]
+GAME_TIME_BOUNDS = [60, 90, 120, 150, 180, 210, 240, 300, 360, 480, 600, 900]
