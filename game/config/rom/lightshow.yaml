@@ -5998,6 +5998,128 @@ shows:
       l_u_p_left_flood: '000000'
       l_u_p_right_flood: '000000'
   - time: 3.5484
+  hand_start:
+  - time: 0.0
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 0.0806
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 0.1613
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 0.2419
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 0.3226
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 0.4032
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 0.4839
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 0.5645
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 0.6452
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 0.7258
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 0.8065
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 0.8871
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 0.9677
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 1.2097
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 1.4516
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 1.6935
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 1.9355
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 2.1774
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 2.4194
+    lights:
+      l_backbox_gi: ffffff
+      l_left_playfield_gi: ffffff
+      l_lower_playfield_gi: ffffff
+      l_upper_right_playfield_gi: ffffff
+  - time: 2.6613
+    lights:
+      l_backbox_gi: '000000'
+      l_left_playfield_gi: '000000'
+      l_lower_playfield_gi: '000000'
+      l_upper_right_playfield_gi: '000000'
+  - time: 2.9032
 show_player:
   mode_attract_started:
     attract_sweep:
@@ -6085,6 +6207,10 @@ show_player:
     iron_super:
       loops: 0
       key: iron_super
+  mode_hand_of_the_king_started:
+    hand_start:
+      loops: 0
+      key: hand_start
 light_player:
   init_done:
     gi: ffffff

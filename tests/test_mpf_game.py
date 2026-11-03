@@ -1043,6 +1043,14 @@ class TestGotGame(MpfGameTestCase):
             self._hit("s_battering_ram")                           # no Stark bit: the ram goes straight to the next set
         self.assertEqual(4, mode._state)
 
+    def test_hand_background_lamps_follow_the_active_mask(self):
+        """chand_lamps.csv effect 111: the lamps of the active shot groups (and the ram in states 2/4) blink; the Hand lamp always."""
+        mode = self._start_hand({4, 5})                            # Greyjoy (left loop) + Tyrell (right 2-bank)
+        self.assertEqual({"hand_of_the_king", "right_2_bank_top", "right_2_bank_bot"}, mode._bg_lights())
+        self._hit("s_left_loop")
+        self._hit("s_right_2_bank_top")
+        self.assertEqual({"hand_of_the_king", "battering_ram_arrow", "battering_ram_1_top"}, mode._bg_lights())
+
     def test_hand_hurry_up_expires_back_to_set_one(self):
         mode = self._start_hand({4})
         for _ in range(2):

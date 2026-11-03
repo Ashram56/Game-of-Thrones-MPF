@@ -21,9 +21,17 @@ BONUS_ROUND_S, HURRY_UP_S = 20, 16
 TIMER_SECOND = 66 / 62.0                                    # a timer second is 66 ticks at 62 Hz (docs/24, M)
 
 
+# lef_hand_background (effect 111, data/chand_lamps.csv): the active groups' lamps and the Hand lamp blink 3 ticks on / 3 off
+BG_LIGHTS = {"ram": ("battering_ram_arrow", "battering_ram_1_top"), "bank3": ("left_3_bank_top", "left_3_bank_mid", "left_3_bank_bot"),
+             "bank2": ("right_2_bank_top", "right_2_bank_bot")}
+BG_PERIOD = 6 / 62.0
+
+
 class HandMode(AwardMode):
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
+        self._bg_on = False
+        self._bg_timer = self.machine.clock.schedule_interval(self._bg_blink, BG_PERIOD / 2)
         prog = self.player.got_progression
         self._houses = set(prog.complete) if prog else set()
         self.machine.events.post("got_hand_started_houses", houses=sorted(self._houses))      # audits 155-161
@@ -33,6 +41,32 @@ class HandMode(AwardMode):
         self._levels_left = self._levels_total
         self._hurry = 0                                       # accumulated super jackpots (chand+0x60)
         self._start_set()
+
+    def _bg_lights(self):
+        names = {"hand_of_the_king"}
+        for g, lights in BG_LIGHTS.items():
+            if g in self._mask:
+                names.update(lights)
+        return names
+
+    def _bg_blink(self, **kwargs):
+        self._bg_on = not self._bg_on
+        wanted = self._bg_lights() if self._bg_on else set()
+        for name in {"hand_of_the_king"} | {n for ls in BG_LIGHTS.values() for n in ls}:
+            light = self.machine.lights["l_" + name] if "l_" + name in self.machine.lights else None
+            if light is None:
+                continue
+            if name in wanted:
+                light.color("ffffff", key="hand_bg", priority=900)
+            else:
+                light.remove_from_stack_by_key("hand_bg")
+
+    def mode_stop(self, **kwargs):
+        self.machine.clock.unschedule(self._bg_timer)
+        for name in {"hand_of_the_king"} | {n for ls in BG_LIGHTS.values() for n in ls}:
+            if "l_" + name in self.machine.lights:
+                self.machine.lights["l_" + name].remove_from_stack_by_key("hand_bg")
+        super().mode_stop(**kwargs)
 
     # --- states
     def _single_value(self):

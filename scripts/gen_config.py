@@ -578,10 +578,29 @@ def lightshow(rules, data=None):
     for sw, fx in FLASH_FX.items():
         out["show_player"][sw + "_active"] = {"pulse": {"show_tokens": {"lights": "l_" + fx}, "key": "fx_" + fx, "loops": 0}}
     iron_lamps(out, data)
+    hand_lamps(out, data)
     return out
 
 
 TICK = 1 / 62.0                                       # the ROM's lamp effects run at 62 Hz
+
+
+def hand_lamps(out, data):
+    """Hand of the King lamp effect 110 (start): the lower/left/upper-right/backbox GI flash 6 x (5 ticks on / 5 off), then 4 pulses of 15/15
+    (data/chand_lamps.csv, M timing); effects 111 (background blink) and the ready/post-hand chases are driven by got.hand / got.lightshow."""
+    if not data or not os.path.exists(os.path.join(data, "chand_lamps.csv")):
+        return
+    gi = sorted({"l_" + r["lamp_name"][3:] for r in rows(data, "chand_lamps.csv") if r["effect"].startswith("110")})
+    if not gi:
+        return
+    steps, t = [], 0.0
+    for on, off in [(5, 5)] * 6 + [(15, 15)] * 4:
+        steps.append({"time": round(t, 4), "lights": {x: "ffffff" for x in gi}})
+        steps.append({"time": round(t + on * TICK, 4), "lights": {x: "000000" for x in gi}})
+        t += (on + off) * TICK
+    steps.append({"time": round(t, 4)})
+    out["shows"]["hand_start"] = steps
+    out["show_player"]["mode_hand_of_the_king_started"] = {"hand_start": {"loops": 0, "key": "hand_start"}}
 
 
 def iron_lamps(out, data):
