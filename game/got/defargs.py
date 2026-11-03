@@ -15,7 +15,7 @@ class DefArgs(Mode):
         for ev in self.machine.config.get("slide_player", {}):
             if ev.startswith("got_def_"):
                 self._events.add(ev)
-                self.add_mode_event_handler(ev, self._set, priority=1000)
+                self.add_mode_event_handler(ev, self._set, priority=1000, ev=ev)
         self.add_mode_event_handler("player_score", self._score)
         self.add_mode_event_handler("got_tickle_progress", self._tickle)
         self.add_mode_event_handler("got_mode_total", self._mode_total)
@@ -39,7 +39,24 @@ class DefArgs(Mode):
     def _tickle(self, left=0, **kwargs):
         self._tickle_left = int(left)
 
-    def _set(self, **kwargs):
+    def _total_of(self, ev):
+        """The mode total the ROM's total screen shows: the score gained since the mode started. The screen is requested by mode_<key>_stopped,
+        which runs before the mode's own got_mode_total reaches us, so it is computed here from the mode."""
+        from got.award_mode import AwardMode
+        name = ev[len("got_def_"):]
+        for key, d in AwardMode.TOTAL_DEF.items():
+            if d == name:
+                m = self.machine.modes.get(key)
+                game = self.machine.game
+                if m is not None and getattr(m, "_score0", None) is not None and game and game.player:
+                    return max(0, int(game.player.score) - m._score0)
+        return None
+
+    def _set(self, ev=None, **kwargs):
+        if ev and ev.endswith("_total"):
+            total = self._total_of(ev)
+            if total:
+                self._award = total
         game = self.machine.game
         score = game.player.score if game and game.player else 0
         self.machine.variables.set_machine_var("got_arg_score", _fmt(score))

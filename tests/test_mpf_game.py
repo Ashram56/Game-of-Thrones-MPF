@@ -655,6 +655,20 @@ class TestGotGame(MpfGameTestCase):
         self.assertFalse(mode.active)
         self.assertGreaterEqual(self.machine.game.player.score - before, v + v + 175000 - 5000)
 
+    def test_mode_total_screen_shows_the_mode_total(self):
+        """The total screen is requested before the mode's own total event: {award} must be the score gained in the mode, not the last switch points."""
+        self._start_game()
+        seen = []
+        self.machine.events.add_handler("got_def_greyjoy_total", lambda **kwargs: seen.append(self.machine.variables.get_machine_var("got_arg_award")))
+        before = self.machine.game.player.score
+        self.post_event("start_mode_greyjoy")
+        self.advance_time_and_run(0.5)
+        for sw in ("s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback"):
+            self._hit(sw)
+        self.advance_time_and_run(1)
+        self.assertEqual(1, len(seen))
+        self.assertGreater(int(seen[0].replace(",", "")), 5000000)
+
     def test_blackwater_background_variables(self):
         self._start_game()
         self.post_event("start_mode_blackwater")
