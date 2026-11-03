@@ -41,9 +41,9 @@ event_player:
   - got_se_fx_house_award_score_flash
   got_def_award_sword:
   - got_se_fx_award_sword_medium
-  - got_se_vo_hearteater
-  - got_se_vo_widows_wail
   - got_se_vo_light_bringer
+  - got_se_vo_widows_wail
+  - got_se_vo_hearteater
   - got_se_vo_needle
   - got_se_vo_oathkeeper
   - got_se_vo_long_claw
@@ -121,11 +121,11 @@ event_player:
   - got_se_fx_lanister_build
   got_def_build_stark:
   - got_se_tune_hand_ready
-  - got_se_vo_mode_build_stark_joffery
   - got_se_vo_mode_build_stark_cersei
-  - got_se_vo_mode_build_stark_walder_frey
+  - got_se_vo_mode_build_stark_joffery
   - got_se_vo_mode_build_stark_meryn_trant
   - got_se_vo_mode_build_stark_tywin_lannister
+  - got_se_vo_mode_build_stark_walder_frey
   - got_se_vo_mode_build_stark_the_red_woman
   - got_se_vo_mode_build_stark_beric_dondarrion
   - got_se_vo_mode_build_stark_thoros_of_myr
@@ -646,8 +646,8 @@ slide_player:
     vid006:
       expire: 4.2s
   got_def_tickle_house:
-    vid020:
-      expire: 1.5s
+    vid025:
+      expire: 2.5s
   got_def_tyrell_award_1:
     vid074:
       expire: 2.5s
