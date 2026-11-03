@@ -432,6 +432,18 @@ event_player:
   - got_def_tilt_background
   slam_tilt:
   - got_def_slam_tilt
+  got_iron_bank:
+  - got_def_cash_in_multipliers
+  got_light_lord_of_light:
+  - got_def_baratheon_button_ability
+  got_pfx:
+  - got_def_lannister_button_ability
+  got_direwolf:
+  - got_def_stark_ability_dire_wolf
+  got_targaryen_freeze:
+  - got_def_targaryen_button_ability
+  got_martell_add_ball:
+  - got_def_iron_bank_add_a_ball
   got_pop_award{award=="Big Points"}:
   - got_def_big_points_pops
   got_add_mode_time{key=="targaryen"}:

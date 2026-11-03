@@ -265,6 +265,7 @@ class GotBase(Mode):
         if ab == 6 and self._multiball_running():
             self.machine.playfield.add_ball(1)
             self.machine.events.post("got_add_a_ball")
+            self.machine.events.post("got_martell_add_ball")
             return True
         return False
 
@@ -284,11 +285,13 @@ class GotBase(Mode):
                 if m.active and cfg.get("kind") == "house" and cfg["id"] != 7:
                     p.got_action_used_ball = self.machine.game.player.ball
                     p.score += powers.DIREWOLF_AWARD
+                    self.machine.events.post("got_direwolf")
                     self.machine.events.post("got_house_complete", house_id=cfg["id"], key=cfg["key"])
                     m.stop()
                     return
         elif house == "targaryen":
             p.got_action_used_ball = self.machine.game.player.ball
+            self.machine.events.post("got_targaryen_freeze")
             for t in self.machine.timers.values():
                 if t.running:
                     t.pause()
@@ -297,3 +300,4 @@ class GotBase(Mode):
             p.got_action_used_ball = self.machine.game.player.ball
             self.machine.playfield.add_ball(1)
             self.machine.events.post("got_add_a_ball")
+            self.machine.events.post("got_martell_add_ball")

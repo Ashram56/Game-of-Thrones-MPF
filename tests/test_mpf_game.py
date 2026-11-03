@@ -110,6 +110,23 @@ class TestGotGame(MpfGameTestCase):
         self.assertEventCalled("got_def_build_stark_0")
         self.assertEventCalled("got_def_build_stark_1")
 
+    def test_button_abilities_post_their_rom_effects(self):
+        """handle_top_player_button: Iron Bank cash-in, Stark dire wolf and Targaryen freeze show their own ROM effects."""
+        self._start_game()
+        self.mock_event("got_def_cash_in_multipliers")
+        self.mock_event("got_def_targaryen_button_ability")
+        player = self.machine.game.player
+        player.got_house = "targaryen"
+        self.hit_and_release_switch("s_lockdown")
+        self.advance_time_and_run(0.2)
+        self.assertEventCalled("got_def_targaryen_button_ability")
+        player.got_button_ability = 5
+        player.got_ability_uses = 1
+        self.machine.modes["combos"]._armed = {0: 3, 1: 3}
+        self.hit_and_release_switch("s_lockdown")
+        self.advance_time_and_run(0.2)
+        self.assertEventCalled("got_def_cash_in_multipliers")
+
     def test_castle_of_shot_map(self):
         """ciron::GetCastleFromShotID: switch -> castle idx (data/ciron_castle_shots.csv)."""
         from got.multiballs import CASTLE_OF
