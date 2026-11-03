@@ -90,6 +90,12 @@ class WinterHasComeMode(AwardMode):
         self._collected = 0
         self._shots = 0
 
+    @property
+    def shots_left(self):
+        if self._phase == "horde":
+            return len(WHC_SHOTS) - len(self._horde)
+        return max(0, LIEUTENANT_NEEDED - self._collected)
+
     def _accepts(self, sw):
         self._shots = 0
         shot = SHOT_OF.get(sw)

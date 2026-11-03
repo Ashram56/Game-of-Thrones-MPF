@@ -44,3 +44,59 @@ slide_player:
   got_cyb_done:
     cyb:
       action: remove
+  got_screen_a:
+    attract_a:
+      priority: 80
+      tokens:
+        line1: "{line1}"
+        line2: "{line2}"
+        line3: "{line3}"
+    attract_b:
+      action: remove
+  got_screen_b:
+    attract_b:
+      priority: 80
+      tokens:
+        line1: "{line1}"
+        line2: "{line2}"
+        line3: "{line3}"
+    attract_a:
+      action: remove
+  got_screen_clear:
+    attract_a:
+      action: remove
+    attract_b:
+      action: remove
+machine_vars:
+  credits:
+    initial_value: 0
+    value_type: int
+    persist: true
+  got_highscores:
+    initial_value: ""
+    value_type: str
+    persist: true
+  got_arg_score:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_arg_award:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_arg_timer:
+    initial_value: "0"
+    value_type: str
+    persist: false
+  got_arg_player:
+    initial_value: "1"
+    value_type: str
+    persist: false
+  got_arg_ball:
+    initial_value: "1"
+    value_type: str
+    persist: false
+  got_arg_shots:
+    initial_value: "0"
+    value_type: str
+    persist: false

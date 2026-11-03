@@ -17,6 +17,10 @@ class TestGotGame(MpfGameTestCase):
     def get_enable_plugins(self):
         return True
 
+    def setUp(self):
+        super().setUp()
+        self.machine.variables.set_machine_var("credits", 20)        # the game needs credits (adjustment 66 = free play off)
+
     def get_platform(self):
         return "smart_virtual"
 
@@ -62,15 +66,32 @@ class TestGotGame(MpfGameTestCase):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)
         self.advance_time_and_run(3)
-        self.mock_event("service_mode_entered")
+        menu = self.machine.modes["servicemenu"]
         self.hit_and_release_switch("s_service_select")
-        self.advance_time_and_run(1)
-        self.assertEventCalled("service_mode_entered")
-        self.assertTrue(self.machine.modes["service"].active)
-        # the ROM's settings are in MPF's settings menu
-        self.assertIn("ad_balls_per_game", self.machine.settings.get_setting_names()) if hasattr(self.machine.settings, "get_setting_names") else None
+        self.advance_time_and_run(0.2)
+        self.assertEqual("top", menu._level)
+        self.assertEqual("SERVICE MENU", menu.lines()[0])
+        self.hit_and_release_switch("s_service_plus")                  # ADJUSTMENTS
+        self.hit_and_release_switch("s_service_select")
+        self.advance_time_and_run(0.2)
+        self.assertEqual("adj", menu._level)
+        name = menu._entries()[0]
+        old = self.machine.settings.get_setting_value(name)
+        self.hit_and_release_switch("s_service_select")                # edit
+        self.hit_and_release_switch("s_service_plus")
+        self.hit_and_release_switch("s_service_select")                # save
+        self.advance_time_and_run(0.2)
+        self.assertNotEqual(old, self.machine.settings.get_setting_value(name))
+        self.hit_and_release_switch("s_service_back")                  # to top
+        self.hit_and_release_switch("s_service_minus")                 # AUDITS
+        self.hit_and_release_switch("s_service_select")
+        self.advance_time_and_run(0.2)
+        self.assertEqual("audits", menu._level)
+        self.assertTrue(menu.lines()[0].startswith("AUDITS 1/"))
         self.hit_and_release_switch("s_service_back")
-        self.advance_time_and_run(1)
+        self.hit_and_release_switch("s_service_back")
+        self.advance_time_and_run(0.2)
+        self.assertIsNone(menu._level)
 
     def test_settings_drive_game(self):
         self.machine.settings.set_setting_value("ad_balls_per_game", 1)
@@ -797,13 +818,14 @@ class TestGotGame(MpfGameTestCase):
 
     def test_special_pays_credit_then_points_over_limit(self):
         self._start_game()
+        credits = int(self.machine.variables.get_machine_var("credits") or 0)
         player = self.machine.game.player
         score = player.score
         self.post_event("got_special")
         self.advance_time_and_run(0.1)
         self.assertEqual(1, player.got_specials)
         self.assertEqual(score, player.score)                 # adjustment 54 = 0: one credit
-        self.assertEqual(1, int(self.machine.variables.get_machine_var("credits") or 0))
+        self.assertEqual(credits + 1, int(self.machine.variables.get_machine_var("credits") or 0))
         self.post_event("got_special")                        # limit 1 reached: 25M points instead
         self.advance_time_and_run(0.1)
         self.assertGreaterEqual(player.score - score, 25000000)
@@ -958,6 +980,18 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(11)                          # the menu confirms itself (timer 22)
         self.assertLess(player.got_gold, 1500)                 # the preselected (most expensive) award was bought
 
+    def test_coin_pop_and_video_mode_audits(self):
+        self._start_game()
+        self.hit_and_release_switch("s_right_coin")
+        self.post_event_with_params("got_pop_award", award="Add A Ball")
+        self.post_event_with_params("got_video_mode_result", outcome="win", n=1, level=2)
+        self.advance_time_and_run(0.1)
+        audits = self.machine.auditor.current_audits["events"]
+        self.assertEqual(1, audits["au_total_right_coins"])
+        self.assertEqual(1, audits["au_pops_add_a_ball"])
+        self.assertEqual(1, audits["au_pops_total_awards"])
+        self.assertEqual(1, audits["au_video_mode_won"])
+
     def test_rom_audits_are_counted(self):
         self._start_game()
         self._hit("s_left_loop", 2)
@@ -1034,3 +1068,168 @@ class TestGotGame(MpfGameTestCase):
         for i in range(40):
             self._hit(("s_left_pop_bumper", "s_bottom_pop_bumper", "s_right_pop_bumper")[i % 3])
         self.assertTrue(got)
+
+    def _lit(self, name):
+        return self.machine.lights["l_" + name].get_color() is not None and sum(self.machine.lights["l_" + name].get_color().rgb) > 0
+
+    def test_lights_attract_gi_start_and_house(self):
+        for i in range(1, 7):
+            self.hit_switch_and_run("s_trough_%d" % i, 0.1)
+        self.advance_time_and_run(3)
+        self.assertTrue(self._lit("backbox_gi"))
+        self.assertTrue(self._lit("start_button"))            # attract show lights the Start button
+        seen = set()
+        for i in range(8):                                    # the sigils sweep through the houses
+            self.advance_time_and_run(0.5)
+            seen |= {h for h in ("targaryen", "stark", "baratheon", "lannister", "greyjoy", "tyrell", "martell") if self._lit(h + "_sigil")}
+        self.assertGreaterEqual(len(seen), 5)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+        self.assertFalse(self._lit("stark_sigil"))            # show stopped with attract
+        self.assertTrue(self._lit("start_button"))            # ball 1
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(0.5)
+        self.assertTrue(self._lit("stark_sigil"))             # running house
+        self.hit_and_release_switch("s_left_pop_bumper")
+        self.advance_time_and_run(0.05)
+        self.assertTrue(self._lit("fl_pop_bumpers"))          # flasher pulse
+        self.advance_time_and_run(0.5)
+        self.assertFalse(self._lit("fl_pop_bumpers"))
+
+    def _trough(self):
+        for i in range(1, 7):
+            self.hit_switch_and_run("s_trough_%d" % i, 0.1)
+        self.advance_time_and_run(3)
+
+    def test_start_needs_a_credit_and_coins_add_them(self):
+        self._trough()
+        self.machine.variables.set_machine_var("credits", 0)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(2)
+        self.assertIsNone(self.machine.game)
+        self.hit_and_release_switch("s_left_coin")
+        self.hit_and_release_switch("s_right_coin")
+        self.assertEqual(2, self.machine.variables.get_machine_var("credits"))
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+        self.assertIsNotNone(self.machine.game)
+        self.assertEqual(1, self.machine.variables.get_machine_var("credits"))
+
+    def _entry_started(self, seen):
+        return bool(seen)
+
+    def test_attract_pages_and_high_score_entry_and_match(self):
+        self._trough()
+        pages = []
+        self.machine.events.add_handler("got_attract_page", lambda **kwargs: pages.append(kwargs["line1"]))
+        self.advance_time_and_run(30)
+        self.assertIn("GAME OF THRONES", pages)
+        self.assertIn("GRAND CHAMPION", pages)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+        self.machine.game.player.score = 80000000                      # beats the grand champion (75 M)
+        seen = []
+        self.machine.events.add_handler("got_initials", lambda **kwargs: seen.append(kwargs["line2"]))
+        self.machine.events.add_handler("got_game_over", lambda **kwargs: seen.append("OVER"))
+        self.machine.game.balls_per_game = 1 if False else self.machine.game.balls_per_game
+        for _ in range(6):
+            if self._entry_started(seen):
+                break
+            self.advance_time_and_run(10)
+            if self.machine.ball_devices["bd_plunger"].balls:
+                self.release_switch_and_run("s_shooter_lane", 1)
+            self.drain_all_balls()
+        self.advance_time_and_run(1)
+        for ch in 1, 2, 3:                                             # right flipper once = B, then Start
+            self.hit_and_release_switch("s_r_flipper_button")
+            self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(10)
+        t = self.machine.modes["scoreboard"].table()
+        self.assertEqual("BBB", t[0]["name"])
+        self.assertGreaterEqual(t[0]["score"], 80000000)
+        self.assertIn("OVER", seen)
+
+    def test_sound_variants_pick_one_at_random(self):
+        import json
+        v = json.load(open(os.path.join(os.path.dirname(__file__), "..", "game", "config", "rom", "sound_variants.json")))
+        ev, names = next(iter(v.items()))
+        played = []
+        for n in names:
+            self.machine.events.add_handler(n, lambda **kwargs: played.append(1))
+        self.post_event(ev)
+        self.advance_time_and_run(0.1)
+        self.assertEqual(1, len(played))
+
+    def test_rom_display_effect_plays_sounds_and_clip(self):
+        self._start_game()
+        played = []
+        self.machine.events.add_handler("got_def_stark_start", lambda **kwargs: played.append("def"))
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(0.5)
+        self.assertIn("def", played)
+        self.assertIn("got_def_stark_start", self.machine.config["slide_player"])        # its DMD clip
+
+    def test_background_music_follows_state(self):
+        tunes = []
+        self.machine.events.add_handler("got_se_tune_main_play", lambda **kwargs: tunes.append("main"))
+        self.machine.events.add_handler("got_se_tune_stark", lambda **kwargs: tunes.append("stark"))
+        self._start_game()
+        self.advance_time_and_run(0.5)
+        self.assertEqual(["main"], tunes)
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(0.5)
+        self.assertEqual(["main", "stark"], tunes)
+        self.assertEqual(-1, self.machine.config["sound_player"]["got_se_tune_stark"][
+            next(iter(self.machine.config["sound_player"]["got_se_tune_stark"]))]["loops"])
+
+    def test_live_text_values_are_set_before_the_effect(self):
+        self._start_game()
+        self.machine.game.player.score += 2500000
+        self.advance_time_and_run(0.1)
+        self.post_event("got_def_tilt_warning")
+        self.advance_time_and_run(0.1)
+        self.assertEqual("2,500,000", self.machine.variables.get_machine_var("got_arg_award"))
+        self.assertEqual("2,500,000", self.machine.variables.get_machine_var("got_arg_score"))
+
+    def test_live_timer_value_follows_running_mode_timer(self):
+        self._start_game()
+        self.post_event("start_mode_stark")
+        self.advance_time_and_run(3)
+        self.post_event("got_def_tilt_warning")
+        self.advance_time_and_run(0.1)
+        self.assertGreater(int(self.machine.variables.get_machine_var("got_arg_timer")), 0)
+
+    def test_live_shots_left_for_greyjoy(self):
+        self._start_game()
+        self.post_event("start_mode_greyjoy")
+        self.advance_time_and_run(1)
+        self.hit_and_release_switch("s_left_loop")
+        self.advance_time_and_run(0.5)
+        self.post_event("got_def_greyjoy_BG")
+        self.advance_time_and_run(0.1)
+        self.assertEqual("4", self.machine.variables.get_machine_var("got_arg_shots"))
+
+    def test_live_shots_left_for_winter_has_come(self):
+        self._start_game()
+        self.post_event("start_mode_winter_has_come")
+        self.advance_time_and_run(1)
+        self.post_event("got_def_winter_mball_BG")
+        self.advance_time_and_run(0.1)
+        self.assertEqual("7", self.machine.variables.get_machine_var("got_arg_shots"))
+
+    def test_ready_music_when_wall_is_lit(self):
+        tunes = []
+        self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))
+        self._start_game()
+        self.machine.game.player.got_wall_lit = 1
+        self.post_event("got_wall_lit")
+        self.advance_time_and_run(0.5)
+        self.assertEqual([1], tunes)
+
+    def test_rom_lamp_effect_follows_its_display_effect(self):
+        self._start_game()
+        self.post_event("got_def_extra_ball_lit")               # def_extra_ball_lit requests lef_extra_ball_lit (extraction)
+        self.advance_time_and_run(0.1)
+        self.assertTrue(self._lit("extra_ball"))
+        self.advance_time_and_run(0.3)
+        self.assertFalse(self._lit("extra_ball"))

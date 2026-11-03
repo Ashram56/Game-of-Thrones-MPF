@@ -1,0 +1,7 @@
+#config_version=6
+# Credits, attract pages, high scores and initials, match, game over (got.scoreboard). Always on.
+mode:
+  start_events: reset_complete, game_ended
+  priority: 20
+  game_mode: false
+  code: got.scoreboard.Scoreboard

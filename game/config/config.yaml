@@ -2,13 +2,16 @@
 # Stern Game of Thrones LE/Premium 1.37.0 (Spike 1), MPF machine config. Switch/coil/light numbers are the ROM's
 # ids (S<id>, C<id>, L<id>, D<idx> for dedicated switches), from game/config/rom/ (generated, scripts/gen_config.py).
 # Platform neutral: launch with an overlay, e.g.  mpf game . -c config,hw_virtual
-# VERIFICATION: no PinMAME/traces exist for Spike 1; nothing here has been run in MPF (MPF was not installable).
+# VERIFICATION: no PinMAME/traces exist for Spike 1; rules are checked against the extraction by tests (pytest -q tests).
 
 config:
   - rom/switches.yaml
   - rom/coils.yaml
   - rom/lights.yaml
+  - rom/lightshow.yaml     # attract light show, GI and flasher pulses (generated; choreography CFG)
   - rom/settings.yaml
+  - rom/sounds_all.yaml    # every sound effect as got_se_<name> (generated)
+  - rom/defs.yaml          # the ROM's display effects (def_*): sounds + DMD clip per rule event (generated)
   - rom/sounds.yaml        # sound_player only (GMC registers game/sounds/<track>/<stem>)
   - rom/slides.yaml        # slide_player only (slides are scenes in game/slides/)
   - devices.yaml
@@ -16,9 +19,13 @@ config:
 
 modes:
   - attract
-  - service
+  - scoreboard
+  - music
+  - defargs
+  - servicemenu
   - tilt
   - extras
+  - lights
   - combos
   - videomode
   - audits
@@ -54,12 +61,7 @@ displays:
     height: 32
     default: true
 
-# Service buttons (D-switches) -> MPF's built-in service mode: select = enter / confirm, back = esc, +/- = up/down.
-event_player:
-  s_service_select_active: sw_service_enter_active
-  s_service_back_active: sw_service_esc_active
-  s_service_plus_active: sw_service_up_active
-  s_service_minus_active: sw_service_down_active
+# Service buttons (D-switches): select / back / +/- drive got.servicemenu (ROM-style menu on the DMD).
 
 # Audits (service menu > Audits). MPF's auditor counts switches, shots, player score and these events; the ROM's own
 # 207 audit counters (data/audits.csv) are not all mapped yet.

@@ -125,9 +125,7 @@ multiballs:
 
 # Sound mapping: gameplay event -> se_* effect of data/sound_effects.csv (core set only, see docs/status.md).
 sounds:
-  game_started: se_tune_main_play
-  ball_started_2: se_tune_main_play_ball_2
-  ball_started_3: se_tune_main_play_ball_3
+  # main-play tunes are played by got.music (background music by state)
   game_ended: se_tune_game_over
   tilt_warning: se_tilt_warning
   tilt: se_tilt
