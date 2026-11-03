@@ -1311,3 +1311,9 @@ class TestGotGame(MpfGameTestCase):
         self.assertTrue(self._lit("extra_ball"))
         self.advance_time_and_run(0.3)
         self.assertFalse(self._lit("extra_ball"))
+
+
+def test_outlane_and_lord_of_light_audits():
+    from got import audit_map as am
+    assert am.SWITCH_AUDITS["au_total_left_drains"] == "s_left_outlane"
+    assert am.EVENT_AUDITS["got_lord_of_light_save"] == "au_lord_of_light_saves"

@@ -8,6 +8,8 @@ SWITCH_AUDITS = {
     "au_left_3_bank_drop_target_bottom": "s_3_bank_drop_tgt_btm", "au_left_loop": "s_left_loop", "au_right_loop": "s_right_loop",
     "au_left_ramp": "s_left_ramp_exit", "au_right_ramp": "s_right_ramp_exit", "au_dragon_kickback": "s_kickback",
     "au_battering_ram": "s_battering_ram", "au_elevator_eject": "s_elevator_popper", "au_throne_eject": "s_throne",
+    # inferred: left/right drains = outlane switches
+    "au_total_left_drains": "s_left_outlane", "au_total_right_drains": "s_right_outlane",
 }
 
 EVENT_AUDITS = {
@@ -21,6 +23,7 @@ EVENT_AUDITS = {
     "got_hand_of_the_king_super": "au_hand_super_jackpot_hurry_up",
     "mode_winter_is_coming_started": "au_start_winter_is_coming", "got_winter_is_coming_award": "au_complete_winte_is_coming",
     "got_mystery_award": "au_mystery_total_awards",
+    "got_lord_of_light_save": "au_lord_of_light_saves", "got_light_lord_of_light": "au_lord_of_light_awarded",
 }
 
 MYSTERY_AUDITS = {"big_points": "au_mystery_big_points", "bigger_points": "au_mystery_bigger_points",
