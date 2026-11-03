@@ -1199,6 +1199,16 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.1)
         self.assertGreater(int(self.machine.variables.get_machine_var("got_arg_timer")), 0)
 
+    def test_live_shots_left_for_greyjoy(self):
+        self._start_game()
+        self.post_event("start_mode_greyjoy")
+        self.advance_time_and_run(1)
+        self.hit_and_release_switch("s_left_loop")
+        self.advance_time_and_run(0.5)
+        self.post_event("got_def_greyjoy_BG")
+        self.advance_time_and_run(0.1)
+        self.assertEqual("4", self.machine.variables.get_machine_var("got_arg_shots"))
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))

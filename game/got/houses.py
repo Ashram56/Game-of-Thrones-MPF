@@ -98,6 +98,10 @@ class LannisterMode(AwardMode):
         self._lit = 0
         self._made = 0
 
+    @property
+    def shots_left(self):
+        return max(0, self.SHOTS_NEEDED - self._made)
+
     def _accepts(self, sw):
         if sw.startswith("s_target_"):
             self._lit += 1
@@ -119,6 +123,10 @@ class GreyjoyMode(AwardMode):
     def mode_start(self, **kwargs):
         super().mode_start(**kwargs)
         self._done = set()
+
+    @property
+    def shots_left(self):
+        return len(GREYJOY_SHOTS) - len(self._done)
 
     def _accepts(self, sw):
         if sw in self._done or sw not in GREYJOY_SHOTS:

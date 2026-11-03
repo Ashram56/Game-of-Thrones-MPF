@@ -30,7 +30,7 @@ def _arg_kinds(data):
                 elif r["format"] == "%d":
                     m = r["meaning"].lower()
                     kind = ("award" if any(k in m for k in ("jackpot value", "hurry-up value", "points awarded")) else
-                            "player" if m == "player number" else "ball" if m == "ball number" else None)
+                            "shots" if m == "shots still needed to complete the mode" else "player" if m == "player number" else "ball" if m == "ball number" else None)
                     if kind:
                         out.setdefault((r["def_name"], r["text"]), kind)
                 continue
@@ -52,11 +52,11 @@ def rom_lines(data):
                 continue
             raw = r["text_en"]
             kind = kinds.get((name, raw))
-            if kind in ("timer", "player", "ball") or (kind == "award" and not re.search(r"%[,0-9]*l+u", raw)):
+            if kind in ("timer", "player", "ball", "shots") or (kind == "award" and not re.search(r"%[,0-9]*l+u", raw)):
                 raw = re.sub(r"%[,0-9]*d", "{%s}" % kind, raw, count=1)
             elif kind and re.search(r"%[,0-9]*l+u", raw):
                 raw = re.sub(r"%[,0-9]*l+u", "{%s}" % kind, raw, count=1)
-            text = _clean(raw.replace("{score}", "\x01").replace("{award}", "\x02").replace("{timer}", "\x03").replace("{player}", "\x04").replace("{ball}", "\x05")).replace("\x01", "{score}").replace("\x02", "{award}").replace("\x03", "{timer}").replace("\x04", "{player}").replace("\x05", "{ball}")
+            text = _clean(raw.replace("{score}", "\x01").replace("{award}", "\x02").replace("{timer}", "\x03").replace("{player}", "\x04").replace("{ball}", "\x05").replace("{shots}", "\x06")).replace("\x01", "{score}").replace("\x02", "{award}").replace("\x03", "{timer}").replace("\x04", "{player}").replace("\x05", "{ball}").replace("\x06", "{shots}")
             if not text:
                 continue
             item = (text, int(r["font"]), int(r["x"]), int(r["y"]))

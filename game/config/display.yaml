@@ -96,3 +96,7 @@ machine_vars:
     initial_value: "1"
     value_type: str
     persist: false
+  got_arg_shots:
+    initial_value: "0"
+    value_type: str
+    persist: false
