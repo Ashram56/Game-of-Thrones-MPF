@@ -2,6 +2,9 @@
 # Headless display test: mpf game . -c smoke_game  (fills the trough, starts a game, scores through the spinner)
 config:
   - config.yaml
+event_player:
+  s_l_flipper_button_active: got_def_battering_ram_award
+
 switch_player:
   start_event: reset_complete
   steps:
@@ -30,11 +33,5 @@ switch_player:
       switch: s_start_button
       action: hit
     - time: 4s
-      switch: s_tilt_pendulum
-      action: hit
-    - time: 0.2s
-      switch: s_tilt_pendulum
-      action: release
-    - time: 1.5s
-      switch: s_tilt_pendulum
+      switch: s_l_flipper_button
       action: hit

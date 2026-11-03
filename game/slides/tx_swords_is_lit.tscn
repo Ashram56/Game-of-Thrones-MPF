@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/dmd_text_pages.gd" id="2"]
 
 [node name="Text" type="Control"]
 layout_mode = 3
@@ -16,21 +17,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0, 0, 0, 1)
 
-[node name="Lines" type="VBoxContainer" parent="."]
+[node name="Pages" type="TextureRect" parent="."]
+texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-alignment = 1
-
-[node name="L0" type="Label" parent="Lines"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "SWORDS"
-horizontal_alignment = 1
-
-[node name="L1" type="Label" parent="Lines"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "ARE LIT"
-horizontal_alignment = 1
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("2")
+pages = PackedStringArray("res://images/tx/tx_swords_is_lit_p0.png")

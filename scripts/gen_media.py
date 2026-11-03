@@ -65,6 +65,13 @@ def main():
         manifest["vid%03d" % vid] = {"frames": n, "fps": rules["dmd"]["fps"]}
     with open(os.path.join(GAME, "config", "rom", "dmd_frames.json"), "w") as f:
         json.dump(manifest, f, indent=1)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import dmd_text                                             # ROM text screens, drawn with the ROM bitmap fonts
+    texts = dmd_text.rom_lines(a.data)
+    for name, pages in texts.items():
+        for i, page in enumerate(pages):
+            dmd_text.render(a.data, page, os.path.join(GAME, "images", "tx", "tx_%s_p%d.png" % (name[4:], i)))
+    print("text screens drawn: %d effects" % len(texts))
     print("sounds copied (missing %d), videos %s" % (missing, manifest))
     return 1 if missing else 0
 

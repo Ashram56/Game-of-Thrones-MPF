@@ -844,7 +844,7 @@ slide_player:
   got_def_mode_start_select_prompt:
     tx_mode_start_select_prompt:
       priority: 70
-      expire: 2.5s
+      expire: 6.3s
   got_def_skill_shot:
     tx_skill_shot:
       priority: 70
@@ -872,7 +872,7 @@ slide_player:
   got_def_greyjoy_BG:
     tx_greyjoy_BG:
       priority: 70
-      expire: 2.5s
+      expire: 3.9s
   got_def_greyjoy_total:
     tx_greyjoy_total:
       priority: 70
@@ -896,7 +896,7 @@ slide_player:
   got_def_targaryen_three_BG:
     tx_targaryen_three_BG:
       priority: 70
-      expire: 2.5s
+      expire: 3.9s
   got_def_targaryen_timer_end:
     tx_targaryen_timer_end:
       priority: 70
@@ -960,7 +960,7 @@ slide_player:
   got_def_baratheon_BG:
     tx_baratheon_BG:
       priority: 70
-      expire: 2.5s
+      expire: 5.1s
   got_def_award_winter_hurry_up:
     tx_award_winter_hurry_up:
       priority: 70
@@ -976,7 +976,7 @@ slide_player:
   got_def_winter_mball_BG:
     tx_winter_mball_BG:
       priority: 70
-      expire: 2.5s
+      expire: 3.9s
   got_def_winter_mball_total:
     tx_winter_mball_total:
       priority: 70
@@ -1072,7 +1072,7 @@ slide_player:
   got_def_hand_bg:
     tx_hand_bg:
       priority: 70
-      expire: 2.5s
+      expire: 6.3s
   got_def_hand_total:
     tx_hand_total:
       priority: 70
@@ -1132,7 +1132,7 @@ slide_player:
   got_def_wall_bg:
     tx_wall_bg:
       priority: 70
-      expire: 2.5s
+      expire: 3.9s
   got_def_wall_total:
     tx_wall_total:
       priority: 70
@@ -1244,7 +1244,7 @@ slide_player:
   got_def_battering_ram_award:
     tx_battering_ram_award:
       priority: 70
-      expire: 2.5s
+      expire: 6.3s
   got_def_add_a_ball:
     tx_add_a_ball:
       priority: 70
