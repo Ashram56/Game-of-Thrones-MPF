@@ -42,6 +42,7 @@ class WinterMode(Mode):
         timer = self.machine.timers["winter_is_coming_timer"]
         points = self._award.hurry_up(timer.ticks, self._cfg["timer_s"]) * (p.got_multiplier or 1)
         p.score += points
+        p.got_best_winter_is_coming = max(int(p.got_best_winter_is_coming or 0), points)     # Winter Is Coming champion table (best hurry-up)
         p.got_winter_super += points                    # cmball_winter::AddSuperJackpot
         p.got_winter_completions += 1
         self.machine.events.post("got_winter_is_coming_award", points=points)
