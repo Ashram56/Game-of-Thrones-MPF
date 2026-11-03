@@ -52,6 +52,17 @@ class TestGotGame(MpfGameTestCase):
         self.assertFalse(mode.elevator_window)
         self.assertFalse(mode.fast_loop_window)
 
+    def test_fast_right_loop_skips_the_normal_shot(self):
+        """docs/22 1c: inside the 1.45 s window state.fast_loop is true for the right loop only, and closes right after the hit."""
+        from got import state
+        self._start_game()
+        self.release_switch_and_run("s_shooter_lane", 0.1)
+        self.assertTrue(state.fast_loop(self.machine, "s_right_loop"))
+        self.assertFalse(state.fast_loop(self.machine, "s_left_loop"))
+        self.hit_and_release_switch("s_right_loop")
+        self.advance_time_and_run(0.1)
+        self.assertFalse(state.fast_loop(self.machine, "s_right_loop"))
+
     def test_ball_search_starts_after_ten_idle_seconds(self):
         """docs/20: 10 s without a switch while a ball is in play starts the search; flippers are never part of it."""
         self._start_game()

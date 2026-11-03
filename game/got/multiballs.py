@@ -1,6 +1,7 @@
 """Multiball phases: shot sets that light a Super Jackpot at the battering ram. Rules: community rulesheet (pinballrulesheets.com
 rev 1.37) over the ROM award values; the set/ram structure is M, the Super multiplier is a placeholder (CFG: the ROM's
 AwardSuperJackpot formula is not recovered)."""
+from got import state
 from got.award_mode import AwardMode
 from got.combos import jackpot_value
 from got.phases import PHASES, RAM
@@ -174,6 +175,8 @@ class BlackwaterMode(AwardMode):
         self._arm()
 
     def _upper_shot(self, sw, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         """DoUpperPlayfieldWork (docs/14, H masks/order): any standup -> left or right standup -> centre standup -> an upper
         rollover. Steps 0-2 pay a jackpot, step 3 the Super Jackpot (upper multiplier 1: M)."""
         p = self.player
@@ -195,6 +198,8 @@ class BlackwaterMode(AwardMode):
         self.machine.events.post("got_blackwater_round", round=self._round)
 
     def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         p = self.player
         if sw == RAM and self._super:
             level = self._super

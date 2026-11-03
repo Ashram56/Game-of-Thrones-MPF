@@ -5,7 +5,7 @@ import random
 
 from mpf.core.mode import Mode
 
-from got import casual
+from got import casual, state
 from got.powers import HOUSES
 
 # shot switch -> combo index (ccombo_manager ctor: 0 left loop, 1 kickback, 2 left ramp exit, 3 right ramp exit, 4 right loop)
@@ -133,6 +133,8 @@ class Combos(Mode):
         return min(COMBO_CAP_HAND if hand else COMBO_CAP, 4 - DIFFICULTY + int(p.got_swords or 0))
 
     def _shot(self, sw, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         idx = SHOTS[sw]
         p = self.player
         mult = self._armed.get(idx, 1)          # multiplier before the bump (ccombo_manager::ShotMade)

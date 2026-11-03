@@ -1,5 +1,6 @@
 """House modes with their own shot logic. Rules: community rulesheet (pinballrulesheets.com, code rev 1.37) over the ROM
 data of Game-of-Thrones docs/03, 06-08; confidence M unless the ROM data says otherwise (award values and timers are ROM)."""
+from got import state
 from got.award_mode import AwardMode
 
 RAMPS = ("s_left_ramp_exit", "s_right_ramp_exit")
@@ -29,6 +30,8 @@ class StarkMode(AwardMode):
         return False
 
     def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         self._shots = self._cfg["shots_to_complete"] - 1       # one collected shot completes the house
         super()._shot(sw=sw, **kwargs)
 
@@ -58,6 +61,8 @@ class MartellMode(AwardMode):
         return sw in RAMPS and self._orbits >= self.ORBITS_NEEDED
 
     def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         self._shots = self._cfg["shots_to_complete"] - 1
         super()._shot(sw=sw, **kwargs)
 
@@ -83,6 +88,8 @@ class BaratheonMode(AwardMode):
         return self._bank >= set(BANK)
 
     def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         self._shots = self._cfg["shots_to_complete"] - 1
         super()._shot(sw=sw, **kwargs)
 
@@ -138,6 +145,8 @@ class GreyjoyMode(AwardMode):
         return True
 
     def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         self._shots = 0
         super()._shot(sw=sw, **kwargs)
         if len(self._done) >= len(GREYJOY_SHOTS) and self.active:
@@ -234,6 +243,8 @@ class TargaryenMode(AwardMode):
         return sw in self._lit
 
     def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         if not self._accepts(sw):
             return
         timer = self.machine.timers["targaryen_timer"]

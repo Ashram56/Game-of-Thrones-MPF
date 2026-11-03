@@ -26,3 +26,8 @@ def hand_startable(machine, player):
     prog = _prog(player)
     return bool(prog and "hand_of_the_king" in prog.ready and "hand_of_the_king" not in prog.started
                 and not multiball_running(machine) and not house_running(machine))
+
+
+def fast_loop(machine, sw):
+    """docs/22 1c (H): a right loop inside the 1.45 s launch window is routed to the elevator; the normal right-loop shot is skipped."""
+    return sw == "s_right_loop" and bool(getattr(machine, "got_fast_loop", False))

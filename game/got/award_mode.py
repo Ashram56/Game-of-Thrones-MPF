@@ -1,6 +1,7 @@
 """MPF glue: one generic mode class for the 8 houses and 7 multiballs, driven by `mode_settings` that
 scripts/gen_config.py writes from rules.yaml.
 API names follow MPF 0.80 (Mode.add_mode_event_handler, Mode.player, <switch>_active events)."""
+from got import state
 from mpf.core.mode import Mode
 
 from got.rules_core import Award
@@ -43,6 +44,8 @@ class AwardMode(Mode):
         super().mode_stop(**kwargs)
 
     def _shot(self, sw=None, **kwargs):
+        if state.fast_loop(self.machine, sw):
+            return
         if not self._accepts(sw):
             return
         self._pay()

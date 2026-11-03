@@ -49,12 +49,12 @@ class GotBase(Mode):
         self.delay.add_if_doesnt_exist(1000, self._madness_check, "madness_check")
 
     def _launch_windows(self, **kwargs):
-        self.fast_loop_window = self.elevator_window = True
+        self.fast_loop_window = self.elevator_window = self.machine.got_fast_loop = True
         self.delay.add(1450, self._end_fast_window, "fast_loop_window")
         self.delay.add(3200, self._end_elevator_window, "elevator_window")
 
     def _end_fast_window(self, **kwargs):
-        self.fast_loop_window = False
+        self.fast_loop_window = self.machine.got_fast_loop = False
 
     def _end_elevator_window(self, **kwargs):
         self.elevator_window = False
@@ -63,8 +63,8 @@ class GotBase(Mode):
         """swdf_right_loop (0x4c49c): inside proc 73 the loop is routed to the elevator (event for the lights/sound); the window is then
         killed. The normal right-loop shot award is not suppressed in every mode (modes read the switch themselves)."""
         if self.fast_loop_window:
-            self.fast_loop_window = False
             self.delay.remove("fast_loop_window")
+            self.delay.add(0, self._end_fast_window, "fast_loop_window")     # after every shot handler of this switch event has run
             self.machine.events.post("got_right_loop_fast")
 
     def _progression(self):
