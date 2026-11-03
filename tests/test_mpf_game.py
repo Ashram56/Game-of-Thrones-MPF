@@ -1139,3 +1139,11 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.5)
         self.assertIn("def", played)
         self.assertIn("got_def_stark_start", self.machine.config["slide_player"])        # its DMD clip
+
+    def test_rom_lamp_effect_follows_its_display_effect(self):
+        self._start_game()
+        self.post_event("got_def_extra_ball_lit")               # def_extra_ball_lit requests lef_extra_ball_lit (extraction)
+        self.advance_time_and_run(0.1)
+        self.assertTrue(self._lit("extra_ball"))
+        self.advance_time_and_run(0.3)
+        self.assertFalse(self._lit("extra_ball"))

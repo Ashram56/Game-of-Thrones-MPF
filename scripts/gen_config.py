@@ -432,6 +432,22 @@ def triggers(data, rules):
     for t, v in vid.items():
         if t.startswith("def_") and v in vids:
             slides_["got_def_" + t[4:]] = {"vid%03d" % v: {"expire": "%.1fs" % (max(1, vids[v]) / fps + 0.5)}}
+    # lamp effects: a def_* requests lef_* effects (data/triggers_lamp_coil.csv); a lef's lights come from the same file (H light ids)
+    lamp = rows(data, "triggers_lamp_coil.csv") if os.path.exists(os.path.join(data, "triggers_lamp_coil.csv")) else []
+    lef_lights = {}
+    for r in lamp:
+        if r["kind"] == "light" and r["id_or_name"].startswith("lt_") and r["rule_function"].startswith("lef_"):
+            lef_lights.setdefault(r["rule_function"], [])
+            if "l_" + r["id_or_name"][3:] not in lef_lights[r["rule_function"]]:
+                lef_lights[r["rule_function"]].append("l_" + r["id_or_name"][3:])
+    for r in lamp:
+        if r["kind"] == "lef" and r["rule_function"].startswith("def_") and r["id_or_name"] in lef_lights \
+                and not r["id_or_name"].endswith("_background"):
+            ev = "got_" + r["id_or_name"]
+            lst = player.setdefault("got_def_" + r["rule_function"][4:], [])
+            if ev not in lst:
+                lst.append(ev)
+    triggers.lef_shows = {"lef_" + k[4:]: v for k, v in lef_lights.items() if not k.endswith("_background")}
     for h, d in HOUSE_DEF.items():
         player["mode_%s_started" % h] = ["got_def_" + d[4:]]
     for ev, d in EVENT_DEF.items():
@@ -445,7 +461,13 @@ def triggers(data, rules):
     player = {k: v for k, v in player.items() if v or k.startswith("got_def_")}
     for k in [k for k, v in player.items() if not v]:
         del player[k]
-    return {"event_player": player, "slide_player": slides_}
+    shows, show_player = {}, {}
+    for name, lights_ in sorted(triggers.lef_shows.items()):
+        shows[name] = [{"time": 0, "lights": {l: "ffffff" for l in lights_}}, {"time": 0.4, "lights": {l: "000000" for l in lights_}},
+                       {"time": 0.6, "lights": {l: "ffffff" for l in lights_}}, {"time": 1.0, "lights": {l: "000000" for l in lights_}},
+                       {"time": 1.2}]
+        show_player["got_" + name] = {name: {"loops": 0, "key": name}}
+    return {"event_player": player, "slide_player": slides_, "shows": shows, "show_player": show_player}
 
 
 def build(data):

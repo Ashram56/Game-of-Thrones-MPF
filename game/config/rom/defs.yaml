@@ -76,6 +76,7 @@ event_player:
   got_def_bonus:
   - got_se_fx_bonus_multiplier_background
   - got_se_fx_bonus_total_page
+  - got_lef_bonus
   got_def_bought_button_ability:
   - got_se_fx_bigpoints
   got_def_build_baratheon_dragon:
@@ -115,6 +116,7 @@ event_player:
   got_def_extra_ball_lit:
   - got_se_fx_light_extra_ball
   - got_se_vo_extra_ball_is_lit
+  - got_lef_extra_ball_lit
   got_def_general_freeze_winter_mball:
   - got_se_fx_winter_has_come_award
   - got_se_fx_winter_boss_freezes_player
@@ -476,3 +478,369 @@ slide_player:
   got_def_winter_hurry_up_start:
     vid146:
       expire: 3.5s
+shows:
+  lef_bonus:
+  - time: 0
+    lights:
+      l_shoot_again: ffffff
+      l_battering_ram_2_mid: ffffff
+      l_right_ramp_arrow_bot: ffffff
+      l_targaryen_sigil: ffffff
+      l_stark_sigil: ffffff
+      l_baratheon_sigil: ffffff
+      l_lannister_sigil: ffffff
+      l_greyjoy_sigil: ffffff
+      l_tyrell_sigil: ffffff
+      l_martell_sigil: ffffff
+  - time: 0.4
+    lights:
+      l_shoot_again: '000000'
+      l_battering_ram_2_mid: '000000'
+      l_right_ramp_arrow_bot: '000000'
+      l_targaryen_sigil: '000000'
+      l_stark_sigil: '000000'
+      l_baratheon_sigil: '000000'
+      l_lannister_sigil: '000000'
+      l_greyjoy_sigil: '000000'
+      l_tyrell_sigil: '000000'
+      l_martell_sigil: '000000'
+  - time: 0.6
+    lights:
+      l_shoot_again: ffffff
+      l_battering_ram_2_mid: ffffff
+      l_right_ramp_arrow_bot: ffffff
+      l_targaryen_sigil: ffffff
+      l_stark_sigil: ffffff
+      l_baratheon_sigil: ffffff
+      l_lannister_sigil: ffffff
+      l_greyjoy_sigil: ffffff
+      l_tyrell_sigil: ffffff
+      l_martell_sigil: ffffff
+  - time: 1.0
+    lights:
+      l_shoot_again: '000000'
+      l_battering_ram_2_mid: '000000'
+      l_right_ramp_arrow_bot: '000000'
+      l_targaryen_sigil: '000000'
+      l_stark_sigil: '000000'
+      l_baratheon_sigil: '000000'
+      l_lannister_sigil: '000000'
+      l_greyjoy_sigil: '000000'
+      l_tyrell_sigil: '000000'
+      l_martell_sigil: '000000'
+  - time: 1.2
+  lef_dragon_light_flicker:
+  - time: 0
+    lights:
+      l_dragon_fire: ffffff
+  - time: 0.4
+    lights:
+      l_dragon_fire: '000000'
+  - time: 0.6
+    lights:
+      l_dragon_fire: ffffff
+  - time: 1.0
+    lights:
+      l_dragon_fire: '000000'
+  - time: 1.2
+  lef_extra_ball_lit:
+  - time: 0
+    lights:
+      l_extra_ball: ffffff
+  - time: 0.4
+    lights:
+      l_extra_ball: '000000'
+  - time: 0.6
+    lights:
+      l_extra_ball: ffffff
+  - time: 1.0
+    lights:
+      l_extra_ball: '000000'
+  - time: 1.2
+  lef_game_over_flasher_show:
+  - time: 0
+    lights:
+      l_fl_sword_lock: ffffff
+      l_fl_right_ramp: ffffff
+      l_fl_pop_bumpers: ffffff
+      l_fl_left_loop: ffffff
+      l_fl_left_right_sling: ffffff
+      l_fl_throne: ffffff
+      l_fl_battering_ram: ffffff
+      l_u_p_left_flood: ffffff
+      l_u_p_right_flood: ffffff
+  - time: 0.4
+    lights:
+      l_fl_sword_lock: '000000'
+      l_fl_right_ramp: '000000'
+      l_fl_pop_bumpers: '000000'
+      l_fl_left_loop: '000000'
+      l_fl_left_right_sling: '000000'
+      l_fl_throne: '000000'
+      l_fl_battering_ram: '000000'
+      l_u_p_left_flood: '000000'
+      l_u_p_right_flood: '000000'
+  - time: 0.6
+    lights:
+      l_fl_sword_lock: ffffff
+      l_fl_right_ramp: ffffff
+      l_fl_pop_bumpers: ffffff
+      l_fl_left_loop: ffffff
+      l_fl_left_right_sling: ffffff
+      l_fl_throne: ffffff
+      l_fl_battering_ram: ffffff
+      l_u_p_left_flood: ffffff
+      l_u_p_right_flood: ffffff
+  - time: 1.0
+    lights:
+      l_fl_sword_lock: '000000'
+      l_fl_right_ramp: '000000'
+      l_fl_pop_bumpers: '000000'
+      l_fl_left_loop: '000000'
+      l_fl_left_right_sling: '000000'
+      l_fl_throne: '000000'
+      l_fl_battering_ram: '000000'
+      l_u_p_left_flood: '000000'
+      l_u_p_right_flood: '000000'
+  - time: 1.2
+  lef_hand_of_the_king_ready:
+  - time: 0
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: ffffff
+      l_left_ramp_lock: ffffff
+      l_left_ramp_sigil: ffffff
+      l_left_ramp_arrow_top: ffffff
+  - time: 0.4
+    lights:
+      l_hand_of_the_king: '000000'
+      l_left_ramp_arrow_bot: '000000'
+      l_left_ramp_lock: '000000'
+      l_left_ramp_sigil: '000000'
+      l_left_ramp_arrow_top: '000000'
+  - time: 0.6
+    lights:
+      l_hand_of_the_king: ffffff
+      l_left_ramp_arrow_bot: ffffff
+      l_left_ramp_lock: ffffff
+      l_left_ramp_sigil: ffffff
+      l_left_ramp_arrow_top: ffffff
+  - time: 1.0
+    lights:
+      l_hand_of_the_king: '000000'
+      l_left_ramp_arrow_bot: '000000'
+      l_left_ramp_lock: '000000'
+      l_left_ramp_sigil: '000000'
+      l_left_ramp_arrow_top: '000000'
+  - time: 1.2
+  lef_playfield_multiplier_newly_lit:
+  - time: 0
+    lights:
+      l_battering_ram_3_bot: ffffff
+  - time: 0.4
+    lights:
+      l_battering_ram_3_bot: '000000'
+  - time: 0.6
+    lights:
+      l_battering_ram_3_bot: ffffff
+  - time: 1.0
+    lights:
+      l_battering_ram_3_bot: '000000'
+  - time: 1.2
+  lef_pop_bumper_hit:
+  - time: 0
+    lights:
+      l_fl_pop_bumpers: ffffff
+  - time: 0.4
+    lights:
+      l_fl_pop_bumpers: '000000'
+  - time: 0.6
+    lights:
+      l_fl_pop_bumpers: ffffff
+  - time: 1.0
+    lights:
+      l_fl_pop_bumpers: '000000'
+  - time: 1.2
+  lef_start_castle_corner:
+  - time: 0
+    lights:
+      l_u_p_left_loop: ffffff
+  - time: 0.4
+    lights:
+      l_u_p_left_loop: '000000'
+  - time: 0.6
+    lights:
+      l_u_p_left_loop: ffffff
+  - time: 1.0
+    lights:
+      l_u_p_left_loop: '000000'
+  - time: 1.2
+  lef_superjackpot_newly_lit:
+  - time: 0
+    lights:
+      l_battering_ram_1_top: ffffff
+  - time: 0.4
+    lights:
+      l_battering_ram_1_top: '000000'
+  - time: 0.6
+    lights:
+      l_battering_ram_1_top: ffffff
+  - time: 1.0
+    lights:
+      l_battering_ram_1_top: '000000'
+  - time: 1.2
+  lef_topper_dragon_fire:
+  - time: 0
+    lights:
+      l_topper_dragon_fire: ffffff
+  - time: 0.4
+    lights:
+      l_topper_dragon_fire: '000000'
+  - time: 0.6
+    lights:
+      l_topper_dragon_fire: ffffff
+  - time: 1.0
+    lights:
+      l_topper_dragon_fire: '000000'
+  - time: 1.2
+  lef_topper_dragon_flashers_left_right:
+  - time: 0
+    lights:
+      l_topper_dragon_flasher_left: ffffff
+      l_topper_dragon_flasher_left_center: ffffff
+      l_topper_dragon_flasher_right_center: ffffff
+      l_topper_dragon_flasher_right: ffffff
+  - time: 0.4
+    lights:
+      l_topper_dragon_flasher_left: '000000'
+      l_topper_dragon_flasher_left_center: '000000'
+      l_topper_dragon_flasher_right_center: '000000'
+      l_topper_dragon_flasher_right: '000000'
+  - time: 0.6
+    lights:
+      l_topper_dragon_flasher_left: ffffff
+      l_topper_dragon_flasher_left_center: ffffff
+      l_topper_dragon_flasher_right_center: ffffff
+      l_topper_dragon_flasher_right: ffffff
+  - time: 1.0
+    lights:
+      l_topper_dragon_flasher_left: '000000'
+      l_topper_dragon_flasher_left_center: '000000'
+      l_topper_dragon_flasher_right_center: '000000'
+      l_topper_dragon_flasher_right: '000000'
+  - time: 1.2
+  lef_topper_dragon_flashers_right_left:
+  - time: 0
+    lights:
+      l_topper_dragon_flasher_right: ffffff
+      l_topper_dragon_flasher_right_center: ffffff
+      l_topper_dragon_flasher_left_center: ffffff
+      l_topper_dragon_flasher_left: ffffff
+  - time: 0.4
+    lights:
+      l_topper_dragon_flasher_right: '000000'
+      l_topper_dragon_flasher_right_center: '000000'
+      l_topper_dragon_flasher_left_center: '000000'
+      l_topper_dragon_flasher_left: '000000'
+  - time: 0.6
+    lights:
+      l_topper_dragon_flasher_right: ffffff
+      l_topper_dragon_flasher_right_center: ffffff
+      l_topper_dragon_flasher_left_center: ffffff
+      l_topper_dragon_flasher_left: ffffff
+  - time: 1.0
+    lights:
+      l_topper_dragon_flasher_right: '000000'
+      l_topper_dragon_flasher_right_center: '000000'
+      l_topper_dragon_flasher_left_center: '000000'
+      l_topper_dragon_flasher_left: '000000'
+  - time: 1.2
+  lef_two_bank_complete:
+  - time: 0
+    lights:
+      l_right_2_bank_top: ffffff
+      l_right_2_bank_bot: ffffff
+  - time: 0.4
+    lights:
+      l_right_2_bank_top: '000000'
+      l_right_2_bank_bot: '000000'
+  - time: 0.6
+    lights:
+      l_right_2_bank_top: ffffff
+      l_right_2_bank_bot: ffffff
+  - time: 1.0
+    lights:
+      l_right_2_bank_top: '000000'
+      l_right_2_bank_bot: '000000'
+  - time: 1.2
+  lef_wild_fire_newly_lit:
+  - time: 0
+    lights:
+      l_battering_ram_2_mid: ffffff
+  - time: 0.4
+    lights:
+      l_battering_ram_2_mid: '000000'
+  - time: 0.6
+    lights:
+      l_battering_ram_2_mid: ffffff
+  - time: 1.0
+    lights:
+      l_battering_ram_2_mid: '000000'
+  - time: 1.2
+show_player:
+  got_lef_bonus:
+    lef_bonus:
+      loops: 0
+      key: lef_bonus
+  got_lef_dragon_light_flicker:
+    lef_dragon_light_flicker:
+      loops: 0
+      key: lef_dragon_light_flicker
+  got_lef_extra_ball_lit:
+    lef_extra_ball_lit:
+      loops: 0
+      key: lef_extra_ball_lit
+  got_lef_game_over_flasher_show:
+    lef_game_over_flasher_show:
+      loops: 0
+      key: lef_game_over_flasher_show
+  got_lef_hand_of_the_king_ready:
+    lef_hand_of_the_king_ready:
+      loops: 0
+      key: lef_hand_of_the_king_ready
+  got_lef_playfield_multiplier_newly_lit:
+    lef_playfield_multiplier_newly_lit:
+      loops: 0
+      key: lef_playfield_multiplier_newly_lit
+  got_lef_pop_bumper_hit:
+    lef_pop_bumper_hit:
+      loops: 0
+      key: lef_pop_bumper_hit
+  got_lef_start_castle_corner:
+    lef_start_castle_corner:
+      loops: 0
+      key: lef_start_castle_corner
+  got_lef_superjackpot_newly_lit:
+    lef_superjackpot_newly_lit:
+      loops: 0
+      key: lef_superjackpot_newly_lit
+  got_lef_topper_dragon_fire:
+    lef_topper_dragon_fire:
+      loops: 0
+      key: lef_topper_dragon_fire
+  got_lef_topper_dragon_flashers_left_right:
+    lef_topper_dragon_flashers_left_right:
+      loops: 0
+      key: lef_topper_dragon_flashers_left_right
+  got_lef_topper_dragon_flashers_right_left:
+    lef_topper_dragon_flashers_right_left:
+      loops: 0
+      key: lef_topper_dragon_flashers_right_left
+  got_lef_two_bank_complete:
+    lef_two_bank_complete:
+      loops: 0
+      key: lef_two_bank_complete
+  got_lef_wild_fire_newly_lit:
+    lef_wild_fire_newly_lit:
+      loops: 0
+      key: lef_wild_fire_newly_lit
