@@ -410,6 +410,64 @@ SWITCH_TRIGGER = {"swdf_left_outlane": "s_left_outlane", "swdf_right_outlane": "
                   "elevator_event_handler": "s_elevator_popper", "throne_event_handler": "s_throne", "lock_event_handler": "s_lock_1"}
 
 
+# ROM caller function (data/def_callers.csv, the code that requests a def_*) -> my MPF event. "{h}" is the house key.
+MODE_KEY = {"cwall": "wall", "cblackwater": "blackwater", "chand": "hand_of_the_king", "ciron": "iron_throne", "cmball_castle": "castle",
+            "cmball_winter": "winter_has_come", "cmadness": "midnight_madness", "cstark": "stark", "cbaratheon": "baratheon",
+            "clannister": "lannister", "cgreyjoy": "greyjoy", "ctyrell": "tyrell", "cmartell": "martell", "ctargaryen": "targaryen",
+            "cwinter": "winter_is_coming"}
+CALLER_EVENT = {
+    "cblackwater::AwardJackpot": "got_blackwater_jackpot", "cblackwater::AwardSuperJackpot": "got_blackwater_super",
+    "cblackwater::DoAwardLock": "got_lock_lit", "cblackwater::LightLockChoreo_proc": "got_lock_lit",
+    "cblackwater::LightSuperChoreo_proc": "got_blackwater_super_lit", "cblackwater::BallLockedChoreo_proc": "got_lock_lit",
+    "cwall::AwardJackpot": "got_wall_award", "cwall::AwardSuperJackpot": "got_wall_super", "cwall::BumpJackpotValue": "got_bump_wall_jackpot",
+    "cmball_castle::AwardDragonTargets": "got_castle_award", "cmball_castle::AwardSuperJackpot": "got_castle_super",
+    "cmball_castle::AddABallChoreo_proc": "got_add_a_ball", "award_add_ball_choreo_proc": "got_add_a_ball",
+    "chand::GiveSingleAward": "got_hand_of_the_king_award", "chand::GiveSuperJackpotAward": "got_hand_of_the_king_super",
+    "ciron::ShotMade": "got_iron_throne_award", "cmode_got::AwardConquerCastle": "got_castle_award",
+    "cmball_winter::DoShotMadeHorde": "got_winter_has_come_horde", "cmball_winter::DoBossAward": "got_winter_has_come_lieutenant",
+    "cmball_winter::DoFinalBossAward": "got_winter_has_come_super", "cwinter::DoAward": "got_winter_is_coming_award",
+    "cswords::GiveSword": "got_award_sword", "cswords::Light": "got_light_swords", "light_Lord_of_light": "got_lord_of_light_lit",
+    "lord_of_light_lit_choreo_proc": "got_lord_of_light_lit", "lord_of_light_outlane": "got_lord_of_light_save",
+    "extra_ball_lit_choreo_proc": "got_light_extra_ball", "extra_ball_award_choreo_proc": "got_award_extra_ball",
+    "replay_award_effects_proc": "got_special_credit", "special_award_choreo_proc": "got_special", "sys_match_do_match_processing": "got_match",
+    "sys_game_do_endball_processing": "got_end_of_ball_bonus", "auto_game1_player_add_end": "player_added{num>1}",
+    "move_up_one_level": "got_castle_level_award", "wildfire_lit_choreo_proc": "got_wildfire_start",
+    "award_5_wild_fire_choreo_proc": "got_wildfire_bump", "cblackwater::BumpWildFire": "got_wildfire_bump",
+    "video_mode_start_proc": "got_video_mode_start", "video_mode_total_proc": "got_video_mode_finished",
+    "StartMystery": "got_mystery_menu", "EndMystery": "got_mystery_award", "award_gold_choreo_proc": "got_gold_collected",
+    "pop_bumper_handler": "got_pop_award", "wall_multiball_advance_choreo_proc": "got_wall_lit",
+}
+for _k, _m in MODE_KEY.items():
+    CALLER_EVENT[_k + "::StartChoreo_proc"] = "mode_%s_started" % _m
+    for _t in ("TotalChoreo_proc", "total_choreo_proc", "%s_total_choreo_proc" % _m):
+        CALLER_EVENT["%s::%s" % (_k, _t)] = "mode_%s_stopped" % _m
+for _h in ("stark", "baratheon", "lannister", "greyjoy", "tyrell", "martell", "targaryen"):
+    CALLER_EVENT["c%s::DoAward" % _h] = ("got_%s_award" % _h, 'got_house_complete{key=="%s"}' % _h)
+    CALLER_EVENT["c%s::GiveCastleShotAward" % _h] = ("got_%s_award" % _h, None)
+    CALLER_EVENT["Light_%s_GiveOne" % _h.upper()] = 'got_light_house{house=="%s"}' % _h
+
+
+def caller_events(data):
+    """event -> [def names] from data/def_callers.csv and CALLER_EVENT. A (award, complete) pair routes the *_complete defs to the
+    completion event and the other defs to the award event."""
+    path = os.path.join(data, "def_callers.csv")
+    out = {}
+    if not os.path.exists(path):
+        return out
+    for r in rows(data, "def_callers.csv"):
+        ev = CALLER_EVENT.get(r["caller_function"])
+        if not ev or r["event"].startswith("no direct"):
+            continue
+        d = r["def_name"]
+        if isinstance(ev, tuple):
+            ev = ev[1] if d.endswith("_complete") else ev[0]
+        if ev:
+            out.setdefault(ev, [])
+            if d not in out[ev]:
+                out[ev].append(d)
+    return out
+
+
 def triggers(data, rules):
     """Wire the ROM's display effects: event got_def_<name> posts the effect's sounds (got_se_*) and plays its DMD clip."""
     rows_ = rows(data, "triggers_sound_video.csv")
@@ -452,6 +510,8 @@ def triggers(data, rules):
         player["mode_%s_started" % h] = ["got_def_" + d[4:]]
     for ev, d in EVENT_DEF.items():
         player[ev] = ["got_def_" + d[4:]]
+    for ev, defs in caller_events(data).items():            # the ROM's own callers (def_callers.csv) win over the table above
+        player[ev] = ["got_def_" + d[4:] for d in defs]
     for t, sw in SWITCH_TRIGGER.items():
         if first.get(t):
             player[sw + "_active"] = [first[t][0]]

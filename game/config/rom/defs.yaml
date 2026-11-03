@@ -5,6 +5,8 @@ event_player:
   - got_se_fx_add_mode_time
   got_def_add_a_player:
   - got_se_fx_add_a_player
+  - got_se_vo_add_a_player
+  - got_se_vo_add_a_player_hound
   got_def_add_time:
   - got_se_fx_add_mode_time
   got_def_attract_midnight_madness_champion:
@@ -21,18 +23,21 @@ event_player:
   - got_se_fx_award_gold_hand
   got_def_award_greyjoy:
   - got_se_fx_greyjoy_award
+  - got_se_fx_house_award_score_flash
   got_def_award_hand:
   - got_se_fx_hand_award
   got_def_award_horde_winter_mball:
   - got_se_fx_winter_has_come_award
   got_def_award_lannister:
   - got_se_fx_lanister_award
+  - got_se_fx_house_award_score_flash
   got_def_award_martell:
   - got_se_fx_martell_complete
   - got_se_fx_house_award_score_flash
   - got_se_fx_martell_award
   got_def_award_stark:
   - got_se_fx_stark_complete_dots
+  - got_se_fx_house_award_score_flash
   got_def_award_sword:
   - got_se_fx_award_sword_medium
   got_def_award_targaryen_1:
@@ -48,6 +53,8 @@ event_player:
   - got_se_fx_winter_is_coming_award
   got_def_ball_locked:
   - got_se_fx_ball_locked
+  - got_se_vo_fn_ball_2_locked
+  - got_se_vo_fn_ball_3_locked
   - got_se_vo_fn_ball_1_locked
   got_def_ball_save:
   - got_se_ball_saved_dragon_roars
@@ -57,6 +64,7 @@ event_player:
   got_def_baratheon_complete:
   - got_se_fx_baratheon_complete
   - got_se_vo_complete_baratheon
+  - got_se_fx_house_award_score_flash
   - got_se_vo_baratheon_mode_total
   got_def_baratheon_lit:
   - got_se_fx_light_house
@@ -66,6 +74,9 @@ event_player:
   - got_se_fx_bigpoints
   got_def_blackwater_jackpot:
   - got_se_fx_blackwater_score_spin
+  - got_se_vo_blackwater_jackpot
+  - got_se_vo_get_the_super_jackpot
+  - got_se_fx_house_award_score_flash
   got_def_blackwater_super_jackpot:
   - got_se_superjackpot_letter_hit
   - got_se_superjackpot_ahhhhh
@@ -73,6 +84,8 @@ event_player:
   got_def_blackwater_total:
   - got_se_fx_blackwater_total
   - got_se_fx_blackwater_total_fx
+  - got_se_vo_post_bw_we_have_won
+  - got_se_vo_blackwater_multiball_total
   got_def_bonus:
   - got_se_fx_bonus_multiplier_background
   - got_se_fx_bonus_total_page
@@ -125,6 +138,7 @@ event_player:
   got_def_greyjoy_complete:
   - got_se_fx_greyjoy_complete
   - got_se_vo_greyjoy_complete
+  - got_se_fx_house_award_score_flash
   got_def_greyjoy_lit:
   - got_se_fx_light_house
   got_def_greyjoy_start:
@@ -150,6 +164,7 @@ event_player:
   - got_se_iron_bank_award
   got_def_lannister_complete:
   - got_se_fx_lanister_complete
+  - got_se_fx_house_award_score_flash
   got_def_lannister_lit:
   - got_se_fx_light_house
   got_def_lannister_total:
@@ -234,10 +249,13 @@ event_player:
   - got_se_vo_mode_advance_targaryen
   got_def_tyrell_award_1:
   - got_se_fx_joust_run
+  - got_se_fx_house_award_score_flash
   got_def_tyrell_award_2:
   - got_se_fx_joust_hit
+  - got_se_fx_house_award_score_flash
   got_def_tyrell_complete:
   - got_se_fx_joust_win
+  - got_se_fx_house_award_score_flash
   got_def_tyrell_lit:
   - got_se_fx_light_house
   got_def_tyrell_total:
@@ -252,6 +270,7 @@ event_player:
   - got_se_vo_wall_multiball_award
   got_def_wall_jackpot:
   - got_se_fx_battle_at_wall_award
+  - got_se_fx_house_award_score_flash
   - got_se_vo_wall_multiball_award
   got_def_wall_jackpot_grows:
   - got_se_fx_battle_at_wall_award
@@ -263,6 +282,7 @@ event_player:
   - got_se_wall_explosion_rumble3
   - got_se_wall_ice_crackle
   - got_se_fx_battle_at_wall_award
+  - got_se_fx_house_award_score_flash
   - got_se_vo_wall_multiball_super_jackpot
   got_def_wall_total:
   - got_se_fx_battle_at_wall_total
@@ -317,6 +337,7 @@ event_player:
   got_award_extra_ball:
   - got_def_extra_ball_award
   got_lock_lit:
+  - got_def_ball_locked
   - got_def_lock_is_lit
   got_blackwater_jackpot:
   - got_def_blackwater_jackpot
@@ -342,12 +363,14 @@ event_player:
   - got_def_ball_save
   got_stark_award:
   - got_def_award_stark
+  - got_def_build_stark
   got_martell_award:
   - got_def_award_martell
   got_greyjoy_award:
   - got_def_award_greyjoy
   got_lannister_award:
   - got_def_award_lannister
+  - got_def_build_lannister
   got_targaryen_award:
   - got_def_award_targaryen_1
   got_tyrell_award:
@@ -360,6 +383,102 @@ event_player:
   - got_def_lannister_complete
   got_house_complete{key=="tyrell"}:
   - got_def_tyrell_complete
+  got_add_a_ball:
+  - got_def_add_a_ball
+  player_added{num>1}:
+  - got_def_add_a_player
+  got_winter_has_come_lieutenant:
+  - got_def_award_boss_winter_mball
+  got_castle_award:
+  - got_def_award_castle
+  - got_def_castle_multiball_award
+  got_hand_of_the_king_award:
+  - got_def_award_hand
+  got_hand_of_the_king_super:
+  - got_def_award_hand
+  got_winter_has_come_horde:
+  - got_def_award_horde_winter_mball
+  got_iron_throne_award:
+  - got_def_award_iron
+  - got_def_iron_tour_award
+  got_winter_is_coming_award:
+  - got_def_award_winter_hurry_up
+  got_light_house{house=="baratheon"}:
+  - got_def_baratheon_lit
+  mode_blackwater_stopped:
+  - got_def_blackwater_total
+  got_end_of_ball_bonus:
+  - got_def_bonus
+  got_baratheon_award:
+  - got_def_build_baratheon_dragon
+  - got_def_build_baratheon_left_ramp
+  got_castle_super:
+  - got_def_castle_multiball_super_jackpot
+  mode_castle_stopped:
+  - got_def_castle_multiball_total
+  got_gold_collected:
+  - got_def_gold_collected
+  got_light_house{house=="greyjoy"}:
+  - got_def_greyjoy_lit
+  mode_greyjoy_stopped:
+  - got_def_greyjoy_total
+  mode_hand_of_the_king_stopped:
+  - got_def_hand_total
+  mode_iron_throne_stopped:
+  - got_def_iron_total
+  got_mystery_award:
+  - got_def_keep_gold
+  got_light_house{house=="lannister"}:
+  - got_def_lannister_lit
+  mode_lannister_stopped:
+  - got_def_lannister_total
+  got_blackwater_super_lit:
+  - got_def_light_super_jackpot
+  got_lord_of_light_save:
+  - got_def_lord_of_light
+  mode_midnight_madness_stopped:
+  - got_def_madness_multiball_total
+  got_light_house{house=="martell"}:
+  - got_def_martell_lit
+  mode_martell_stopped:
+  - got_def_martell_total
+  got_mystery_menu:
+  - got_def_mystery
+  got_pop_award:
+  - got_def_pictopops
+  - got_def_pictopops_award
+  got_special:
+  - got_def_special_award
+  got_light_house{house=="stark"}:
+  - got_def_stark_lit
+  mode_iron_throne_started:
+  - got_def_start_iron
+  got_winter_has_come_super:
+  - got_def_super_jackpot_winter_mball
+  got_light_house{house=="targaryen"}:
+  - got_def_targaryen_lit
+  mode_targaryen_stopped:
+  - got_def_targaryen_total
+  got_light_house{house=="tyrell"}:
+  - got_def_tyrell_lit
+  mode_tyrell_stopped:
+  - got_def_tyrell_total
+  got_video_mode_start:
+  - got_def_video_mode_start
+  got_video_mode_finished:
+  - got_def_video_mode_total
+  got_wall_award:
+  - got_def_wall_jackpot
+  got_wall_lit:
+  - got_def_wall_multiball_advance
+  got_wall_super:
+  - got_def_wall_super_jackpot
+  mode_wall_stopped:
+  - got_def_wall_total
+  got_wildfire_bump:
+  - got_def_wildfire_award
+  mode_winter_has_come_stopped:
+  - got_def_winter_mball_total
   s_left_outlane_active:
   - got_se_fx_outlanes_unlit
   s_right_outlane_active:
