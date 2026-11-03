@@ -49,6 +49,9 @@ func _draw_page(page: Array) -> ImageTexture:
 		var ax: int = int(line[2]) - (width if al == "r" else 0 if al == "l" else width / 2)
 		var ox: int = clampi(ax, 0, maxi(0, 128 - width))               # never clipped at the left/right edge
 		var oy: int = int(line[3]) - int(font["height_px"]) + 1
+		var dim := 1.0
+		if line.size() > 5 and str(line[5]) == "b":      # 8-frame blink of 6 ticks: the colour transform in frames 0-3, plain in 4-7 (docs/25 s7; dimmed, M)
+			dim = 0.45 if (int(Time.get_ticks_msec() / 96.8) % 8) < 4 else 1.0
 		for g in glyphs:
 			var rows: Array = g["rows"]
 			for j in rows.size():
@@ -58,7 +61,7 @@ func _draw_page(page: Array) -> ImageTexture:
 					var gx := ox + int(g.get("dx", 0)) + i
 					var gy := oy + int(g.get("dy", 0)) + j
 					if v > 0 and gx >= 0 and gx < 128 and gy >= 0 and gy < 32:
-						var k := v / 15.0
+						var k := v / 15.0 * dim
 						img.set_pixel(gx, gy, Color(COLOR.r * k, COLOR.g * k, COLOR.b * k, 1.0))
 			ox += int(g.get("advance", int(g["w"]) + 1))
 	return ImageTexture.create_from_image(img)

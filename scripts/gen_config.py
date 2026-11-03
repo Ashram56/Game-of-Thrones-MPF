@@ -330,14 +330,14 @@ def text_slides(data):
             scenes["slides/%s.tscn" % slide] = TEXT_LIVE % json.dumps(pages, separators=(",", ":")).replace("\\", "\\\\").replace('"', '\\"')
             player["got_%s_%s" % (r["effect"], r["index"])] = {slide: {"priority": 70, "expire": "2.5s"}}
     # def_hand_bg: one live page per chand state (docs/25 section 7, H layout); got.hand keeps the machine variables current
-    head = [("HAND OF THE KING", 6, 127, 6, "r"), ("{score}", 6, 32, 6, "c")]
+    head = [("HAND OF THE KING", 6, 127, 6, "r"), ("{score}", 6, 32, 6, "c", "b")]
     sets = [("HURRY UP: {hurry}", 0, 0, 23, "l"), ("{sets} SETS", 0, 127, 23, "r")]
     hand_pages = [head + [("COMPLETE ALL SHOTS", 10, 64, 16, "c")] + sets,
                   head + [("HIT BATTERING RAM", 10, 64, 16, "c")] + sets,
                   head + [("BONUS ROUND", 6, 45, 15, "c"), ("{timer}", 14, 124, 20, "r"), ("FREE SHOTS FOR 20 SECS", 6, 45, 23, "c")],
                   head + [("{hurry}", 10, 64, 15, "c"), ("HIT BATTERING RAM", 6, 64, 23, "c")]]
     body = TEXT_LIVE % json.dumps(hand_pages, separators=(",", ":")).replace("\\", "\\\\").replace('"', '\\"')
-    scenes["slides/tx_hand_bg_live.tscn"] = body.rstrip("\n") + '\npage_var = "got_hand_state"\nrefresh = 0.2\n'
+    scenes["slides/tx_hand_bg_live.tscn"] = body.rstrip("\n") + '\npage_var = "got_hand_state"\nrefresh = 0.0968\n'
     player["got_hand_bg_show"] = {"tx_hand_bg_live": {"priority": 65}}
     player["got_hand_bg_hide"] = {"tx_hand_bg_live": {"action": "remove"}}
     # def_build_stark: the character comes from the global kill list (data/build_stark_kill_list.csv), the layout from the side byte
