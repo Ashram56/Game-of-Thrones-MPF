@@ -1122,27 +1122,47 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(0, mode._phase)                           # coming from the orbits: ramps next
         self.assertTrue(mode.active)                               # no timer, it ends when the balls drain
 
-    def test_winter_has_come_horde_lieutenant_super(self):
+    def test_winter_has_come_horde_lieutenant_super_frozen(self):
+        """docs/29 (H): horde (7 shots, award 18 +375k each), boss triple (5 hits, combo+2), super (3V+30M), dry up -> frozen -> thawed."""
         self._start_game()
         player = self.machine.game.player
-        player.got_winter_super = 3000000                       # fed by the Winter Is Coming hurry-ups
         self.post_event("start_mode_winter_has_come")
         self.advance_time_and_run(0.5)
         mb = self.machine.modes["winter_has_come"]
         self.assertTrue(mb.active)
-        for sw in ("s_left_ramp_exit", "s_left_ramp_exit", "s_right_ramp_exit", "s_left_loop", "s_right_loop", "s_kickback",
-                   "s_3_bank_drop_tgt_top", "s_right_2_bank_bottom"):
-            self._hit(sw)
-        self.assertEqual("lieutenant", mb._phase)               # all seven majors collected in Horde
-        self.assertEqual(3, len(mb._lieutenant))
-        inv = {"left_ramp": "s_left_ramp_exit", "right_ramp": "s_right_ramp_exit", "left_loop": "s_left_loop", "right_loop": "s_right_loop",
-               "kickback": "s_kickback", "bank": "s_3_bank_drop_tgt_mid", "right2": "s_right_2_bank_top"}
+        sw_of = {1: "s_3_bank_drop_tgt_mid", 2: "s_left_loop", 4: "s_kickback", 8: "s_left_ramp_exit", 32: "s_right_ramp_exit",
+                 64: "s_right_loop", 128: "s_right_2_bank_top"}
         before = player.score
-        for _ in range(5):
-            self._hit(inv[sorted(mb._lieutenant)[0]])
-        self.assertEqual("horde", mb._phase)                    # 5 collected: Super paid, back to Horde
-        self.assertGreaterEqual(player.score - before, 3000000)
-        self.assertEqual(0, player.got_winter_super)
+        self._hit(sw_of[2])
+        self.assertAlmostEqual(1000000, player.score - before, delta=5000)       # award 18 start value
+        self.assertEqual(1375000, mb._value())
+        for bit in (1, 4, 8, 32, 64, 128):
+            self._hit(sw_of[bit])
+        self.assertEqual("lieutenant", mb._phase)
+        self.assertEqual(3, len(mb._lieutenant))
+        self.assertEqual(5, mb.shots_left)
+        v = mb._value()
+        before = player.score
+        self._hit(sw_of[sorted(mb._lieutenant)[0]])
+        self.assertAlmostEqual(v * 3, player.score - before, delta=5000)         # combo 1 + 2
+        for _ in range(3):
+            self._hit(sw_of[sorted(mb._lieutenant)[0]])
+        v = mb._value()
+        before = player.score
+        self._hit(sw_of[sorted(mb._lieutenant)[0]])
+        gained = player.score - before
+        self.assertTrue(any(abs(gained - (3 * v + 30000000) * c) < 5000 for c in (1, 2, 3, 4, 5)), gained)   # final boss award x combo
+        self.assertEqual("horde", mb._phase)
+        for bit in (1, 2, 4, 8, 32, 64, 128):
+            self._hit(sw_of[bit])
+        self.assertEqual("lieutenant", mb._phase)
+        self.advance_time_and_run(11)                                            # all three dry up
+        self.assertEqual("frozen", mb._phase)
+        self._hit(sw_of[2])
+        self.assertEqual("frozen", mb._phase)                                    # only the left ramp thaws
+        self._hit(sw_of[8])
+        self.assertEqual("lieutenant", mb._phase)
+        self.assertEqual(5, mb.shots_left)
 
     def test_house_choice_cycles_with_flippers_and_baratheon_advances(self):
         self._start_game()
