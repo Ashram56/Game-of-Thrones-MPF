@@ -145,6 +145,14 @@ machine_vars:
     initial_value: "1"
     value_type: str
     persist: false
+  got_wall_phase:
+    initial_value: "1"
+    value_type: str
+    persist: false
+  got_bw_state:
+    initial_value: "1"
+    value_type: str
+    persist: false
   got_arg_wildfire:
     initial_value: "0"
     value_type: str

@@ -1456,6 +1456,18 @@ slide_player:
   got_hand_bg_hide:
     tx_hand_bg_live:
       action: remove
+  got_wall_bg_show:
+    tx_wall_bg_live:
+      priority: 65
+  got_wall_bg_hide:
+    tx_wall_bg_live:
+      action: remove
+  got_blackwater_bg_show:
+    tx_blackwater_bg_live:
+      priority: 65
+  got_blackwater_bg_hide:
+    tx_blackwater_bg_live:
+      action: remove
   got_def_build_stark_0:
     tx_build_stark_0:
       priority: 70

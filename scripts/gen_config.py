@@ -340,6 +340,22 @@ def text_slides(data):
     scenes["slides/tx_hand_bg_live.tscn"] = body.rstrip("\n") + '\npage_var = "got_hand_state"\nrefresh = 0.0968\n'
     player["got_hand_bg_show"] = {"tx_hand_bg_live": {"priority": 65}}
     player["got_hand_bg_hide"] = {"tx_hand_bg_live": {"action": "remove"}}
+    # def_wall_bg (docs/26 section 7) and def_blackwater_bg (docs/27 section 6): live pages selected by a machine variable
+    def live_bg(slide, pages, var, refresh, ev):
+        body = TEXT_LIVE % json.dumps(pages, separators=(",", ":")).replace("\\", "\\\\").replace('"', '\\"')
+        scenes["slides/%s.tscn" % slide] = body.rstrip("\n") + '\npage_var = "%s"\nrefresh = %s\n' % (var, refresh)
+        player["got_%s_bg_show" % ev] = {slide: {"priority": 65}}
+        player["got_%s_bg_hide" % ev] = {slide: {"action": "remove"}}
+    wh = [("BATTLE FOR THE WALL", 5, 64, 7, "c"), ("{score}", 7, 64, 16, "c")]
+    live_bg("tx_wall_bg_live", [wh + [("{shots} MORE RAMPS", 5, 64, 23, "c")], wh + [("{shots} MORE ORBITS", 5, 64, 23, "c")],
+                                wh + [("SHOOT SUPER JACKPOT", 5, 64, 23, "c")]], "got_wall_phase", 0.2, "wall")
+    bw = []
+    for r in (1, 2, 3):
+        bw.append([("BLACKWATER", 0, 0, 4, "l"), ("PHASE %d" % r, 0, 0, 10, "l"), ("{score}", 0, 127, 4, "r"), ("COMPLETE LIT SHOTS", 6, 64, 20, "c")])
+    for r in (1, 2, 3):
+        bw.append([("BLACKWATER", 0, 0, 4, "l"), ("PHASE %d" % r, 0, 0, 10, "l"), ("{score}", 0, 105, 4, "r"),
+                   ("SHOOT BATTERING RAM", 6, 59, 20, "c"), ("{timer}", 23, 116, 22, "l")])
+    live_bg("tx_blackwater_bg_live", bw, "got_bw_state", 0.2, "blackwater")
     # def_build_stark: the character comes from the global kill list (data/build_stark_kill_list.csv), the layout from the side byte
     kp = os.path.join(data, "build_stark_kill_list.csv")
     if os.path.exists(kp) and os.path.exists(lp):

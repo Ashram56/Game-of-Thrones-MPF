@@ -181,7 +181,23 @@ class BlackwaterMode(AwardMode):
         self._upper = 0
         for sw in UPPER_ALL:
             self.add_mode_event_handler(sw + "_active", self._upper_shot, sw=sw)
+        self._super_t0 = 0
+        self._vars_timer = self.machine.clock.schedule_interval(self._publish, 0.2)
         self._arm()
+        self.machine.events.post("got_blackwater_bg_show")
+
+    def mode_stop(self, **kwargs):
+        self.machine.clock.unschedule(self._vars_timer)
+        self.machine.events.post("got_blackwater_bg_hide")
+        super().mode_stop(**kwargs)
+
+    def _publish(self, **kwargs):
+        """def_blackwater_bg variables (docs/27 section 6): page = round, +3 while the super window runs; seconds left from timer 28."""
+        v = self.machine.variables
+        left = max(0, int(self.SUPER_S - (self.machine.clock.get_time() - self._super_t0) + 0.999)) if self._super else 0
+        v.set_machine_var("got_bw_state", str(self._round + (3 if self._super else 0)))
+        v.set_machine_var("got_arg_score", "{:,}".format(int(self.player.score)))
+        v.set_machine_var("got_arg_timer", str(min(20, left)))
 
     def _upper_shot(self, sw, **kwargs):
         if state.fast_loop(self.machine, sw):
@@ -226,6 +242,7 @@ class BlackwaterMode(AwardMode):
         self.machine.events.post("got_blackwater_jackpot", points=points, round=self._round)
         if not any(self._left.values()):
             self._super = self._round
+            self._super_t0 = self.machine.clock.get_time()
             self.delay.add(int(self.SUPER_S * 1000), self._super_expired, name="bw_super")
             self.machine.events.post("got_blackwater_super_lit", level=self._super)
 
