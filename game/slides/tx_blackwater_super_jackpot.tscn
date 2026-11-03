@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages_json = "[[[\"{award}X SUPER JACKPOT\",10,64,12]]]"
+pages_json = "[[[\"{award}X SUPER JACKPOT\",10,64,12],[\"{award}\",6,64,20]]]"

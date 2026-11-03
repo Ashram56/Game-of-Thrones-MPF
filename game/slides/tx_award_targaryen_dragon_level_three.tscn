@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages_json = "[[[\"HOUSE TARGARYEN\",6,42,14],[\"{award}\",10,42,24]]]"
+pages_json = "[[[\"HOUSE TARGARYEN\",6,42,14],[\"{award}\",10,42,24],[\"{award}\",6,64,20]]]"

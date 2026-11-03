@@ -26,4 +26,4 @@ anchor_bottom = 1.0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2")
-pages_json = "[[[\"{timer}\",23,116,22]],[[\"BLACKWATER\",0,0,4]]]"
+pages_json = "[[[\"{timer}\",23,116,22]],[[\"BLACKWATER\",0,0,4],[\"{score}\",6,64,20]]]"

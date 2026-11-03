@@ -1117,7 +1117,7 @@ slide_player:
   got_def_castle_multiball_bg:
     tx_castle_multiball_bg:
       priority: 70
-      expire: 2.5s
+      expire: 3.9s
   got_def_castle_multiball_total:
     tx_castle_multiball_total:
       priority: 70
@@ -1176,6 +1176,14 @@ slide_player:
       expire: 2.5s
   got_def_madness_multiball_pointy:
     tx_madness_multiball_pointy:
+      priority: 70
+      expire: 2.5s
+  got_def_award_iron:
+    tx_award_iron:
+      priority: 70
+      expire: 2.5s
+  got_def_iron_tour_award:
+    tx_iron_tour_award:
       priority: 70
       expire: 2.5s
   got_def_iron_ready_bg:
