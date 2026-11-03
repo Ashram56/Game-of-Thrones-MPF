@@ -1,6 +1,6 @@
 # Status
 
-Current state (2026-11-03, 92 tests pass): built from the extraction: lights, attract, credits, high scores, match, all sounds and clips available, ROM display effects wired from def_callers (text effects drawn with the ROM bitmap fonts, run-time values for score, award, mode timer, shots, player and ball), background music by state, coil times, Pict-O-Pops and other audits, a ROM-style service menu on the DMD. Missing and departures: docs/rom_differences.md. The notes below are the running log of each feature.
+Current state (2026-11-03, 122 tests pass; the mode sections at the end of this page, "Modes on the ROM state machines", supersede older mode bullets): built from the extraction: lights, attract, credits, high scores, match, all sounds and clips available, ROM display effects wired from def_callers (text effects drawn with the ROM bitmap fonts, run-time values for score, award, mode timer, shots, player and ball), background music by state, coil times, Pict-O-Pops and other audits, a ROM-style service menu on the DMD. Missing and departures: docs/rom_differences.md. The notes below are the running log of each feature.
 
 Verification: MPF 0.80.1 boots the game headless (smart_virtual) and tests/test_mpf_game.py plays a full 3-ball game (start, house mode shot, drains, game end). Still no Spike 1 traces.
 
@@ -52,7 +52,7 @@ Checked: GMC connects to MPF, music plays on the music bus, slide vid004 plays t
 ## Spinner, Lord of Light, video mode (docs/10 part 2, H) - in got/combos.py
 - Spinner: per spin V[p] + B (V starts 2,500, +150 per left-bank/single-drop/PFx bump, cap 250k; B by level table, reset per ball); level rises on the 1st and every 3rd left-bank completion when completed houses > level. The usual 970 per switch stays in scoring.yaml. Baratheon's own spinner logic is unchanged.
 - Lord of Light: lit by bank completion rise (M gating), Mystery/pop "Light Lord of Light"; either outlane then adds a ball once (limit 10 per player, adjustment 123). Not modelled: timer-38 ability, adjustment 124.
-- Video mode: only the scoring is in (`video_mode_score`, event `got_video_mode_result` outcome/n/level). The duel itself (20 s, AI, flipper buttons) and the Mystery "Video Mode nX" awards are not built; needs a Godot scene.
+- Video mode: superseded, the duel is built on docs/33 (see the last section). Old note: only the scoring was in; needs a Godot scene.
 
 ## DMD score slide (checked on Xvfb)
 `game/slides/score.tscn` (MPFVariable score, comma separated) is played on `ball_started` and removed on `game_ended` (`config/display.yaml`). Headless display run: `mpf game . -c smoke_game -t` (fills the trough, starts a game, hits the spinner) with Godot `--rendering-driver opengl3` under Xvfb; the screenshot showed 10,410 after 3 spins (2,500 + 970 each, matching MPF). The slide must start after the player exists (not on `game_started`). Still plain text: no ROM font, no ball/player line, no mode text; ROM videos play over it.
@@ -105,3 +105,21 @@ Choose Your Battle slide (`slides/cyb.tscn`, `-c smoke_cyb`) checked on Xvfb: sh
 mpf-monitor 1.0.0 starts, connects to MPF 0.80.1 (port 5051) and shows its control window with the Devices/Monitor/Layers tabs. Needs: system libs `libegl1 libxkbcommon-x11-0 libxcb-cursor0 ...` (apt) and the `mpfmonitor/core/ui/*.ui` files, which are MISSING from both the PyPI wheel and the sdist of 1.0.0 (copy them from the upstream repo missionpinball/mpf-monitor `mpfmonitor/core/ui/` or install from git). The Playfield window (Toggle Playfield window) shows the VPX playfield picture from `game/monitor/monitor.yaml` ([docs/img/monitor_playfield.png](img/monitor_playfield.png)); the switch/light markers were not inspected. Run: Xvfb, `mpf game . -c smoke_game -t`, `mpf-monitor`, click the button (xdotool).
 
 Special now pays for real: award 0 adds 1 to the machine var `credits`, award 4 adds an MPF extra ball (limit adj 'ad_extra_ball_limit', else 25M), award 3 and over-limit pay 25M points.
+
+## Modes on the ROM state machines (2026-11-03, Game-of-Thrones docs/23-33; ROM wins over the VPX and the rulesheet)
+Every mode below follows the extraction's state machine (H logic, M timings and lamp steps where marked in the docs) and has at least one test.
+| Mode | Code | Source | What is in |
+|---|---|---|---|
+| Iron Throne | `got/iron.py` | docs/23 | states 0-4, castle choice, 22-castle tour, awards 15/16, audit 166 |
+| Hand of the King | `got/hand.py` | docs/25 | states 1-4, 20 s bonus round, 16 s hurry-up, 3 sets (2 with Greyjoy), lamps 109-112/124, background screen |
+| Wall | `got/wall.py` | docs/26 | ramps / orbits / kickback super cycle, 3 jackpots per phase, +175,000 bump, super +10M, background screen, lamps 119/121-123, audits 152/153 |
+| Blackwater | `BlackwaterMode` | docs/27 | rounds R=1..3, 20 s + 93 tick super window, ram super, upper playfield chain, background screen with the seconds left |
+| Castle | `got/castle.py` | docs/28 | main shots and standups pay award 12 (+250k, super +750k), rollovers pay the super (+10M), first super adds a ball |
+| Winter Has Come | `WinterHasComeMode` | docs/29 B | horde (mask 239, 10 s add-back), boss triples (5 hits, combo+2, 10 s timers), super (3V+30M) x combo, frozen phase (8 s, left ramp thaws) |
+| Winter Is Coming | `got/winter.py` | docs/29 A | each counted shot +75,000, third starts the 16 s hurry-up on the shot hit, reset to 4,000,000 after each end |
+| Stark, Baratheon, Lannister, Greyjoy, Tyrell, Martell | `got/houses.py` | docs/30 | Baratheon ladder, Lannister red shots, Greyjoy +10 s per shot and double last payment, Tyrell run shots and 2-bank x3, Martell mini timer and hurry-up |
+| Targaryen | `TargaryenMode` | docs/18, docs/30 s9 | three dragons; audits 178-183 checked |
+| Mystery | `got/mystery.py` | docs/11, docs/31 | 3-slot menu, 10 s timer, cursor, keep gold (already matched docs/31) |
+| Midnight Madness | `got/base.py` | docs/32 | only in the first minute after midnight, 10 minute wait for a ball, once per game, adjustment 152 |
+| Video mode | `got/videomode.py` | docs/33 | 125 tick countdown, collision matrix, AI reactions, level = adjustment 132 + wins, loss (500,000 x level + 1,000,000) x n |
+Display fixes found by the Xvfb pass (mode screens captured with `smoke_a` / `smoke_b`): total screens now show the mode total, "%dX SUPER JACKPOT IS LIT" shows the level, Wall / Hand / Blackwater / Castle publish their own live values.

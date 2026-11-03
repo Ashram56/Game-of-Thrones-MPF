@@ -14,7 +14,7 @@ Confidence per rule: `game/config/rules.yaml` (H table/constant, M constants plu
 | 4 | Attract, credits, high scores, match | ROM screens and rules | Mine (CFG): pages every 4 s, 1 coin = 1 credit (adj 65 limit, adj 66 free play), initials by flippers + Start, tables 75/50/40/30/20 M from docs/03, match draw from adj 61 | Screens and match odds not decoded |
 | 5 | Lamps, flashers | ROM lamp and flasher effects (`lef_*`) | The ROM's 101 named lights; attract sweep, GI, Start, Shoot Again, house sigils, flasher pulses on switch events (CFG choreography) | Effects not decoded |
 | 6 | Coils | Per-coil drive times | From data/coil_timing.csv (call-site pulse H, node reflex M); the shaker is 100 ms (table 1000) | Held coils (diverter, sword, lock hold levels) not modelled |
-| 7 | Video mode duel | ROM duel | 20 s, player health 3, AI 3-7 by level, damage 1 (heavy 2 at 30 %, CFG); text only | Health, AI timing, graphics not recovered |
+| 7 | Video mode duel | ROM duel (docs/33) | Rules and collision matrix as the ROM; M: sprite width (16 px), how long an attack or parry lasts, the AI's idle thresholds, knockback recovery; the Godot duel screen still draws from the health values only | Not recovered |
 | 8 | Iron Bank, Greyjoy/Lannister/Tyrell/Baratheon/Martell abilities | ROM routines | Built from `house_select_awards.csv` and docs/14; Iron Bank `c` is M; no dragon waves | Partly M |
 | 9 | Hardware | Spike 1 node bus | smart_virtual and a virtual overlay only | Different platform |
 
@@ -52,3 +52,13 @@ Iron Throne runs the ROM's state machine (docs/23 of Game-of-Thrones, H states/t
 
 ## Hand of the King: chand state machine (got.hand)
 The Hand runs the ROM's state machine (Game-of-Thrones docs/25, docs/24; H logic, M timer durations): single shots (the shot groups of the completed houses, all seven with Baratheon, two hits each with Martell), ram super jackpot, bonus round (Stark bit, 20 timer seconds of free shots), 3 sets (2 with Greyjoy), then the 16 s super-jackpot hurry-up, which loops back to set 1; the mode ends only when the balls drain, there is no +10 s add-time (no ROM caller). The return lanes no longer count as Hand shots. Not modelled: the bonus-round alternate increment fields (75,000 / 750,000, M), lamps 109-112/124 and the def_hand_bg state screens, the ball-save / balls-in-play-at-start rules of chand::Start beyond the existing multiball configuration.
+
+## Modes rebuilt on the ROM state machines (2026-11-03)
+Wall, Blackwater, Castle, Winter Has Come, Winter Is Coming, six houses, Midnight Madness and the video duel now follow Game-of-Thrones docs/26-33. Remaining departures:
+- Winter Is Coming: which counted shots are frozen (a lit house's tickle shot, `AddFrozenShot`) is not enforced; any mode shot counts (M).
+- Castle: the upper multiplier is fixed at 1 (M); effect 160 (loop award) has no caller in the ROM and is not built.
+- Blackwater: Wildfire, lock and the upper-playfield chain as docs/12-14; the intro delay (proc 228) that ignores shots is not modelled.
+- Wall: the +20,000,000 super bonus of the house-select instance and the 218 tick grace are not modelled; jackpot/super screens use the generic layouts.
+- Winter Has Come: sound/lamp steps and the walking-animation background are not built; the accumulator `AddSuperJackpot` has no reader in the ROM and is not paid.
+- Houses: the Greyjoy bonus mask (first hit only bumps) is not enforced; lamp effects 29-33 internals are not built.
+- Video mode: see departure 7.
