@@ -54,7 +54,7 @@ def video_mode_score(outcome, n, level):
         return (5000000 * level + 20000000) * n
     if outcome == "tie":
         return (1500000 * level + 2500000) * n
-    return 500000 * level * n
+    return (500000 * level + 1000000) * n          # ROM wins over docs/10: the 1,000,000 constant (docs/33)
 
 
 def jackpot_value(n):

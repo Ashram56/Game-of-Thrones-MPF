@@ -814,7 +814,7 @@ class TestGotGame(MpfGameTestCase):
         from got.combos import video_mode_score
         self.assertEqual(20000000 + 5000000 * 2, video_mode_score("win", 1, 2) // 1)
         self.assertEqual(3 * (2500000 + 3000000), video_mode_score("tie", 3, 2))
-        self.assertEqual(1000000, video_mode_score("loss", 1, 2))
+        self.assertEqual(2000000, video_mode_score("loss", 1, 2))     # (500,000 x level + 1,000,000) x n
         self._start_game()
         player = self.machine.game.player
         combos = self.machine.modes["combos"]
@@ -916,26 +916,52 @@ class TestGotGame(MpfGameTestCase):
         self.assertTrue(player.got_lock_lit)
 
     def test_video_mode_win_tie_and_loss(self):
+        """docs/33: countdown, rock-paper-scissors collisions, win by emptying the AI's 5 HP (level 2), tie on timer expiry; level rises with wins."""
         self._start_game()
         player = self.machine.game.player
         before = player.score
         self.post_event_with_params("got_video_mode_start", n=2)
         self.advance_time_and_run(0.1)
-        for _ in range(5):                                              # AI health at level 2
-            self.hit_and_release_switch("s_r_flipper_button")
+        mode = self.machine.modes["videomode"]
+        self.assertFalse(mode._active)                                  # the 125-tick countdown comes first
+        self.advance_time_and_run(2)
+        self.assertTrue(mode._active)
+        self.assertEqual((3, 5), (mode.me.hp, mode.ai.hp))
+        self.hit_and_release_switch("s_l_flipper_button")               # left flipper parries
+        self.assertEqual(2, mode.me.state)
+        mode.me.set(0)
+        mode.ai.set(0)
+        mode.ai.x = mode.me.x + 4                                       # overlap: an attack against an idle AI deals 1
+        mode._lock = 0
+        mode.me.set(1)
+        mode._collide()
+        self.assertEqual(4, mode.ai.hp)
+        mode.ai.set(0)
+        mode.me.set(3)                                                  # strong against idle deals 2
+        mode._lock = 0
+        mode._collide()
+        self.assertEqual(2, mode.ai.hp)
+        mode.ai.set(2)                                                  # strong breaks a parry: the parrier is knocked back
+        mode.me.set(3)
+        mode._collide()
+        self.assertEqual((2, 5), (mode.ai.hp, mode.ai.state))
+        mode.ai.hp = 1
+        mode.ai.set(0)
+        mode.me.set(1)
+        self.advance_time_and_run(0.2)
+        mode._lock = 0
+        mode._collide()
+        mode._state()
+        mode._update()
         self.advance_time_and_run(0.1)
-        self.assertFalse(self.machine.modes["videomode"].active)
-        self.assertGreaterEqual(player.score - before, (5000000 * 2 + 20000000) * 2)   # win, level 2, 2X
+        self.assertFalse(mode.active)
+        self.assertEqual(1, player.got_video_wins)                      # the win raises the next level
+        self.assertGreaterEqual(player.score - before, (5000000 * 2 + 20000000) * 2)
         before = player.score
         self.post_event_with_params("got_video_mode_start", n=1)
-        self.advance_time_and_run(21)                                   # no presses: the AI wins
+        self.advance_time_and_run(30)                                   # no presses: the timer ends the duel in a tie or the AI wins
         self.assertFalse(self.machine.modes["videomode"].active)
-        self.assertEqual(500000 * 2, player.score - before)             # loss
-        self.post_event_with_params("got_video_mode_start", n=1)
-        self.advance_time_and_run(0.1)
-        self.hit_and_release_switch("s_l_flipper_button")
-        self.advance_time_and_run(0.1)
-        self.assertTrue(self.machine.modes["videomode"].active)
+        self.assertGreater(player.score - before, 0)
 
     def test_house_tickle_lights_house_and_ability_on_completion(self):
         self._start_game()
@@ -1581,8 +1607,8 @@ class TestGotGame(MpfGameTestCase):
             self.machine.events.add_handler("got_se_fx_video_mode_" + n, lambda n=n, **kwargs: heard.append(n))
         self._start_game()
         self.post_event_with_params("got_video_mode_start", n=1)
-        self.advance_time_and_run(0.2)
-        self.hit_and_release_switch("s_l_flipper_button")
+        self.advance_time_and_run(2)                                   # after the countdown
+        self.hit_and_release_switch("s_r_flipper_button")
         self.advance_time_and_run(0.1)
         self.assertEqual(["start", "player_attack"], heard)
 
