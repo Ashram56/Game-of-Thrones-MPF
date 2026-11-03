@@ -1278,6 +1278,23 @@ class TestGotGame(MpfGameTestCase):
         self.advance_time_and_run(0.3)
         self.assertEqual(115000000, self.machine.modes["hand_of_the_king"]._super_bonus)
 
+    def test_tyrell_start_lights_left_return_lane_and_flipper_swaps(self):
+        shown = []
+        self.machine.events.add_handler("got_def_hand_bump_multiplier", lambda **kwargs: shown.append(1))
+        self._start_game()
+        p = self.machine.game.player
+        p.got_house_index = 5
+        p.got_house_picked = 1
+        self.hit_switch_and_run("s_shooter_lane", 0.1)
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertEqual("s_left_return_lane", p.got_return_lane)
+        self.hit_and_release_switch("s_right_return_lane")        # not the lit lane: no count
+        self.assertEqual([], shown)
+        self.hit_and_release_switch("s_r_flipper_button")         # the flipper moves the lit lane right
+        self.hit_and_release_switch("s_right_return_lane")
+        self.advance_time_and_run(0.1)
+        self.assertEqual([1], shown)
+
     def test_ready_music_when_wall_is_lit(self):
         tunes = []
         self.machine.events.add_handler("got_se_tune_wall_multiball_ready", lambda **kwargs: tunes.append(1))

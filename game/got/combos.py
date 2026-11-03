@@ -89,6 +89,12 @@ class Combos(Mode):
             for sw in switches:
                 self.add_mode_event_handler(sw + "_active", self._tickle, house=house)
         self.add_mode_event_handler("got_bump_wall_jackpot", self._bump_wall_jackpot)
+        # return lanes (docs/18 section 3, H/M): flag 49 left / 50 right lit by the Tyrell start award, a flipper press swaps the lit lane
+        for sw in ("s_left_return_lane", "s_right_return_lane"):
+            self.add_mode_event_handler(sw + "_active", self._return_lane, lane=sw)
+        for sw in ("s_l_flipper_button_active", "s_r_flipper_button_active"):
+            self.add_mode_event_handler(sw, self._return_lane_swap)
+        self.add_mode_event_handler("got_give_return_lane", self._give_return_lane)
         self.add_mode_event_handler("got_special", self._special)
         self.add_mode_event_handler("got_award_sword", self._award_sword)
         self.add_mode_event_handler(RAM + "_active", self._ram)
@@ -316,6 +322,22 @@ class Combos(Mode):
     def _setting(self, name, default):
         s = self.machine.settings
         return s.get_setting_value(name) if name in s._settings else default
+
+    def _give_return_lane(self, **kwargs):
+        if not self.player.got_return_lane:
+            self.player.got_return_lane = "s_left_return_lane"
+
+    def _return_lane_swap(self, **kwargs):
+        p = self.player
+        if p.got_return_lane:
+            p.got_return_lane = "s_right_return_lane" if p.got_return_lane == "s_left_return_lane" else "s_left_return_lane"
+
+    def _return_lane(self, lane, **kwargs):
+        """A counted hit (the lit lane, or any lane while Hand of the King runs) shows HAND OF THE KING / +1 COMBO MULTIPLIERS (effect 170)."""
+        p = self.player
+        hand = any(m.active and m.config.get("mode_settings", {}).get("key") == "hand_of_the_king" for m in self.machine.modes)
+        if hand or p.got_return_lane == lane:
+            self.machine.events.post("got_def_hand_bump_multiplier")
 
     # --- house tickle: three hits of the house's tickle shot light it (the throne then starts lit houses first)
     def _tickle(self, house, **kwargs):

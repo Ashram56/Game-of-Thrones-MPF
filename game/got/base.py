@@ -213,6 +213,8 @@ class GotBase(Mode):
             p.got_winter_award = int(p.got_winter_award or 4000000) + 5 * 75000
         elif house == "baratheon":                     # Wall jackpot (award #11) starts at 5,000,000 instead of 3,250,000
             p.got_award_wall = max(int(p.got_award_wall or 0), 5000000)
+        elif house == "tyrell":                        # GiveReturnLane: flag 49 (left return lane lit), lasts the ball (M)
+            self.machine.events.post("got_give_return_lane")
         elif house == "lannister":                     # AddGold(750)
             p.got_gold = int(p.got_gold or 0) + 750
         self.machine.events.post("got_def_give_house_" + house)
