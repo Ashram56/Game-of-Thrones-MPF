@@ -7,6 +7,16 @@ HOUSES = ("targaryen", "stark", "baratheon", "lannister", "greyjoy", "tyrell", "
 COLORS = {"targaryen": "ff1a00", "stark": "bfdfff", "baratheon": "ffd000", "lannister": "ff8c00", "greyjoy": "1a4dff",
           "tyrell": "22dd44", "martell": "ff4000"}
 KEY = "rules"
+SKEY = "shots"
+# playfield shot switch -> the arrow / sigil lamps that mark it
+SHOT_LAMPS = {
+    "s_left_loop": ("left_loop_arrow",), "s_right_loop": ("right_loop_arrow_top", "right_loop_arrow_mid", "right_loop_arrow_bot"),
+    "s_left_ramp_exit": ("left_ramp_arrow_top", "left_ramp_arrow_bot"), "s_right_ramp_exit": ("right_ramp_arrow_top", "right_ramp_arrow_bot"),
+    "s_kickback": ("kickback_lane_arrow_top", "kickback_lane_arrow_bot"), "s_battering_ram": ("battering_ram_arrow",),
+    "s_3_bank_drop_tgt_top": ("left_3_bank_top",), "s_3_bank_drop_tgt_mid": ("left_3_bank_mid",), "s_3_bank_drop_tgt_btm": ("left_3_bank_bot",),
+    "s_throne": ("iron_throne",), "s_right_2_bank_top": ("right_2_bank_top",), "s_right_2_bank_bottom": ("right_2_bank_bot",),
+    "s_elevator_popper": ("hand_of_the_king",), "s_left_return_lane": ("left_return_lane",), "s_right_return_lane": ("right_return_lane",),
+}
 
 
 class LightMode(Mode):
@@ -20,11 +30,16 @@ class LightMode(Mode):
         self.add_mode_event_handler("ball_save_default_timer_start", self._shoot_again, on=True)
         for ev in ("ball_save_default_disabled", "ball_save_default_timer_expired", "ball_save_default_saving_ball"):
             self.add_mode_event_handler(ev, self._shoot_again, on=False)
+        self._poll = self.machine.clock.schedule_interval(self.refresh, 0.25)    # lamp state follows player variables (lane, lock, multiplier)
         self.refresh()
 
     def mode_stop(self, **kwargs):
+        self.machine.clock.unschedule(self._poll)
         for name in ("start_button", "shoot_again", "extra_ball", "iron_throne") + tuple(h + "_sigil" for h in HOUSES):
             self._set(name, "000000")
+        for lamps in SHOT_LAMPS.values():
+            for lamp in lamps:
+                self.machine.lights["l_" + lamp].remove_from_stack_by_key(SKEY)
 
     def _set(self, name, color):
         light = self.machine.lights["l_" + name]
@@ -56,3 +71,35 @@ class LightMode(Mode):
                 self._set(h + "_sigil", "000000")
         self._set("extra_ball", "ffffff" if p.got_extra_ball_lit else "000000")
         self._set("iron_throne", "ffffff" if getattr(self.machine.modes["combos"], "cyb", None) else "000000")
+
+        self._shot_lamps(p)
+
+    def _shot_lamps(self, p):
+        """Arrows of the shots the running modes still want (white), the lit return lane, the lock and the playfield multiplier."""
+        wanted = {}
+        for m in self.machine.modes:
+            cfg = m.config.get("mode_settings") if m.active else None
+            if cfg and "shots" in cfg and m.name not in ("scoring",):
+                color = COLORS.get(cfg.get("key"), "ffffff")
+                for sw in cfg["shots"]:
+                    wanted.setdefault(sw, color)
+        if p.got_return_lane:
+            wanted[str(p.got_return_lane)] = "ffffff"
+        if p.got_lock_lit:
+            wanted["s_left_ramp_exit"] = wanted.get("s_left_ramp_exit", "ffffff")
+        for sw, lamps in SHOT_LAMPS.items():
+            for lamp in lamps:
+                light = self.machine.lights["l_" + lamp]
+                light.remove_from_stack_by_key(SKEY)
+                if sw in wanted:
+                    light.color(wanted[sw], key=SKEY, priority=40)
+        mult = int(p.got_multiplier or 1)
+        for n in (2, 3, 4, 5):
+            light = self.machine.lights["l_%dx" % n]
+            light.remove_from_stack_by_key(SKEY)
+            if mult == n:
+                light.color("ffffff", key=SKEY, priority=40)
+        lock = self.machine.lights["l_left_ramp_lock"]
+        lock.remove_from_stack_by_key(SKEY)
+        if p.got_lock_lit:
+            lock.color("ffffff", key=SKEY, priority=40)
