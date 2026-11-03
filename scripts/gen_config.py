@@ -662,7 +662,8 @@ EVENT_DEF = {"got_light_extra_ball": "def_extra_ball_lit", "got_award_extra_ball
              "tilt_warning": "def_tilt_warning", "tilt": "def_tilt_background", "slam_tilt": "def_slam_tilt"}
 EVENT_DEF.update({"got_iron_bank": "def_cash_in_multipliers", "got_light_lord_of_light": "def_baratheon_button_ability",     # handle_top_player_button (docs, H)
                   "got_pfx": "def_lannister_button_ability", "got_direwolf": "def_stark_ability_dire_wolf",
-                  "got_targaryen_freeze": "def_targaryen_button_ability", "got_martell_add_ball": "def_iron_bank_add_a_ball"})
+                  "got_targaryen_freeze": "def_targaryen_button_ability", "got_martell_add_ball": "def_iron_bank_add_a_ball",
+                  "got_golden_hand": "def_award_golden_hand"})
 EVENT_DEF.update({'got_pop_award{award=="Big Points"}': "def_big_points_pops", 'got_add_mode_time{key=="targaryen"}': "def_targaryen_add_time",
                   'got_add_mode_time{key=="martell"}': "def_martell_add_time",
                   'got_add_mode_time{key!="targaryen" and key!="martell"}': "def_add_time",

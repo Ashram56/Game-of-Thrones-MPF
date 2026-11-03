@@ -186,6 +186,8 @@ class Mystery:
             p.got_lock_lit = 1
         elif n == "Golden Hand":
             p.got_golden_hand = 1
+            ev.post("got_mode_total", total=self.machine.modes["extras"].GOLDEN_HAND)    # sets {award} for the +%llu line
+            ev.post("got_golden_hand")                                                  # award_golden_hand (0x10504, H)
         elif n == "Light Lord of Light":
             ev.post("got_light_lord_of_light")
         elif n == "Light Playfield Multiplier":

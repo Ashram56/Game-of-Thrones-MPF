@@ -444,6 +444,8 @@ event_player:
   - got_def_targaryen_button_ability
   got_martell_add_ball:
   - got_def_iron_bank_add_a_ball
+  got_golden_hand:
+  - got_def_award_golden_hand
   got_pop_award{award=="Big Points"}:
   - got_def_big_points_pops
   got_add_mode_time{key=="targaryen"}:

@@ -736,12 +736,14 @@ class TestGotGame(MpfGameTestCase):
         by = {e["name"]: e for e in mys.table}
         self.assertEqual(40, len(mys.table))
         self.assertEqual(4020, by["Award Sword"]["price"])
+        self.mock_event("got_def_award_golden_hand")
         for name in ("Light Swords", "+10 Wild Fire", "Golden Hand", "Light Lord of Light", "Light Stark", "Hold Bonus"):
             mys.give(name)
         self.advance_time_and_run(0.1)
         self.assertEqual(1, player.got_swords_lit)
         self.assertEqual(10, player.got_wildfire)
         self.assertEqual(1, player.got_golden_hand)
+        self.assertEventCalled("got_def_award_golden_hand")
         self.assertTrue(self.machine.modes["combos"]._lol)
         self.assertEqual("stark", player.got_lit_houses)
         self.assertFalse(mys.go(by["Light Swords"]))             # already lit: no-go
