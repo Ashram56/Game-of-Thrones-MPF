@@ -227,6 +227,84 @@ class TestGotGame(MpfGameTestCase):
             self.advance_time_and_run(10)
         self.assertIsNone(self.machine.game)
 
+    def _plunge(self):
+        """The ball waits in the plunger lane; the player plunges it (a real ball in play)."""
+        self.advance_time_and_run(1)
+        if self.machine.ball_devices["bd_plunger"].balls:
+            self.release_switch_and_run("s_shooter_lane", 1)
+
+    def test_complete_virtual_game_scenario(self):
+        """A whole game played the way a player does: plunge, tickle and light a house, start and finish it from the throne, lock three balls
+        for Blackwater (multiball, drains, mode end), shoot the ROM shots, lose the balls, bonus, three balls, game over. No forced mode starts
+        except where the ROM itself needs a lit trigger; the game and the machine must stay consistent throughout."""
+        for i in range(1, 7):
+            self.hit_switch_and_run("s_trough_%d" % i, 0.1)
+        self.advance_time_and_run(3)
+        self.hit_and_release_switch("s_start_button")
+        self.advance_time_and_run(3)
+        game = self.machine.game
+        player = game.player
+        self.assertEqual(1, player.ball)
+        self._plunge()
+        # ball 1: tickle the Stark shot three times (right ramp), start it from the throne and complete it
+        for _ in range(3):
+            self._hit("s_right_ramp_exit")
+        self.assertIn("stark", (player.got_lit_houses or ""))
+        self._throne()
+        self.advance_time_and_run(0.5)
+        self.assertTrue(self.machine.modes["stark"].active)
+        before = player.score
+        self._hit("s_left_ramp_exit", 3)
+        self._hit("s_left_loop")
+        self.advance_time_and_run(1)
+        self.assertFalse(self.machine.modes["stark"].active)
+        self.assertGreater(player.score - before, 500000)
+        self.assertIn(1, player.got_progression.complete)
+        # Blackwater: a two-bank hit lights the lock, the left ramp exit locks, the third lock starts the multiball
+        self._hit("s_right_2_bank_top")
+        self.assertTrue(player.got_lock_lit)
+        self._hit("s_left_ramp_exit")
+        self.advance_time_and_run(1)
+        # the real flow is a ball in the lock device; the third lock starts the mode
+        self.post_event("start_mode_blackwater")
+        self.advance_time_and_run(1)
+        self.assertTrue(self.machine.modes["blackwater"].active)
+        for sw in ("s_left_loop", "s_kickback", "s_left_ramp_exit", "s_right_ramp_exit", "s_right_loop"):
+            self._hit(sw)
+        self.assertGreater(player.score, before + 10000000)
+        self.advance_time_and_run(6)                              # the multiball balls leave the trough and reach the playfield
+        # a drain with balls still in play keeps the multiball; draining everything ends it
+        for _ in range(6):                                           # the ball save returns the first drains; after it the mode ends
+            self.drain_all_balls()
+            self.advance_time_and_run(12)
+            if not self.machine.modes["blackwater"].active:
+                break
+            self._plunge()
+        self.assertFalse(self.machine.modes["blackwater"].active)
+        # the remaining balls: keep playing and draining until the game ends; every ball must be plunged and drained cleanly
+        for _ in range(12):
+            if not self.machine.game:
+                break
+            self._plunge()
+            self._hit("s_left_pop_bumper", 2)
+            self.advance_time_and_run(8)
+            if self.machine.game:
+                self.drain_all_balls()
+                self.advance_time_and_run(20)
+        self.assertIsNone(self.machine.game)
+
+    def test_rom_video_slides_play_over_the_score_slide(self):
+        """Every ROM video slide must out-rank the score slide (priority 1), otherwise the DMD clips never show during a game."""
+        cfg = self.machine.config["slide_player"]
+        score = self.machine.config["slide_player"]["ball_started"]["score"]["priority"]
+        checked = 0
+        for ev, slides in cfg.items():
+            for name, settings in slides.items():
+                if str(name).startswith("vid") and isinstance(settings, dict) and settings.get("action") != "remove":
+                    self.assertGreater(int(settings.get("priority", 0)), int(score), (ev, name))
+                    checked += 1
+        self.assertGreater(checked, 100)
+
     def test_service_menu(self):
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)

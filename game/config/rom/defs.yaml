@@ -608,108 +608,143 @@ slide_player:
   got_def_award_greyjoy:
     vid050:
       expire: 2.8s
+      priority: 70
   got_def_award_lannister:
     vid042:
       expire: 1.9s
+      priority: 70
   got_def_award_martell:
     vid107:
       expire: 6.9s
+      priority: 70
   got_def_award_stark:
     vid023:
       expire: 2.5s
+      priority: 70
   got_def_award_targaryen_1:
     vid008:
       expire: 3.0s
+      priority: 70
   got_def_award_targaryen_2:
     vid009:
       expire: 3.1s
+      priority: 70
   got_def_baratheon_complete:
     vid032:
       expire: 2.5s
+      priority: 70
   got_def_baratheon_start:
     vid030:
       expire: 3.1s
+      priority: 70
   got_def_blackwater_jackpot:
     vid150:
       expire: 1.6s
+      priority: 70
   got_def_build_baratheon_dragon:
     vid024:
       expire: 1.8s
+      priority: 70
   got_def_build_baratheon_left_ramp:
     vid024:
       expire: 1.8s
+      priority: 70
   got_def_build_lannister:
     vid036:
       expire: 2.5s
+      priority: 70
   got_def_general_freeze_winter_mball:
     vid149:
       expire: 2.1s
+      priority: 70
   got_def_greyjoy_complete:
     vid066:
       expire: 9.2s
+      priority: 70
   got_def_greyjoy_start:
     vid049:
       expire: 3.5s
+      priority: 70
   got_def_house_lit:
     vid003:
       expire: 0.6s
+      priority: 70
   got_def_lannister_complete:
     vid042:
       expire: 1.9s
+      priority: 70
   got_def_lannister_start:
     vid037:
       expire: 3.1s
+      priority: 70
   got_def_martell_start:
     vid086:
       expire: 5.8s
+      priority: 70
   got_def_replay_award:
     vid156:
       expire: 6.0s
+      priority: 70
   got_def_stark_start:
     vid022:
       expire: 1.5s
+      priority: 70
   got_def_start_wall:
     vid110:
       expire: 9.7s
+      priority: 70
   got_def_super_jackpot_winter_mball:
     vid148:
       expire: 2.9s
+      priority: 70
   got_def_targaryen_start_1:
     vid004:
       expire: 2.5s
+      priority: 70
   got_def_targaryen_start_2:
     vid005:
       expire: 3.5s
+      priority: 70
   got_def_targaryen_start_3:
     vid006:
       expire: 4.2s
+      priority: 70
   got_def_tickle_house:
     vid025:
       expire: 2.5s
+      priority: 70
   got_def_tyrell_award_1:
     vid074:
       expire: 2.5s
+      priority: 70
   got_def_tyrell_award_2:
     vid079:
       expire: 1.4s
+      priority: 70
   got_def_tyrell_complete:
     vid080:
       expire: 2.8s
+      priority: 70
   got_def_tyrell_start:
     vid073:
       expire: 5.2s
+      priority: 70
   got_def_wall_jackpot:
     vid111:
       expire: 2.6s
+      priority: 70
   got_def_wall_jackpot_grows:
     vid108:
       expire: 2.0s
+      priority: 70
   got_def_wall_super_jackpot:
     vid145:
       expire: 9.0s
+      priority: 70
   got_def_winter_hurry_up_start:
     vid146:
       expire: 3.5s
+      priority: 70
   got_def_power_distribution_board_signal_missing:
     tx_power_distribution_board_signal_missing:
       priority: 70

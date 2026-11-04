@@ -4,525 +4,700 @@ slide_player:
   mode_targaryen_started:
     vid004:
       expire: 2s
+      priority: 70
   mode_stark_started:
     vid022:
       expire: 2s
+      priority: 70
   mode_baratheon_started:
     vid030:
       expire: 2s
+      priority: 70
   mode_lannister_started:
     vid037:
       expire: 2s
+      priority: 70
   mode_greyjoy_started:
     vid049:
       expire: 2s
+      priority: 70
   mode_tyrell_started:
     vid073:
       expire: 2s
+      priority: 70
   mode_martell_started:
     vid086:
       expire: 2s
+      priority: 70
   mode_winter_is_coming_started:
     vid146:
       expire: 2s
+      priority: 70
   mode_wall_started:
     vid110:
       expire: 2s
+      priority: 70
   got_video_0:
     vid000:
       expire: 0.6s
+      priority: 70
   got_video_1:
     vid001:
       expire: 0.6s
+      priority: 70
   got_video_2:
     vid002:
       expire: 0.6s
+      priority: 70
   got_video_3:
     vid003:
       expire: 0.6s
+      priority: 70
   got_video_4:
     vid004:
       expire: 2.5s
+      priority: 70
   got_video_5:
     vid005:
       expire: 3.5s
+      priority: 70
   got_video_6:
     vid006:
       expire: 4.2s
+      priority: 70
   got_video_7:
     vid007:
       expire: 5.8s
+      priority: 70
   got_video_8:
     vid008:
       expire: 3.0s
+      priority: 70
   got_video_9:
     vid009:
       expire: 3.1s
+      priority: 70
   got_video_10:
     vid010:
       expire: 3.0s
+      priority: 70
   got_video_11:
     vid011:
       expire: 1.4s
+      priority: 70
   got_video_12:
     vid012:
       expire: 1.6s
+      priority: 70
   got_video_13:
     vid013:
       expire: 3.8s
+      priority: 70
   got_video_14:
     vid014:
       expire: 3.3s
+      priority: 70
   got_video_15:
     vid015:
       expire: 2.5s
+      priority: 70
   got_video_16:
     vid016:
       expire: 3.5s
+      priority: 70
   got_video_17:
     vid017:
       expire: 3.6s
+      priority: 70
   got_video_18:
     vid018:
       expire: 1.5s
+      priority: 70
   got_video_19:
     vid019:
       expire: 1.5s
+      priority: 70
   got_video_20:
     vid020:
       expire: 1.5s
+      priority: 70
   got_video_21:
     vid021:
       expire: 1.3s
+      priority: 70
   got_video_22:
     vid022:
       expire: 1.5s
+      priority: 70
   got_video_23:
     vid023:
       expire: 2.5s
+      priority: 70
   got_video_24:
     vid024:
       expire: 1.8s
+      priority: 70
   got_video_25:
     vid025:
       expire: 2.5s
+      priority: 70
   got_video_26:
     vid026:
       expire: 1.5s
+      priority: 70
   got_video_27:
     vid027:
       expire: 1.5s
+      priority: 70
   got_video_28:
     vid028:
       expire: 1.5s
+      priority: 70
   got_video_29:
     vid029:
       expire: 1.5s
+      priority: 70
   got_video_30:
     vid030:
       expire: 3.1s
+      priority: 70
   got_video_31:
     vid031:
       expire: 1.4s
+      priority: 70
   got_video_32:
     vid032:
       expire: 2.5s
+      priority: 70
   got_video_33:
     vid033:
       expire: 2.5s
+      priority: 70
   got_video_34:
     vid034:
       expire: 1.9s
+      priority: 70
   got_video_35:
     vid035:
       expire: 2.5s
+      priority: 70
   got_video_36:
     vid036:
       expire: 2.5s
+      priority: 70
   got_video_37:
     vid037:
       expire: 3.1s
+      priority: 70
   got_video_38:
     vid038:
       expire: 1.6s
+      priority: 70
   got_video_39:
     vid039:
       expire: 1.8s
+      priority: 70
   got_video_40:
     vid040:
       expire: 2.4s
+      priority: 70
   got_video_41:
     vid041:
       expire: 1.8s
+      priority: 70
   got_video_42:
     vid042:
       expire: 1.9s
+      priority: 70
   got_video_43:
     vid043:
       expire: 8.8s
+      priority: 70
   got_video_44:
     vid044:
       expire: 3.0s
+      priority: 70
   got_video_45:
     vid045:
       expire: 3.0s
+      priority: 70
   got_video_46:
     vid046:
       expire: 3.0s
+      priority: 70
   got_video_47:
     vid047:
       expire: 3.5s
+      priority: 70
   got_video_48:
     vid048:
       expire: 3.5s
+      priority: 70
   got_video_49:
     vid049:
       expire: 3.5s
+      priority: 70
   got_video_50:
     vid050:
       expire: 2.8s
+      priority: 70
   got_video_51:
     vid051:
       expire: 1.9s
+      priority: 70
   got_video_52:
     vid052:
       expire: 3.2s
+      priority: 70
   got_video_53:
     vid053:
       expire: 3.4s
+      priority: 70
   got_video_54:
     vid054:
       expire: 3.2s
+      priority: 70
   got_video_55:
     vid055:
       expire: 2.5s
+      priority: 70
   got_video_56:
     vid056:
       expire: 3.5s
+      priority: 70
   got_video_57:
     vid057:
       expire: 2.1s
+      priority: 70
   got_video_58:
     vid058:
       expire: 2.6s
+      priority: 70
   got_video_59:
     vid059:
       expire: 2.5s
+      priority: 70
   got_video_60:
     vid060:
       expire: 2.6s
+      priority: 70
   got_video_61:
     vid061:
       expire: 8.7s
+      priority: 70
   got_video_62:
     vid062:
       expire: 9.3s
+      priority: 70
   got_video_63:
     vid063:
       expire: 4.6s
+      priority: 70
   got_video_64:
     vid064:
       expire: 3.0s
+      priority: 70
   got_video_65:
     vid065:
       expire: 3.1s
+      priority: 70
   got_video_66:
     vid066:
       expire: 9.2s
+      priority: 70
   got_video_67:
     vid067:
       expire: 1.2s
+      priority: 70
   got_video_68:
     vid068:
       expire: 1.2s
+      priority: 70
   got_video_69:
     vid069:
       expire: 2.4s
+      priority: 70
   got_video_70:
     vid070:
       expire: 1.8s
+      priority: 70
   got_video_71:
     vid071:
       expire: 6.7s
+      priority: 70
   got_video_72:
     vid072:
       expire: 2.4s
+      priority: 70
   got_video_73:
     vid073:
       expire: 5.2s
+      priority: 70
   got_video_74:
     vid074:
       expire: 2.5s
+      priority: 70
   got_video_75:
     vid075:
       expire: 1.5s
+      priority: 70
   got_video_76:
     vid076:
       expire: 1.8s
+      priority: 70
   got_video_77:
     vid077:
       expire: 1.8s
+      priority: 70
   got_video_78:
     vid078:
       expire: 1.0s
+      priority: 70
   got_video_79:
     vid079:
       expire: 1.4s
+      priority: 70
   got_video_80:
     vid080:
       expire: 2.8s
+      priority: 70
   got_video_81:
     vid081:
       expire: 1.6s
+      priority: 70
   got_video_82:
     vid082:
       expire: 3.2s
+      priority: 70
   got_video_83:
     vid083:
       expire: 1.8s
+      priority: 70
   got_video_84:
     vid084:
       expire: 2.6s
+      priority: 70
   got_video_85:
     vid085:
       expire: 2.0s
+      priority: 70
   got_video_86:
     vid086:
       expire: 5.8s
+      priority: 70
   got_video_87:
     vid087:
       expire: 2.4s
+      priority: 70
   got_video_88:
     vid088:
       expire: 2.0s
+      priority: 70
   got_video_89:
     vid089:
       expire: 1.6s
+      priority: 70
   got_video_90:
     vid090:
       expire: 2.1s
+      priority: 70
   got_video_91:
     vid091:
       expire: 2.5s
+      priority: 70
   got_video_92:
     vid092:
       expire: 2.8s
+      priority: 70
   got_video_93:
     vid093:
       expire: 2.1s
+      priority: 70
   got_video_94:
     vid094:
       expire: 2.5s
+      priority: 70
   got_video_95:
     vid095:
       expire: 2.6s
+      priority: 70
   got_video_96:
     vid096:
       expire: 2.5s
+      priority: 70
   got_video_97:
     vid097:
       expire: 2.5s
+      priority: 70
   got_video_98:
     vid098:
       expire: 2.1s
+      priority: 70
   got_video_99:
     vid099:
       expire: 3.1s
+      priority: 70
   got_video_100:
     vid100:
       expire: 2.8s
+      priority: 70
   got_video_101:
     vid101:
       expire: 2.3s
+      priority: 70
   got_video_102:
     vid102:
       expire: 2.6s
+      priority: 70
   got_video_103:
     vid103:
       expire: 2.2s
+      priority: 70
   got_video_104:
     vid104:
       expire: 2.8s
+      priority: 70
   got_video_105:
     vid105:
       expire: 2.7s
+      priority: 70
   got_video_106:
     vid106:
       expire: 2.7s
+      priority: 70
   got_video_107:
     vid107:
       expire: 6.9s
+      priority: 70
   got_video_108:
     vid108:
       expire: 2.0s
+      priority: 70
   got_video_109:
     vid109:
       expire: 4.0s
+      priority: 70
   got_video_110:
     vid110:
       expire: 9.7s
+      priority: 70
   got_video_111:
     vid111:
       expire: 2.6s
+      priority: 70
   got_video_112:
     vid112:
       expire: 2.4s
+      priority: 70
   got_video_113:
     vid113:
       expire: 2.5s
+      priority: 70
   got_video_114:
     vid114:
       expire: 1.8s
+      priority: 70
   got_video_115:
     vid115:
       expire: 3.0s
+      priority: 70
   got_video_116:
     vid116:
       expire: 2.2s
+      priority: 70
   got_video_117:
     vid117:
       expire: 2.0s
+      priority: 70
   got_video_118:
     vid118:
       expire: 2.2s
+      priority: 70
   got_video_119:
     vid119:
       expire: 1.9s
+      priority: 70
   got_video_120:
     vid120:
       expire: 2.7s
+      priority: 70
   got_video_121:
     vid121:
       expire: 3.1s
+      priority: 70
   got_video_122:
     vid122:
       expire: 2.5s
+      priority: 70
   got_video_123:
     vid123:
       expire: 2.0s
+      priority: 70
   got_video_124:
     vid124:
       expire: 3.0s
+      priority: 70
   got_video_125:
     vid125:
       expire: 3.2s
+      priority: 70
   got_video_126:
     vid126:
       expire: 2.9s
+      priority: 70
   got_video_127:
     vid127:
       expire: 1.5s
+      priority: 70
   got_video_128:
     vid128:
       expire: 1.6s
+      priority: 70
   got_video_129:
     vid129:
       expire: 3.0s
+      priority: 70
   got_video_130:
     vid130:
       expire: 2.8s
+      priority: 70
   got_video_131:
     vid131:
       expire: 6.9s
+      priority: 70
   got_video_132:
     vid132:
       expire: 2.1s
+      priority: 70
   got_video_133:
     vid133:
       expire: 2.8s
+      priority: 70
   got_video_134:
     vid134:
       expire: 2.4s
+      priority: 70
   got_video_135:
     vid135:
       expire: 3.9s
+      priority: 70
   got_video_136:
     vid136:
       expire: 1.9s
+      priority: 70
   got_video_137:
     vid137:
       expire: 7.3s
+      priority: 70
   got_video_138:
     vid138:
       expire: 4.0s
+      priority: 70
   got_video_139:
     vid139:
       expire: 3.2s
+      priority: 70
   got_video_140:
     vid140:
       expire: 3.1s
+      priority: 70
   got_video_141:
     vid141:
       expire: 5.0s
+      priority: 70
   got_video_142:
     vid142:
       expire: 3.5s
+      priority: 70
   got_video_143:
     vid143:
       expire: 3.0s
+      priority: 70
   got_video_144:
     vid144:
       expire: 2.6s
+      priority: 70
   got_video_145:
     vid145:
       expire: 9.0s
+      priority: 70
   got_video_146:
     vid146:
       expire: 3.5s
+      priority: 70
   got_video_147:
     vid147:
       expire: 2.1s
+      priority: 70
   got_video_148:
     vid148:
       expire: 2.9s
+      priority: 70
   got_video_149:
     vid149:
       expire: 2.1s
+      priority: 70
   got_video_150:
     vid150:
       expire: 1.6s
+      priority: 70
   got_video_151:
     vid151:
       expire: 2.8s
+      priority: 70
   got_video_152:
     vid152:
       expire: 3.4s
+      priority: 70
   got_video_153:
     vid153:
       expire: 3.2s
+      priority: 70
   got_video_154:
     vid154:
       expire: 3.2s
+      priority: 70
   got_video_155:
     vid155:
       expire: 6.0s
+      priority: 70
   got_video_156:
     vid156:
       expire: 6.0s
+      priority: 70
   got_video_160:
     vid160:
       expire: 1.6s
+      priority: 70
   got_targaryen_award:
     vid008:
       expire: 2.5s
+      priority: 70
   got_stark_award:
     vid023:
       expire: 2.5s
+      priority: 70
   got_martell_award:
     vid107:
       expire: 2.5s
+      priority: 70
   got_house_complete{key=="baratheon"}:
     vid032:
       expire: 2.5s
+      priority: 70
   got_house_complete{key=="lannister"}:
     vid042:
       expire: 2.5s
+      priority: 70
   got_house_complete{key=="greyjoy"}:
     vid066:
       expire: 2.5s
+      priority: 70
   got_house_complete{key=="tyrell"}:
     vid080:
       expire: 2.5s
+      priority: 70
   got_special_credit:
     vid155:
       expire: 2.5s
+      priority: 70

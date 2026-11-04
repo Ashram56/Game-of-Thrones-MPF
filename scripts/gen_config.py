@@ -413,12 +413,12 @@ def slides(data, rules):
     """GMC slides are scenes (game/slides/vidNNN.tscn, one per DMD video); MPF only gets the slide_player."""
     player = {}
     for event, vid in rules["dmd"]["videos"].items():
-        player[event] = {"vid%03d" % vid: {"expire": "2s"}}
+        player[event] = {"vid%03d" % vid: {"expire": "2s", "priority": 70}}
     for r in rows(data, "dmd_videos.csv"):                  # every extracted clip is playable: event got_video_<id>
         v = int(r["video_id"])
-        player["got_video_%d" % v] = {"vid%03d" % v: {"expire": "%.1fs" % (max(1, int(r["frames"])) / float(rules["dmd"]["fps"]) + 0.5)}}
+        player["got_video_%d" % v] = {"vid%03d" % v: {"expire": "%.1fs" % (max(1, int(r["frames"])) / float(rules["dmd"]["fps"]) + 0.5), "priority": 70}}
     for ev, vid in VIDEO_EVENTS.items():                    # clips whose ROM effect name says when they play (played_by column)
-        player[ev] = {"vid%03d" % vid: {"expire": "%.1fs" % (VIDEO_FRAMES.get(vid, 40) / float(rules["dmd"]["fps"]) + 0.5)}}
+        player[ev] = {"vid%03d" % vid: {"expire": "%.1fs" % (VIDEO_FRAMES.get(vid, 40) / float(rules["dmd"]["fps"]) + 0.5), "priority": 70}}
     return {"slide_player": player}
 
 
@@ -867,7 +867,7 @@ def triggers(data, rules):
             player["got_def_" + t[4:]] = evs
     for t, v in vid.items():
         if t.startswith("def_") and v in vids:
-            slides_["got_def_" + t[4:]] = {"vid%03d" % v: {"expire": "%.1fs" % (max(1, vids[v]) / fps + 0.5)}}
+            slides_["got_def_" + t[4:]] = {"vid%03d" % v: {"expire": "%.1fs" % (max(1, vids[v]) / fps + 0.5), "priority": 70}}
     # lamp effects: a def_* requests lef_* effects (data/triggers_lamp_coil.csv); a lef's lights come from the same file (H light ids)
     lamp = rows(data, "triggers_lamp_coil.csv") if os.path.exists(os.path.join(data, "triggers_lamp_coil.csv")) else []
     lef_lights = {}

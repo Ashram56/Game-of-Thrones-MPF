@@ -1,0 +1,61 @@
+#config_version=6
+config:
+- config.yaml
+event_player:
+  s_dip_1_active: got_def_award_stark
+  s_dip_2_active: got_def_baratheon_start
+  s_dip_3_active: got_def_greyjoy_complete
+  s_dip_4_active: got_def_blackwater_jackpot
+  s_dip_5_active: got_def_general_freeze_winter_mball
+  s_dip_6_active: got_def_award_martell
+switch_player:
+  start_event: reset_complete
+  steps:
+  - time: 0.1s
+    switch: s_trough_1
+    action: activate
+  - time: 0.1s
+    switch: s_trough_2
+    action: activate
+  - time: 0.1s
+    switch: s_trough_3
+    action: activate
+  - time: 0.1s
+    switch: s_trough_4
+    action: activate
+  - time: 0.1s
+    switch: s_trough_5
+    action: activate
+  - time: 0.1s
+    switch: s_trough_6
+    action: activate
+  - time: 12s
+    switch: s_left_coin
+    action: hit
+  - time: 0.3s
+    switch: s_start_button
+    action: hit
+  - time: 5s
+    switch: s_shooter_lane
+    action: activate
+  - time: 1s
+    switch: s_shooter_lane
+    action: deactivate
+  - time: 4s
+    switch: s_dip_1
+    action: activate
+  - time: 4s
+    switch: s_dip_2
+    action: activate
+  - time: 4s
+    switch: s_dip_3
+    action: activate
+  - time: 4s
+    switch: s_dip_4
+    action: activate
+  - time: 4s
+    switch: s_dip_5
+    action: activate
+  - time: 4s
+    switch: s_dip_6
+    action: activate
