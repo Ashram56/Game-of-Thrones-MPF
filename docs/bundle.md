@@ -12,5 +12,5 @@ Stern-SAM-Decryption `agents/packaging.md`, applied here. This repository does *
 | Patched GMC (rule 5) | `scripts/gmc_patch.py` skips an add-on already patched by the platform (`# mpf-godot fix`) |
 | No cabinet data | `game/data`, audits, logs, `*.local.cfg` are never tracked or copied (tested in `tests/test_package.py`) |
 
-Open before a real image: the ROM-derived sounds/DMD frames must be present in the builder's `GOT_ASSETS`; a Godot import pass and a run on the
+The ROM-derived sounds, DMD frames, fonts and text pages are committed in `game/sounds` and `game/images` (owner decision 2026-11-04, the repository is to be made private); `scripts/gen_media.py` regenerates them from `GOT_ASSETS`. Open before a real image: a Godot import pass and a run on the
 target (the tool does not check that the game runs); MPF Monitor `.ui` files are fetched by `setup.py` (platform fix `fixes/mpf-monitor`).
