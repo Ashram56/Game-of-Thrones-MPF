@@ -1,0 +1,634 @@
+{
+ "vid000": {
+  "frames": 1,
+  "fps": 20
+ },
+ "vid001": {
+  "frames": 1,
+  "fps": 20
+ },
+ "vid002": {
+  "frames": 1,
+  "fps": 20
+ },
+ "vid003": {
+  "frames": 1,
+  "fps": 20
+ },
+ "vid004": {
+  "frames": 41,
+  "fps": 20
+ },
+ "vid005": {
+  "frames": 60,
+  "fps": 20
+ },
+ "vid006": {
+  "frames": 75,
+  "fps": 20
+ },
+ "vid007": {
+  "frames": 106,
+  "fps": 20
+ },
+ "vid008": {
+  "frames": 50,
+  "fps": 20
+ },
+ "vid009": {
+  "frames": 53,
+  "fps": 20
+ },
+ "vid010": {
+  "frames": 51,
+  "fps": 20
+ },
+ "vid011": {
+  "frames": 19,
+  "fps": 20
+ },
+ "vid012": {
+  "frames": 21,
+  "fps": 20
+ },
+ "vid013": {
+  "frames": 66,
+  "fps": 20
+ },
+ "vid014": {
+  "frames": 56,
+  "fps": 20
+ },
+ "vid015": {
+  "frames": 41,
+  "fps": 20
+ },
+ "vid016": {
+  "frames": 59,
+  "fps": 20
+ },
+ "vid017": {
+  "frames": 62,
+  "fps": 20
+ },
+ "vid018": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid019": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid020": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid021": {
+  "frames": 16,
+  "fps": 20
+ },
+ "vid022": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid023": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid024": {
+  "frames": 26,
+  "fps": 20
+ },
+ "vid025": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid026": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid027": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid028": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid029": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid030": {
+  "frames": 53,
+  "fps": 20
+ },
+ "vid031": {
+  "frames": 18,
+  "fps": 20
+ },
+ "vid032": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid033": {
+  "frames": 39,
+  "fps": 20
+ },
+ "vid034": {
+  "frames": 29,
+  "fps": 20
+ },
+ "vid035": {
+  "frames": 39,
+  "fps": 20
+ },
+ "vid036": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid037": {
+  "frames": 52,
+  "fps": 20
+ },
+ "vid038": {
+  "frames": 22,
+  "fps": 20
+ },
+ "vid039": {
+  "frames": 25,
+  "fps": 20
+ },
+ "vid040": {
+  "frames": 37,
+  "fps": 20
+ },
+ "vid041": {
+  "frames": 25,
+  "fps": 20
+ },
+ "vid042": {
+  "frames": 29,
+  "fps": 20
+ },
+ "vid043": {
+  "frames": 165,
+  "fps": 20
+ },
+ "vid044": {
+  "frames": 50,
+  "fps": 20
+ },
+ "vid045": {
+  "frames": 50,
+  "fps": 20
+ },
+ "vid046": {
+  "frames": 50,
+  "fps": 20
+ },
+ "vid047": {
+  "frames": 60,
+  "fps": 20
+ },
+ "vid048": {
+  "frames": 61,
+  "fps": 20
+ },
+ "vid049": {
+  "frames": 60,
+  "fps": 20
+ },
+ "vid050": {
+  "frames": 46,
+  "fps": 20
+ },
+ "vid051": {
+  "frames": 29,
+  "fps": 20
+ },
+ "vid052": {
+  "frames": 55,
+  "fps": 20
+ },
+ "vid053": {
+  "frames": 58,
+  "fps": 20
+ },
+ "vid054": {
+  "frames": 54,
+  "fps": 20
+ },
+ "vid055": {
+  "frames": 39,
+  "fps": 20
+ },
+ "vid056": {
+  "frames": 60,
+  "fps": 20
+ },
+ "vid057": {
+  "frames": 32,
+  "fps": 20
+ },
+ "vid058": {
+  "frames": 43,
+  "fps": 20
+ },
+ "vid059": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid060": {
+  "frames": 42,
+  "fps": 20
+ },
+ "vid061": {
+  "frames": 164,
+  "fps": 20
+ },
+ "vid062": {
+  "frames": 177,
+  "fps": 20
+ },
+ "vid063": {
+  "frames": 82,
+  "fps": 20
+ },
+ "vid064": {
+  "frames": 50,
+  "fps": 20
+ },
+ "vid065": {
+  "frames": 52,
+  "fps": 20
+ },
+ "vid066": {
+  "frames": 173,
+  "fps": 20
+ },
+ "vid067": {
+  "frames": 14,
+  "fps": 20
+ },
+ "vid068": {
+  "frames": 14,
+  "fps": 20
+ },
+ "vid069": {
+  "frames": 37,
+  "fps": 20
+ },
+ "vid070": {
+  "frames": 25,
+  "fps": 20
+ },
+ "vid071": {
+  "frames": 124,
+  "fps": 20
+ },
+ "vid072": {
+  "frames": 37,
+  "fps": 20
+ },
+ "vid073": {
+  "frames": 93,
+  "fps": 20
+ },
+ "vid074": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid075": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid076": {
+  "frames": 25,
+  "fps": 20
+ },
+ "vid077": {
+  "frames": 25,
+  "fps": 20
+ },
+ "vid078": {
+  "frames": 10,
+  "fps": 20
+ },
+ "vid079": {
+  "frames": 19,
+  "fps": 20
+ },
+ "vid080": {
+  "frames": 46,
+  "fps": 20
+ },
+ "vid081": {
+  "frames": 22,
+  "fps": 20
+ },
+ "vid082": {
+  "frames": 55,
+  "fps": 20
+ },
+ "vid083": {
+  "frames": 25,
+  "fps": 20
+ },
+ "vid084": {
+  "frames": 43,
+  "fps": 20
+ },
+ "vid085": {
+  "frames": 31,
+  "fps": 20
+ },
+ "vid086": {
+  "frames": 107,
+  "fps": 20
+ },
+ "vid087": {
+  "frames": 37,
+  "fps": 20
+ },
+ "vid088": {
+  "frames": 31,
+  "fps": 20
+ },
+ "vid089": {
+  "frames": 22,
+  "fps": 20
+ },
+ "vid090": {
+  "frames": 32,
+  "fps": 20
+ },
+ "vid091": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid092": {
+  "frames": 45,
+  "fps": 20
+ },
+ "vid093": {
+  "frames": 32,
+  "fps": 20
+ },
+ "vid094": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid095": {
+  "frames": 43,
+  "fps": 20
+ },
+ "vid096": {
+  "frames": 41,
+  "fps": 20
+ },
+ "vid097": {
+  "frames": 39,
+  "fps": 20
+ },
+ "vid098": {
+  "frames": 32,
+  "fps": 20
+ },
+ "vid099": {
+  "frames": 52,
+  "fps": 20
+ },
+ "vid100": {
+  "frames": 46,
+  "fps": 20
+ },
+ "vid101": {
+  "frames": 36,
+  "fps": 20
+ },
+ "vid102": {
+  "frames": 42,
+  "fps": 20
+ },
+ "vid103": {
+  "frames": 35,
+  "fps": 20
+ },
+ "vid104": {
+  "frames": 45,
+  "fps": 20
+ },
+ "vid105": {
+  "frames": 44,
+  "fps": 20
+ },
+ "vid106": {
+  "frames": 44,
+  "fps": 20
+ },
+ "vid107": {
+  "frames": 128,
+  "fps": 20
+ },
+ "vid108": {
+  "frames": 30,
+  "fps": 20
+ },
+ "vid109": {
+  "frames": 71,
+  "fps": 20
+ },
+ "vid110": {
+  "frames": 183,
+  "fps": 20
+ },
+ "vid111": {
+  "frames": 42,
+  "fps": 20
+ },
+ "vid112": {
+  "frames": 37,
+  "fps": 20
+ },
+ "vid113": {
+  "frames": 40,
+  "fps": 20
+ },
+ "vid114": {
+  "frames": 25,
+  "fps": 20
+ },
+ "vid115": {
+  "frames": 49,
+  "fps": 20
+ },
+ "vid116": {
+  "frames": 35,
+  "fps": 20
+ },
+ "vid117": {
+  "frames": 30,
+  "fps": 20
+ },
+ "vid118": {
+  "frames": 34,
+  "fps": 20
+ },
+ "vid119": {
+  "frames": 28,
+  "fps": 20
+ },
+ "vid120": {
+  "frames": 44,
+  "fps": 20
+ },
+ "vid121": {
+  "frames": 52,
+  "fps": 20
+ },
+ "vid122": {
+  "frames": 39,
+  "fps": 20
+ },
+ "vid123": {
+  "frames": 31,
+  "fps": 20
+ },
+ "vid124": {
+  "frames": 50,
+  "fps": 20
+ },
+ "vid125": {
+  "frames": 55,
+  "fps": 20
+ },
+ "vid126": {
+  "frames": 47,
+  "fps": 20
+ },
+ "vid127": {
+  "frames": 20,
+  "fps": 20
+ },
+ "vid128": {
+  "frames": 21,
+  "fps": 20
+ },
+ "vid129": {
+  "frames": 51,
+  "fps": 20
+ },
+ "vid130": {
+  "frames": 45,
+  "fps": 20
+ },
+ "vid131": {
+  "frames": 128,
+  "fps": 20
+ },
+ "vid132": {
+  "frames": 33,
+  "fps": 20
+ },
+ "vid133": {
+  "frames": 45,
+  "fps": 20
+ },
+ "vid134": {
+  "frames": 37,
+  "fps": 20
+ },
+ "vid135": {
+  "frames": 68,
+  "fps": 20
+ },
+ "vid136": {
+  "frames": 29,
+  "fps": 20
+ },
+ "vid137": {
+  "frames": 136,
+  "fps": 20
+ },
+ "vid138": {
+  "frames": 70,
+  "fps": 20
+ },
+ "vid139": {
+  "frames": 54,
+  "fps": 20
+ },
+ "vid140": {
+  "frames": 53,
+  "fps": 20
+ },
+ "vid141": {
+  "frames": 89,
+  "fps": 20
+ },
+ "vid142": {
+  "frames": 60,
+  "fps": 20
+ },
+ "vid143": {
+  "frames": 49,
+  "fps": 20
+ },
+ "vid144": {
+  "frames": 42,
+  "fps": 20
+ },
+ "vid145": {
+  "frames": 170,
+  "fps": 20
+ },
+ "vid146": {
+  "frames": 60,
+  "fps": 20
+ },
+ "vid147": {
+  "frames": 32,
+  "fps": 20
+ },
+ "vid148": {
+  "frames": 47,
+  "fps": 20
+ },
+ "vid149": {
+  "frames": 32,
+  "fps": 20
+ },
+ "vid150": {
+  "frames": 23,
+  "fps": 20
+ },
+ "vid151": {
+  "frames": 45,
+  "fps": 20
+ },
+ "vid152": {
+  "frames": 57,
+  "fps": 20
+ },
+ "vid153": {
+  "frames": 55,
+  "fps": 20
+ },
+ "vid154": {
+  "frames": 55,
+  "fps": 20
+ },
+ "vid155": {
+  "frames": 109,
+  "fps": 20
+ },
+ "vid156": {
+  "frames": 109,
+  "fps": 20
+ },
+ "vid160": {
+  "frames": 21,
+  "fps": 20
+ }
+}
