@@ -1,4 +1,5 @@
 """MPF glue: base game mode. Wizard progression and starting the next ready mode."""
+import random
 import time
 
 from mpf.core.mode import Mode
@@ -32,6 +33,9 @@ class GotBase(Mode):
         self.add_mode_event_handler("s_l_flipper_button_active", self._choose, step=-1)
         self.add_mode_event_handler("s_r_flipper_button_active", self._choose, step=1)
         self.add_mode_event_handler("s_shooter_lane_inactive", self._house_confirmed)
+        self.add_mode_event_handler("ball_started", self._start_chooser)
+        self._slot = 0                                  # chooser position: 0 = RANDOM (the ROM's undecided state), 1..7 = houses 0..6
+        self._chooser_on = False
         self.add_mode_event_handler(powers.ACTION_SWITCH + "_active", self._action)
         self._bank_hit = set()
         for sw in pr["wall_bank_switches"]:
@@ -216,20 +220,55 @@ class GotBase(Mode):
         p = self.player
         return not p.got_house_confirmed and self.machine.game.player.ball == 1
 
+    def _set_page(self):
+        self.machine.variables.set_machine_var("got_house_page", self._slot + 1)
+
+    def _start_chooser(self, ball=1, **kwargs):
+        """Docs/18 1.2: on a player's first ball, adjustment 109 (PLAYER HOUSE CHOICE) = 0 starts the chooser (hand animation, prompt
+        and voice 431, shooter music); 1..7 fixes the house, 8 draws a random one. Casual mode skips it."""
+        p = self.player
+        if int(ball) != 1 or p.got_house_confirmed or casual.is_casual(self.machine):
+            return
+        try:
+            mode = int(self.machine.settings.get_setting_value("ad_house_choice"))
+        except Exception:
+            mode = 0
+        if mode == 0:
+            self._slot, self._chooser_on = 0, True
+            p.got_house_picked = 0
+            self._set_page()
+            self.machine.variables.set_machine_var("got_choosing", 1)
+            self.machine.events.post("got_house_choose_bg_show")
+            self.machine.events.post("got_def_house_select_prompt_BG")
+            self.machine.events.post("got_house_choosing_started")
+        else:
+            idx = mode - 1 if mode <= 7 else random.randrange(7)
+            p.got_house_index, p.got_house_picked = idx, 1
+            self._house_confirmed(forced=True)
+
     def _choose(self, step, **kwargs):
-        if not self._choosing() or casual.is_casual(self.machine):        # casual mode skips the house choice (docs/14)
+        if not self._choosing() or not self._chooser_on:
             return
         p = self.player
-        p.got_house_index = (int(p.got_house_index or 1) + step) % len(powers.HOUSES)     # default Stark (1)
-        p.got_house_picked = 1
-        self.machine.events.post("got_house_chosen", house=powers.HOUSES[p.got_house_index])
+        self._slot = (self._slot + step) % 8
+        p.got_house_picked = 1 if self._slot else 0
+        if self._slot:
+            p.got_house_index = self._slot - 1
+        self._set_page()
+        self.machine.events.post("got_se_vo_fn_just_house_name_v%d" % (self._slot if self._slot else 8))
+        self.machine.events.post("got_house_chosen", house=powers.HOUSES[self._slot - 1] if self._slot else "random")
 
-    def _house_confirmed(self, **kwargs):
+    def _house_confirmed(self, forced=False, **kwargs):
         p = self.player
         if p.got_house_confirmed or self.machine.game.player.ball != 1:
             return
+        if self._chooser_on:
+            self._chooser_on = False
+            self.machine.variables.set_machine_var("got_choosing", 0)
+            self.machine.events.post("got_house_choose_bg_hide")
+            self.machine.events.post("got_house_choosing_ended")
         p.got_house_confirmed = 1
-        idx = int(p.got_house_index) if p.got_house_picked else 1
+        idx = int(p.got_house_index) if p.got_house_picked else (1 if casual.is_casual(self.machine) else random.randrange(7))
         p.got_house_index = idx
         p.got_house = powers.HOUSES[idx]
         prog = self._progression()
@@ -291,6 +330,9 @@ class GotBase(Mode):
     def _action(self, **kwargs):
         """Action button: once per ball (rulesheet)."""
         p = self.player
+        if self._chooser_on:                                    # the top player button confirms the house (docs/18 1.2)
+            self._house_confirmed()
+            return
         if self.machine.modes["extras"].mystery.menu:           # the button confirms the Mystery menu instead
             return
         if self._ability():

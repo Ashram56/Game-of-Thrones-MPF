@@ -358,6 +358,14 @@ def text_slides(data):
     live_bg("tx_blackwater_bg_live", bw, "got_bw_state", 0.2, "blackwater")
     live_bg("tx_castle_bg_live", [[("CASTLE MULTIBALL", 0, 0, 5, "l"), ("{score}", 0, 127, 5, "r"), ("SHOOT CASTLE DRAGON SHOTS", 0, 64, 11, "c"),
                                    ("SUPER JACKPOT VALUE", 0, 64, 17, "c"), ("{hurry}", 0, 64, 23, "c")]], "got_castle_page", 0.2, "castle")
+    # Choose your house (docs/18 1.2): the hand animation (effect 66, video 144) with the prompt (effect 68, RANDOM / THE GAME WILL CHOOSE)
+    # and the house chosen by the flippers (got_house_page: 1 = random, 2..8 = the houses 0..6)
+    names = ["TARGARYEN", "STARK", "BARATHEON", "LANNISTER", "GREYJOY", "TYRELL", "MARTELL"]
+    pg = [[("RANDOM", 18, 76, 20, "c"), ("THE GAME WILL CHOOSE", 0, 76, 31, "c")]]
+    pg += [[(n, 18, 76, 20, "c"), ("FLIPPERS TO CHANGE", 0, 76, 31, "c")] for n in names]
+    live_bg("tx_house_choose_live", pg, "got_house_page", 0.1, "house_choose")
+    scenes["slides/tx_house_choose_live.tscn"] += 'video = "vid144"\nvideo_fps = 20\n'
+    player["got_house_choose_bg_show"] = {"tx_house_choose_live": {"priority": 72}}
     # def_build_stark: the character comes from the global kill list (data/build_stark_kill_list.csv), the layout from the side byte
     kp = os.path.join(data, "build_stark_kill_list.csv")
     if os.path.exists(kp) and os.path.exists(lp):

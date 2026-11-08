@@ -1,0 +1,52 @@
+#config_version=6
+# Choose your house screen: start a game, flippers cycle the houses
+config:
+  - config.yaml
+switch_player:
+  start_event: reset_complete
+  steps:
+    - time: 0.1s
+      switch: s_trough_1
+      action: activate
+    - time: 0.1s
+      switch: s_trough_2
+      action: activate
+    - time: 0.1s
+      switch: s_trough_3
+      action: activate
+    - time: 0.1s
+      switch: s_trough_4
+      action: activate
+    - time: 0.1s
+      switch: s_trough_5
+      action: activate
+    - time: 0.1s
+      switch: s_trough_6
+      action: activate
+    - time: 3s
+      switch: s_left_coin
+      action: hit
+    - time: 0.3s
+      switch: s_start_button
+      action: hit
+    - time: 0.2s
+      switch: s_start_button
+      action: release
+    - time: 6s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 0.2s
+      switch: s_r_flipper_button
+      action: release
+    - time: 4s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 0.2s
+      switch: s_r_flipper_button
+      action: release
+    - time: 4s
+      switch: s_r_flipper_button
+      action: hit
+    - time: 0.2s
+      switch: s_r_flipper_button
+      action: release

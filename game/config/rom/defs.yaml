@@ -1509,6 +1509,12 @@ slide_player:
   got_castle_bg_hide:
     tx_castle_bg_live:
       action: remove
+  got_house_choose_bg_show:
+    tx_house_choose_live:
+      priority: 72
+  got_house_choose_bg_hide:
+    tx_house_choose_live:
+      action: remove
   got_def_build_stark_0:
     tx_build_stark_0:
       priority: 70

@@ -394,7 +394,9 @@ class TestGotGame(MpfGameTestCase):
             self.hit_and_release_switch(sw)
             self.advance_time_and_run(0.2)
 
-    def _start_game(self):
+    def _start_game(self, choice=2):
+        """choice = adjustment 109 PLAYER HOUSE CHOICE: 2 fixes Stark (the old default of these tests); 0 starts the chooser."""
+        self.machine.settings.set_setting_value("ad_house_choice", choice)
         for i in range(1, 7):
             self.hit_switch_and_run("s_trough_%d" % i, 0.1)
         self.advance_time_and_run(3)
@@ -580,7 +582,7 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(1000000, start("winter_has_come")["start"])
 
     def test_winter_award_grows_per_completion(self):
-        self._start_game()
+        self._start_game(0)
         player = self.machine.game.player
         for _ in range(2):
             self.post_event("start_mode_winter_is_coming")
@@ -1358,9 +1360,10 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual(5, mb.shots_left)
 
     def test_house_choice_cycles_with_flippers_and_baratheon_advances(self):
-        self._start_game()
+        self._start_game(0)
         player = self.machine.game.player
-        self.hit_and_release_switch("s_r_flipper_button")      # Stark -> Baratheon
+        for _ in range(3):                                     # RANDOM -> Targaryen -> Stark -> Baratheon
+            self.hit_and_release_switch("s_r_flipper_button")
         self.advance_time_and_run(0.1)
         self.assertEqual(2, player.got_house_index)
         self.hit_and_release_switch("s_shooter_lane")          # (re)seat then release: the ball leaves the lane
@@ -1371,9 +1374,9 @@ class TestGotGame(MpfGameTestCase):
         self.assertEqual("baratheon", player.got_house)
 
     def test_targaryen_starts_with_house_complete(self):
-        self._start_game()
+        self._start_game(0)
         player = self.machine.game.player
-        self.hit_and_release_switch("s_l_flipper_button")      # Stark -> Targaryen (wraps from 1 to 0)
+        self.hit_and_release_switch("s_r_flipper_button")      # RANDOM -> Targaryen
         self.release_switch_and_run("s_shooter_lane", 0.5)
         self.assertEqual("targaryen", player.got_house)
         self.assertIn(0, player.got_progression.complete)
@@ -1398,9 +1401,9 @@ class TestGotGame(MpfGameTestCase):
         self.assertTrue(self.machine.modes["lannister"].active)
 
     def test_targaryen_action_freezes_timers_15s(self):
-        self._start_game()
+        self._start_game(0)
         player = self.machine.game.player
-        self.hit_and_release_switch("s_l_flipper_button")
+        self.hit_and_release_switch("s_r_flipper_button")
         self.release_switch_and_run("s_shooter_lane", 0.5)
         self.post_event("start_mode_greyjoy")
         self.advance_time_and_run(0.3)
@@ -1641,14 +1644,48 @@ class TestGotGame(MpfGameTestCase):
         tunes = []
         self.machine.events.add_handler("got_se_tune_main_play", lambda **kwargs: tunes.append("main"))
         self.machine.events.add_handler("got_se_tune_stark", lambda **kwargs: tunes.append("stark"))
-        self._start_game()
+        self.machine.events.add_handler("got_se_tune_shooter_groove", lambda **kwargs: tunes.append("groove"))
+        self._start_game(0)
         self.advance_time_and_run(0.5)
-        self.assertEqual(["main"], tunes)
+        self.assertEqual(["groove"], tunes)             # the house chooser has its own music
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertEqual(["groove", "main"], tunes)
+        tunes[:] = ["main"]
         self.post_event("start_mode_stark")
         self.advance_time_and_run(0.5)
         self.assertEqual(["main", "stark"], tunes)
         self.assertEqual(-1, self.machine.config["sound_player"]["got_se_tune_stark"][
             next(iter(self.machine.config["sound_player"]["got_se_tune_stark"]))]["loops"])
+
+    def test_house_chooser_start_voice_screen_and_flippers(self):
+        """docs/18 1.2: ball 1 starts the chooser: voice 431, hand video + prompt slide, RANDOM first; flippers move; the plunge confirms."""
+        seen = []
+        for ev in ("got_def_house_select_prompt_BG", "got_house_choose_bg_show", "got_house_choose_bg_hide",
+                   "got_se_vo_fn_just_house_name_v3", "got_se_vo_fn_house_selected_v3"):
+            self.machine.events.add_handler(ev, lambda ev=ev, **kwargs: seen.append(ev))
+        self._start_game(0)
+        self.assertIn("got_def_house_select_prompt_BG", seen)
+        self.assertIn("got_house_choose_bg_show", seen)
+        self.assertEqual(1, self.machine.variables.get_machine_var("got_house_page"))       # RANDOM
+        self.hit_and_release_switch("s_r_flipper_button")
+        self.hit_and_release_switch("s_r_flipper_button")
+        self.hit_and_release_switch("s_r_flipper_button")                                     # slot 3 = Baratheon
+        self.advance_time_and_run(0.2)
+        self.assertEqual(4, self.machine.variables.get_machine_var("got_house_page"))
+        self.assertIn("got_se_vo_fn_just_house_name_v3", seen)
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertEqual("baratheon", self.machine.game.player.got_house)
+        self.assertIn("got_house_choose_bg_hide", seen)
+        self.assertIn("got_se_vo_fn_house_selected_v3", seen)
+
+    def test_house_chooser_random_when_nothing_picked(self):
+        self._start_game(0)
+        self.release_switch_and_run("s_shooter_lane", 0.5)
+        self.assertIn(self.machine.game.player.got_house, ("targaryen", "stark", "baratheon", "lannister", "greyjoy", "tyrell", "martell"))
+
+    def test_house_fixed_by_adjustment(self):
+        self._start_game(4)                                                 # fixed house 3 = Lannister
+        self.assertEqual("lannister", self.machine.game.player.got_house)
 
     def test_live_text_values_are_set_before_the_effect(self):
         self._start_game()
@@ -1710,7 +1747,7 @@ class TestGotGame(MpfGameTestCase):
     def test_house_start_award_lannister_gets_gold_and_voice(self):
         voice = []
         self.machine.events.add_handler("got_se_vo_fn_house_selected_v4", lambda **kwargs: voice.append(1))
-        self._start_game()
+        self._start_game(0)
         p = self.machine.game.player
         p.got_house_index = 3
         p.got_house_picked = 1
@@ -1722,7 +1759,7 @@ class TestGotGame(MpfGameTestCase):
 
     def test_targaryen_start_one_dragon_killed_by_adjustment(self):
         self.machine.settings.set_setting_value("ad_targaryen_house_select", 0)
-        self._start_game()
+        self._start_game(0)
         p = self.machine.game.player
         p.got_house_index = 0
         p.got_house_picked = 1
@@ -1746,7 +1783,7 @@ class TestGotGame(MpfGameTestCase):
     def test_tyrell_start_lights_left_return_lane_and_flipper_swaps(self):
         shown = []
         self.machine.events.add_handler("got_def_hand_bump_multiplier", lambda **kwargs: shown.append(1))
-        self._start_game()
+        self._start_game(0)
         p = self.machine.game.player
         p.got_house_index = 5
         p.got_house_picked = 1

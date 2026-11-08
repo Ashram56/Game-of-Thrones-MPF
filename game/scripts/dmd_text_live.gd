@@ -7,6 +7,11 @@ extends TextureRect
 @export var period := 1.2
 @export var page_var := ""        ## machine variable whose value (1-based) selects the page; the page is redrawn every `refresh` seconds
 @export var refresh := 0.0
+@export var video := ""           ## ROM DMD clip (res://images/dmd_<video>_fNNN.png) played behind the text at `video_fps`, last frame held
+@export var video_fps := 20
+var _vtex: TextureRect
+var _vframes: Array = []
+var _vt := 0.0
 var _pages: Array = []
 var _r := 0.0
 
@@ -66,7 +71,25 @@ func _draw_page(page: Array) -> ImageTexture:
 			ox += int(g.get("advance", int(g["w"]) + 1))
 	return ImageTexture.create_from_image(img)
 
+func _setup_video() -> void:
+	_vtex = TextureRect.new()
+	_vtex.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_vtex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_vtex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_vtex.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var k := 0
+	while FileAccess.file_exists("res://images/dmd_%s_f%03d.png" % [video, k]):
+		_vframes.append(ImageTexture.create_from_image(Image.load_from_file(ProjectSettings.globalize_path("res://images/dmd_%s_f%03d.png" % [video, k]))))
+		k += 1
+	if _vframes.size() > 0:
+		_vtex.texture = _vframes[0]
+	var par := get_parent()
+	par.add_child.call_deferred(_vtex)
+	par.move_child.call_deferred(_vtex, get_index())     # behind the text layer
+
 func _ready() -> void:
+	if video != "":
+		_setup_video()
 	var pages = JSON.parse_string(pages_json)
 	if page_var != "" and pages is Array:
 		_pages = pages
@@ -84,6 +107,10 @@ func _show_var_page() -> void:
 	texture = _draw_page(_pages[idx])
 
 func _process(delta: float) -> void:
+	if _vframes.size() > 1:
+		_vt += delta
+		if _vtex.is_inside_tree():
+			_vtex.texture = _vframes[mini(int(_vt * video_fps), _vframes.size() - 1)]
 	if page_var != "":
 		_r += delta
 		if _r >= refresh:

@@ -35,7 +35,7 @@ class Music(Mode):
         for m in STACK:
             self.add_mode_event_handler("mode_%s_started" % m, self._on, which=m)
             self.add_mode_event_handler("mode_%s_stopped" % m, self._off, which=m)
-        for ev in ("got_wall_lit", "got_house_complete", "got_house_confirmed"):
+        for ev in ("got_house_choosing_started", "got_house_choosing_ended", "got_wall_lit", "got_house_complete", "got_house_confirmed"):
             self.add_mode_event_handler(ev, self._refresh)
         self.add_mode_event_handler("ball_started", self._ball_started)
         self.add_mode_event_handler("game_ended", self._reset)
@@ -78,8 +78,10 @@ class Music(Mode):
         if not self.machine.game:
             return
         tune = MAIN.get(self._ball, MAIN[3])
+        if self.machine.variables.get_machine_var("got_choosing"):
+            tune = "tune_shooter_groove"               # chooser background (music_stack, docs/18)
         cands = [STACK[m] for m in self._active] + self._ready()
-        if cands:
+        if cands and not self.machine.variables.get_machine_var("got_choosing"):
             tune = max(cands, key=lambda x: x[0])[1]
         if tune != self._now:
             self._now = tune
