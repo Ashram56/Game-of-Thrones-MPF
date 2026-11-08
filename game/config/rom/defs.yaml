@@ -68,6 +68,7 @@ event_player:
   got_def_ball_save:
   - got_se_ball_saved_dragon_roars
   - got_se_ball_saved_dragon_fly_sngle_flap
+  - got_se_vo_ball_saved
   got_def_baratheon_button_ability:
   - got_se_iron_bank_award
   - got_lef_baratheon_ability
@@ -187,8 +188,6 @@ event_player:
   - got_se_vo_hand_of_the_king_total
   got_def_house_select_prompt_BG:
   - got_se_vo_fn_choose_a_house
-  got_def_hstd_enter_initials:
-  - got_se_node_board_runtime_update_complete
   got_def_interlock_voltage_disabled:
   - got_se_interlock_message_hit
   got_def_iron_bank_add_a_ball:
@@ -252,6 +251,7 @@ event_player:
   - got_se_blackwater_explosions
   - got_se_vo_blackwater_multiball_start_end
   - got_se_blackwater_start_archer
+  - got_se_vo_blackwater_multiball
   - got_lef_ball_locked
   - got_lef_blackwater_start
   got_def_start_corner_combo:
@@ -353,6 +353,19 @@ event_player:
   - got_se_fx_start_winter_is_coming
   got_def_winter_mball_total:
   - got_se_fx_winter_has_come_total
+  got_def_hstd_enter_initials:
+  - got_se_fx_hstd_cursor_right
+  - got_se_fx_hstd_cursor_left
+  - got_se_fx_hstd_enter
+  - got_se_invalid
+  got_def_tournament_hstd_enter_initials:
+  - got_se_fx_hstd_cursor_right
+  - got_se_fx_hstd_cursor_left
+  - got_se_fx_hstd_enter
+  got_def_hstd_enter_initials_begin:
+  - got_se_invalid
+  got_def_tournament_hstd_enter_initials_begin:
+  - got_se_invalid
   got_def_video_mode_total:
   - got_lef_video_mode_total
   mode_targaryen_started:
@@ -789,6 +802,18 @@ slide_player:
     vid146:
       expire: 3.5s
       priority: 70
+  got_def_award_targaryen_dragon_level_three:
+    vid013:
+      expire: 3.8s
+      priority: 70
+  got_def_targaryen_timer_end:
+    vid014:
+      expire: 3.3s
+      priority: 70
+  got_def_award_winter_hurry_up:
+    vid147:
+      expire: 2.1s
+      priority: 70
   got_def_power_distribution_board_signal_missing:
     tx_power_distribution_board_signal_missing:
       priority: 70
@@ -1057,16 +1082,8 @@ slide_player:
     tx_targaryen_three_BG:
       priority: 70
       expire: 3.9s
-  got_def_targaryen_timer_end:
-    tx_targaryen_timer_end:
-      priority: 70
-      expire: 2.5s
   got_def_targaryen_total:
     tx_targaryen_total:
-      priority: 70
-      expire: 2.5s
-  got_def_award_targaryen_dragon_level_three:
-    tx_award_targaryen_dragon_level_three:
       priority: 70
       expire: 2.5s
   got_def_lannister_lit:
@@ -1121,10 +1138,6 @@ slide_player:
     tx_baratheon_BG:
       priority: 70
       expire: 6.3s
-  got_def_award_winter_hurry_up:
-    tx_award_winter_hurry_up:
-      priority: 70
-      expire: 2.5s
   got_def_winter_grows:
     tx_winter_grows:
       priority: 70
