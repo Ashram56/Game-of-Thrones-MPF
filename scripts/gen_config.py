@@ -785,7 +785,7 @@ EVENT_DEF = {"got_light_extra_ball": "def_extra_ball_lit", "got_award_extra_ball
              "got_special_credit": "def_replay_award", "got_match": "def_match", "ball_save_default_saving_ball": "def_ball_save",
              "got_stark_award": "def_award_stark", "got_martell_award": "def_award_martell", "got_greyjoy_award": "def_award_greyjoy",
              "got_lannister_award": "def_award_lannister", "got_targaryen_award": "def_award_targaryen_1",
-             "got_tyrell_award": "def_tyrell_award_1",
+             "got_tyrell_award{stage==1}": "def_tyrell_award_1", "got_tyrell_award{stage==2}": "def_tyrell_award_2",
              "tilt_warning": "def_tilt_warning", "tilt": "def_tilt_background", "slam_tilt": "def_slam_tilt"}
 EVENT_DEF.update({"got_iron_bank": "def_cash_in_multipliers", "got_light_lord_of_light": "def_baratheon_button_ability",     # handle_top_player_button (docs, H)
                   "got_pfx": "def_lannister_button_ability", "got_direwolf": "def_stark_ability_dire_wolf",
@@ -936,6 +936,7 @@ def triggers(data, rules):
         player[ev] = ["got_def_" + d[4:]]
     for ev, defs in caller_events(data).items():            # the ROM's own callers (def_callers.csv) win over the table above
         player[ev] = ["got_def_" + d[4:] for d in defs]
+    player.pop("got_tyrell_award", None)                  # split by stage (EVENT_DEF): award 1 = run shot, 2 = right 2-bank
     for h in ("stark", "baratheon", "greyjoy", "lannister", "tyrell", "martell", "targaryen"):      # the BG screens survive the callers above
         for ev, add in (("mode_%s_started" % h, "got_house_%s_bg_show" % h), ("mode_%s_stopped" % h, "got_house_%s_bg_hide" % h)):
             player.setdefault(ev, [])

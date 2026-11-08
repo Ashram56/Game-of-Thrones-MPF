@@ -18,14 +18,14 @@ BANK2 = ("s_right_2_bank_top", "s_right_2_bank_bottom")
 class RomHouse(AwardMode):
     """Shared payment of the ROM house classes (docs/30): GiveAward(award, combo, bump) and Complete."""
 
-    def _give(self, bump=True, complete=False):
+    def _give(self, bump=True, complete=False, stage=1):
         points = self._award.give(global_mult=self._gm())
         self.player.score += points
         self._last_points = points
         if bump:
             self._award.bump()
         setattr(self.player, self._award_key, self._award.value)
-        self.machine.events.post("got_%s_award" % self._cfg["key"], points=points)
+        self.machine.events.post("got_%s_award" % self._cfg["key"], points=points, stage=stage)
         if complete:
             self.machine.events.post("got_house_complete", house_id=self._cfg["id"], key=self._cfg["key"])
             self.stop()
@@ -208,10 +208,10 @@ class TyrellMode(RomHouse):
             self._hits += 1
             self._bank = False
             if self._hits >= 3:
-                self._give(bump=True, complete=True)
+                self._give(bump=True, complete=True, stage=2)
                 return
             self._run = set(self.RUN_AFTER[self._hits])
-            self._give(bump=True)
+            self._give(bump=True, stage=2)
 
 
 VISERION_VALUES = (8000000, 10000000, 12000000)               # H (docs/18 2.2): SetHurryUpAwardValue per step, 3 hurry-ups

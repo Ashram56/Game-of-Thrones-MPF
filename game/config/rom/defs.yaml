@@ -464,8 +464,9 @@ event_player:
   - got_def_build_lannister
   got_targaryen_award:
   - got_def_award_targaryen_1
-  got_tyrell_award:
+  got_tyrell_award{stage==1}:
   - got_def_tyrell_award_1
+  got_tyrell_award{stage==2}:
   - got_def_tyrell_award_2
   tilt_warning:
   - got_def_tilt_warning
