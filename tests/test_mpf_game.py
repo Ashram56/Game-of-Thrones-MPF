@@ -1678,6 +1678,12 @@ class TestGotGame(MpfGameTestCase):
         self.assertIn("got_house_choose_bg_hide", seen)
         self.assertIn("got_se_vo_fn_house_selected_v3", seen)
 
+    def test_ready_and_house_background_slides_are_wired(self):
+        sp = self.machine.config["slide_player"]
+        for ev in ("got_wall_ready_lamps", "got_hand_ready_lamps", "got_house_stark_bg_show", "got_house_targaryen_bg_hide",
+                   "got_house_choose_bg_show"):
+            self.assertIn(ev, sp)
+
     def test_house_chooser_random_when_nothing_picked(self):
         self._start_game(0)
         self.release_switch_and_run("s_shooter_lane", 0.5)

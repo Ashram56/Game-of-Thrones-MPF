@@ -369,6 +369,11 @@ def text_slides(data):
         live_bg("tx_%s_bg_live" % key, [page + [right]], "got_house_page_const", 0.2, "house_" + key)
     drag = [[("{score}", 1, 0, 5, "l"), (n, 0, 127, 5, "r"), ("{timer}", 1, 0, 23, "l")] for n in ("VISERION", "RHAEGAL", "DROGON")]
     live_bg("tx_targaryen_bg_live", drag, "got_dragon_page", 0.2, "house_targaryen")
+    # Ready backgrounds (def_wall_multiball_ready_background / def_hand_ready_background): shown while the multiball waits to be started
+    for key, t1, t2 in (("wall", "WALL MULTIBALL READY", "SHOOT THE RIGHT ORBIT"), ("hand", "HAND OF THE KING READY", "SHOOT THE LEFT RAMP")):
+        live_bg("tx_%s_ready_live" % key, [[(t1, 2, 64, 6, "c"), ("{score}", 0, 64, 13, "c"), (t2, 10, 64, 23, "c")]], "got_house_page_const", 0.5, key + "_ready")
+        player["got_%s_ready_lamps" % key] = {"tx_%s_ready_live" % key: {"priority": 65}}
+        player["got_%s_ready_lamps_off" % key] = {"tx_%s_ready_live" % key: {"action": "remove"}}
     # Choose your house (docs/18 1.2): the hand animation (effect 66, video 144) with the prompt (effect 68, RANDOM / THE GAME WILL CHOOSE)
     # and the house chosen by the flippers (got_house_page: 1 = random, 2..8 = the houses 0..6)
     names = ["TARGARYEN", "STARK", "BARATHEON", "LANNISTER", "GREYJOY", "TYRELL", "MARTELL"]

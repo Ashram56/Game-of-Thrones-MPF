@@ -1580,6 +1580,30 @@ slide_player:
   got_house_targaryen_bg_hide:
     tx_targaryen_bg_live:
       action: remove
+  got_wall_ready_bg_show:
+    tx_wall_ready_live:
+      priority: 65
+  got_wall_ready_bg_hide:
+    tx_wall_ready_live:
+      action: remove
+  got_wall_ready_lamps:
+    tx_wall_ready_live:
+      priority: 65
+  got_wall_ready_lamps_off:
+    tx_wall_ready_live:
+      action: remove
+  got_hand_ready_bg_show:
+    tx_hand_ready_live:
+      priority: 65
+  got_hand_ready_bg_hide:
+    tx_hand_ready_live:
+      action: remove
+  got_hand_ready_lamps:
+    tx_hand_ready_live:
+      priority: 65
+  got_hand_ready_lamps_off:
+    tx_hand_ready_live:
+      action: remove
   got_house_choose_bg_show:
     tx_house_choose_live:
       priority: 72
