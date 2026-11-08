@@ -796,6 +796,8 @@ EVENT_DEF.update({'got_pop_award{award=="Big Points"}': "def_big_points_pops", '
                   'got_add_mode_time{key=="martell"}': "def_martell_add_time",
                                     'got_add_mode_time{key!="targaryen" and key!="martell" and key!="hand_of_the_king" and key!="winter_is_coming"}': "def_add_time",
                   "got_tickle_progress": "def_tickle_house", "ball_search_started": "def_ball_search",
+                  'got_mystery_award{award=="Big Points"}': "def_big_points", 'got_mystery_award{award=="Bigger Points"}': "def_bigger_points",
+                  'got_mystery_award{award=="Biggest Points"}': "def_biggest_points",
                   'got_mystery_award{award=="hold_bonus"}': "def_award_bonus_held",
                   'got_mystery_award{award=="bonus_x_1"}': "def_award_bonus_multipliers",
                   'got_mystery_award{award=="bonus_x_2"}': "def_award_bonus_multipliers",
