@@ -358,6 +358,17 @@ def text_slides(data):
     live_bg("tx_blackwater_bg_live", bw, "got_bw_state", 0.2, "blackwater")
     live_bg("tx_castle_bg_live", [[("CASTLE MULTIBALL", 0, 0, 5, "l"), ("{score}", 0, 127, 5, "r"), ("SHOOT CASTLE DRAGON SHOTS", 0, 64, 11, "c"),
                                    ("SUPER JACKPOT VALUE", 0, 64, 17, "c"), ("{hurry}", 0, 64, 23, "c")]], "got_castle_page", 0.2, "castle")
+    # House mode backgrounds (def_<house>_BG, dmd_texts.csv): the mode's title on the left half, the live score on the right
+    right = ("{score}", 7, 96, 20, "c")
+    for key, page in (("stark", [("ARYA'S TRAINING", 0, 32, 8, "c"), ("{timer}", 1, 32, 20, "c")]),
+                      ("baratheon", [("AID FOR THE WALL", 1, 37, 6, "c"), ("LEFT TARGETS", 1, 37, 24, "c")]),
+                      ("greyjoy", [("WINTERFELL BURNS", 0, 37, 7, "c"), ("SHOTS = {shots}", 0, 2, 21, "l")]),
+                      ("lannister", [("SAVE MYRCELLA", 1, 32, 8, "c"), ("SHOTS = {shots}", 0, 2, 21, "l")]),
+                      ("tyrell", [("JOUST", 5, 32, 8, "c"), ("{shots}", 1, 32, 22, "c")]),
+                      ("martell", [("TRIAL BY COMBAT", 1, 32, 5, "c"), ("SHOOT ORBITS", 0, 32, 23, "c")])):
+        live_bg("tx_%s_bg_live" % key, [page + [right]], "got_house_page_const", 0.2, "house_" + key)
+    drag = [[("{score}", 1, 0, 5, "l"), (n, 0, 127, 5, "r"), ("{timer}", 1, 0, 23, "l")] for n in ("VISERION", "RHAEGAL", "DROGON")]
+    live_bg("tx_targaryen_bg_live", drag, "got_dragon_page", 0.2, "house_targaryen")
     # Choose your house (docs/18 1.2): the hand animation (effect 66, video 144) with the prompt (effect 68, RANDOM / THE GAME WILL CHOOSE)
     # and the house chosen by the flippers (got_house_page: 1 = random, 2..8 = the houses 0..6)
     names = ["TARGARYEN", "STARK", "BARATHEON", "LANNISTER", "GREYJOY", "TYRELL", "MARTELL"]
@@ -778,7 +789,7 @@ EVENT_DEF.update({"got_iron_bank": "def_cash_in_multipliers", "got_light_lord_of
                   "ball_starting{is_extra_ball}": "def_shoot_again"})      # flag 12: an extra ball is replayed (docs/24, H)
 EVENT_DEF.update({'got_pop_award{award=="Big Points"}': "def_big_points_pops", 'got_add_mode_time{key=="targaryen"}': "def_targaryen_add_time",
                   'got_add_mode_time{key=="martell"}': "def_martell_add_time",
-                  'got_add_mode_time{key!="targaryen" and key!="martell"}': "def_add_time",
+                                    'got_add_mode_time{key!="targaryen" and key!="martell" and key!="hand_of_the_king" and key!="winter_is_coming"}': "def_add_time",
                   "got_tickle_progress": "def_tickle_house", "ball_search_started": "def_ball_search",
                   'got_mystery_award{award=="hold_bonus"}': "def_award_bonus_held",
                   'got_mystery_award{award=="bonus_x_1"}': "def_award_bonus_multipliers",
@@ -821,6 +832,10 @@ CALLER_EVENT = {
     "award_5_wild_fire_choreo_proc": "got_wildfire_bump", "cblackwater::BumpWildFire": "got_wildfire_bump",
     "video_mode_start_proc": "got_video_mode_start", "video_mode_total_proc": "got_video_mode_finished",
     "StartMystery": "got_mystery_menu", "EndMystery": "got_mystery_award", "award_gold_choreo_proc": "got_gold_collected",
+    "bump_winter_comming_choreo_proc": "got_winter_grows", "cwinter::BumpAwardValue": "got_winter_grows",
+    "cmball_winter::DoShotMadeFrozen": "got_winter_has_come_thawed", "cmball_winter::OnGrace": "got_winter_has_come_frozen",
+    "cbattering_ram::ShotMade": "got_ram_super_jackpot", "chand::AddTimerChoreo_proc": 'got_add_mode_time{key=="hand_of_the_king"}',
+    "cwinter::AddTimerChoreo_proc": 'got_add_mode_time{key=="winter_is_coming"}',
     "pop_bumper_handler": "got_pop_award", "wall_multiball_advance_choreo_proc": "got_wall_lit",
 }
 for _k, _m in MODE_KEY.items():
@@ -904,10 +919,18 @@ def triggers(data, rules):
     triggers.lef_shows = {k: v for k, v in lef_lights.items() if not k.endswith("_background") and "background" not in show_type.get(k, "")}
     for h, d in HOUSE_DEF.items():
         player["mode_%s_started" % h] = ["got_def_" + d[4:]]
+        if h in ("stark", "baratheon", "greyjoy", "lannister", "tyrell", "martell", "targaryen"):
+            player["mode_%s_started" % h].append("got_house_%s_bg_show" % h)
+            player["mode_%s_stopped" % h] = ["got_house_%s_bg_hide" % h]
     for ev, d in EVENT_DEF.items():
         player[ev] = ["got_def_" + d[4:]]
     for ev, defs in caller_events(data).items():            # the ROM's own callers (def_callers.csv) win over the table above
         player[ev] = ["got_def_" + d[4:] for d in defs]
+    for h in ("stark", "baratheon", "greyjoy", "lannister", "tyrell", "martell", "targaryen"):      # the BG screens survive the callers above
+        for ev, add in (("mode_%s_started" % h, "got_house_%s_bg_show" % h), ("mode_%s_stopped" % h, "got_house_%s_bg_hide" % h)):
+            player.setdefault(ev, [])
+            if add not in player[ev]:
+                player[ev].append(add)
     for t, sw in SWITCH_TRIGGER.items():
         if first.get(t):
             player[sw + "_active"] = [first[t][0]]

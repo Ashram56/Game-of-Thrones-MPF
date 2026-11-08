@@ -235,6 +235,7 @@ class TargaryenMode(AwardMode):
         super().mode_start(**kwargs)
         p = self.player
         self._dragon = min(2, int(p.got_dragon_stage or 0))
+        self.machine.variables.set_machine_var("got_dragon_page", self._dragon + 1)
         self._step = 0
         self._done = set()
         self._banked = 0
