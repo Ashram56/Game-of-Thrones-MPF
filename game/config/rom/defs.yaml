@@ -356,7 +356,6 @@ event_player:
   got_def_video_mode_total:
   - got_lef_video_mode_total
   mode_targaryen_started:
-  - got_def_targaryen_start_1
   - got_house_targaryen_bg_show
   mode_targaryen_stopped:
   - got_def_targaryen_total
@@ -409,6 +408,8 @@ event_player:
   - got_def_start_winter_mball
   mode_midnight_madness_started:
   - got_def_madness_multiball_start
+  got_targaryen_dragon_started{dragon==0}:
+  - got_def_targaryen_start_1
   got_light_extra_ball:
   - got_def_extra_ball_lit
   got_award_extra_ball:
@@ -452,6 +453,7 @@ event_player:
   - got_def_award_targaryen_1
   got_tyrell_award:
   - got_def_tyrell_award_1
+  - got_def_tyrell_award_2
   tilt_warning:
   - got_def_tilt_warning
   tilt:
@@ -502,6 +504,12 @@ event_player:
   - got_def_award_bonus_multipliers
   s_left_spinner_active:
   - got_def_spinner
+  got_targaryen_dragon_started{dragon==1}:
+  - got_def_targaryen_start_2
+  got_targaryen_dragon_started{dragon==2}:
+  - got_def_targaryen_start_3
+  got_targaryen_award{dragon==1}:
+  - got_def_award_targaryen_2
   got_house_complete{key=="baratheon"}:
   - got_def_baratheon_complete
   got_house_complete{key=="greyjoy"}:
@@ -542,6 +550,7 @@ event_player:
   got_baratheon_award:
   - got_def_build_baratheon_dragon
   - got_def_build_baratheon_left_ramp
+  - got_def_build_baratheon_spinner
   got_castle_super:
   - got_def_castle_multiball_super_jackpot
   mode_castle_stopped:

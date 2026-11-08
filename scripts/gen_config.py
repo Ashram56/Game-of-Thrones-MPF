@@ -802,6 +802,8 @@ EVENT_DEF.update({'got_pop_award{award=="Big Points"}': "def_big_points_pops", '
                   'got_mystery_award{award=="bonus_x_1"}': "def_award_bonus_multipliers",
                   'got_mystery_award{award=="bonus_x_2"}': "def_award_bonus_multipliers",
                   'got_mystery_award{award=="bonus_x_3"}': "def_award_bonus_multipliers", "s_left_spinner_active": "def_spinner"})      # def_callers.csv: award_pops_*, AddTimerChoreo, Tickle, AwardSpinnerSpin
+EVENT_DEF.update({'got_targaryen_dragon_started{dragon==1}': "def_targaryen_start_2", 'got_targaryen_dragon_started{dragon==2}': "def_targaryen_start_3",
+                  'got_targaryen_award{dragon==1}': "def_award_targaryen_2"})     # docs/34: ctargaryen::Start vt+0xa0 SetStartDef; DoAwardDragonLevelOneOrTwo
 for _h in ("baratheon", "greyjoy", "lannister", "tyrell"):
     EVENT_DEF['got_house_complete{key=="%s"}' % _h] = "def_%s_complete" % _h
 # ROM switch handlers (swdf_*, call sites that play one sound when the switch is hit) -> MPF switch
@@ -925,10 +927,11 @@ def triggers(data, rules):
                 lst.append(ev)
     triggers.lef_shows = {k: v for k, v in lef_lights.items() if not k.endswith("_background") and "background" not in show_type.get(k, "")}
     for h, d in HOUSE_DEF.items():
-        player["mode_%s_started" % h] = ["got_def_" + d[4:]]
+        player["mode_%s_started" % h] = [] if h == "targaryen" else ["got_def_" + d[4:]]
         if h in ("stark", "baratheon", "greyjoy", "lannister", "tyrell", "martell", "targaryen"):
             player["mode_%s_started" % h].append("got_house_%s_bg_show" % h)
             player["mode_%s_stopped" % h] = ["got_house_%s_bg_hide" % h]
+    player["got_targaryen_dragon_started{dragon==0}"] = ["got_def_targaryen_start_1"]
     for ev, d in EVENT_DEF.items():
         player[ev] = ["got_def_" + d[4:]]
     for ev, defs in caller_events(data).items():            # the ROM's own callers (def_callers.csv) win over the table above

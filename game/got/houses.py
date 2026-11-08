@@ -236,6 +236,7 @@ class TargaryenMode(AwardMode):
         p = self.player
         self._dragon = min(2, int(p.got_dragon_stage or 0))
         self.machine.variables.set_machine_var("got_dragon_page", self._dragon + 1)
+        self.machine.events.post("got_targaryen_dragon_started", dragon=self._dragon)      # def_targaryen_start_1/2/3 (effects 92-94)
         self._step = 0
         self._done = set()
         self._banked = 0
@@ -284,7 +285,7 @@ class TargaryenMode(AwardMode):
         self._done.add(sw)
         if self._dragon < 2:
             self.player.score += value
-            self.machine.events.post("got_targaryen_award", points=value)
+            self.machine.events.post("got_targaryen_award", points=value, dragon=self._dragon)
             self._step += 1
             if self._step >= len(self._values()):
                 self._dragon_defeated()
@@ -293,11 +294,11 @@ class TargaryenMode(AwardMode):
             self._banked += value
             self._hp -= DROGON_HURRYUP_HP
             self._step += 1
-            self.machine.events.post("got_targaryen_award", points=value)
+            self.machine.events.post("got_targaryen_award", points=value, dragon=self._dragon)
             timer.ticks = min(self._timer_s, timer.ticks + 10)
         else:                                                         # final shot: the bank is paid, 20 HP
             self.player.score += self._banked
-            self.machine.events.post("got_targaryen_award", points=self._banked)
+            self.machine.events.post("got_targaryen_award", points=self._banked, dragon=self._dragon)
             self._banked = 0
             self._hp -= DROGON_FINAL_HP
             if self._hp <= 0:
